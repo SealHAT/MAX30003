@@ -60,15 +60,20 @@ typedef enum {
  * REG_STATUS data structure of configurable bits
  **/
 typedef struct {
-    uint32_t ldoff_nl   : 1;
-    uint32_t ldoff_nh   : 1;
-    uint32_t ldoff_pl   : 1;
-    uint32_t ldoff_ph   : 1;
-    uint32_t reserved1  : 8;
-    uint32_t dcloffint  : 1;
-    uint32_t fstint     : 1;
-    uint32_t eovf       : 1;
-    uint32_t eint       : 1;
+    uint32_t ldoff_nl   : 1; /* DC Lead Off Detection Detailed Status       */
+    uint32_t ldoff_nh   : 1; /* DC Lead Off Detection Detailed Status       */
+    uint32_t ldoff_pl   : 1; /* DC Lead Off Detection Detailed Status       */
+    uint32_t ldoff_ph   : 1; /* DC Lead Off Detection Detailed Status       */
+    uint32_t reserved1  : 4; /* reserved                                    */
+    uint32_t pllint     : 1; /* PLL Unlocked Interrupt                      */
+    uint32_t samp       : 1; /* Sample Synchronization Pulse                */
+    uint32_t rrint      : 1; /* ECG RtoR Detector R Event Interrupt         */
+    uint32_t lonint     : 1; /* Ultra-Low Power Leads-On Detection Interrupt*/
+    uint32_t reserved2  : 8; /* reserved                                    */
+    uint32_t dcloffint  : 1; /* DC Lead-Off Detection Interrupt             */
+    uint32_t fstint     : 1; /* ECG Fast Recovery Mode.                     */
+    uint32_t eovf       : 1; /* ECG FIFO overflow                           */
+    uint32_t eint       : 1; /* ECG FIFO interrupt                          */
 } MAX30003_REG_STATUS;
 
 /**
