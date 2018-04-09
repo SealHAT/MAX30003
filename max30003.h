@@ -56,32 +56,129 @@ typedef enum {
     NO_OP2         = 0x7F   /* RW - no internal effect. DOUT = 0 during R, W ignored */
 } MAX30003_REG;
 
-/**
- * REG_STATUS data structure of configurable bits
- **/
-typedef struct {
-    uint32_t ldoff_nl   : 1; /* DC Lead Off Detection Detailed Status       */
-    uint32_t ldoff_nh   : 1; /* DC Lead Off Detection Detailed Status       */
-    uint32_t ldoff_pl   : 1; /* DC Lead Off Detection Detailed Status       */
-    uint32_t ldoff_ph   : 1; /* DC Lead Off Detection Detailed Status       */
-    uint32_t reserved1  : 4; /* reserved                                    */
-    uint32_t pllint     : 1; /* PLL Unlocked Interrupt                      */
-    uint32_t samp       : 1; /* Sample Synchronization Pulse                */
-    uint32_t rrint      : 1; /* ECG RtoR Detector R Event Interrupt         */
-    uint32_t lonint     : 1; /* Ultra-Low Power Leads-On Detection Interrupt*/
-    uint32_t reserved2  : 8; /* reserved                                    */
-    uint32_t dcloffint  : 1; /* DC Lead-Off Detection Interrupt             */
-    uint32_t fstint     : 1; /* ECG Fast Recovery Mode.                     */
-    uint32_t eovf       : 1; /* ECG FIFO overflow                           */
-    uint32_t eint       : 1; /* ECG FIFO interrupt                          */
-} MAX30003_REG_STATUS;
+typedef enum {
+    LDOFF_NL    = 0x000001,
+    LDOFF_NH    = 0x000002,
+    LDOFF_PL    = 0x000004,
+    LDOFF_PH    = 0x000008,
+    PLLINT      = 0x000100,
+    SAMP        = 0x000200,
+    RRINT       = 0x000400,
+    LONINT      = 0x000800,
+    DCLOFFINT   = 0x100000,
+    FSTINT      = 0x200000,
+    EOVF        = 0x400000,
+    EINT        = 0x800000,
+    RESERVED    = 0x0FF0F0,
+} MAX30003_STATUS_MASKS;
 
-/**
- * DATA word to an SPI message for the MAX30003
- **/
-typedef union {
-    MAX30003_REG_STATUS REG_STATUS;
-} MAX30003_DATA_WORD;
+/***
+ * EN_INT register's masks and values
+ ***/
+typedef enum {
+    INTB_TYPE   = 0x000003,
+    EN_PLLINT   = 0x000100,
+    EN_SAMP     = 0x000200,
+    EN_RRINT    = 0x000400,
+    EN_LONINT   = 0x000800,
+    EN_DCLOFFINT= 0x100000,
+    EN_FSTINT   = 0x200000,
+    EN_EOVF     = 0x400000,
+    EN_EINT     = 0x800000
+} MAX30003_EN_INT_MASKS;
+
+typedef enum {
+    DISABLED    = 0,
+    CMOS_DRIVER = 1,
+    NMOS_DRIVER = 2,
+    NMOS_WITH_PU= 3
+} MAX30003_EN_INT_INTB_VAL;
+
+// TODO add ENABLE,DISABLE enums for the EN_* fields
+
+/***
+ * MNG_INT register's masks and values
+ ***/
+typedef enum {
+    SAMP_IT     = 0x000003,
+    CLR_SAMP    = 0x000004,
+    CLR_RRINT   = 0x000030,
+    CLR_FAST    = 0x000040,
+    EFIT        = 0xF80000,
+    RESERVED    = 0x07FF88
+} MAX30003_MNGR_INT_MASKS;
+
+typedef enum {
+    EVERY_INST  = 0,
+    EVERY_2ND   = 1,
+    EVERY_4TH   = 2,
+    EVERY_16TH  = 3
+} MAX30003_MNGR_INT_SAMP_IT_VAL;
+
+typedef enum {
+    CLEAR_ON_READ   = 0,
+    SELF_CLEAR      = 1
+} MAX30003_MNGR_INT_CLR_SAMP_VAL;
+
+typedef enum {
+    CLEAR_ON_STATUS = 0,
+    CLEAR_ON_RTOR   = 1,
+    SELF_CLEAR      = 2,
+    RESERVED        = 3
+} MAX30003_MNGR_INT_CLR_RRINT_VAL;
+
+typedef enum {
+    CLEAR_ON_FAST   = 0,
+    CLEAR_ON_STATUS = 1
+} MAX30003_MNGR_INT_CLR_FAST_VAL;
+
+// TODO enum for 0000 = 1 to 1111 = 32 to enforce "off-by-one" behaviour
+typedef uint32_t MAX30003_MNGR_INT_EFIT_VAL;
+
+/***
+ * MNG_DYN register's masks and values
+ ***/
+typedef enum {
+    FAST        = 0xC00000,
+    FAST_TH     = 0x3F0000,
+    RESERVED    = 0x00FFFF
+} MAX30003_MNGR_DYN_MASKS;
+
+typedef enum {
+    NORMAL_MODE = 0,
+    MANUAL_FAST = 1,
+    AUTO_FAST   = 2,
+    RESERVED    = 3
+} MAX30003_MNGR_DYN_FAST_VAL;
+
+//TODO SW_RST, SYNCH, FIFO_RST
+
+/***
+ * INFO register's masks and values
+ ***/
+typedef enum {
+    REV_ID      = 0x0F0000,
+    RESERVED    = 0x00CFFF,
+    REQUIRED    = 0x503000
+} MAX30003_INFO_MASKS;
+
+/***
+ * CNFG_GEN register's masks and values
+ ***/
+typedef enum {
+    RBIASN      = 0x000001,
+    RBIASP      = 0x000002,
+    RBIASV      = 0x00000C,
+    EN_RBIAS    = 0x000030,
+    VTH         = 0x0000C0,
+    IMAG        = 0x000700,
+    IPOL        = 0x000800,
+    EN_DCLOFF   = 0x003000,
+    EN_ECG      = 0x080000,
+    FMSTR       = 0x300000,
+    EN_ULP_LON  = 0xC00000,
+    RESERVED    = 0x07C000
+} MAX30003_CNFG_GEN_MASKS;
 
 #ifdef __cplusplus
 }
