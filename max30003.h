@@ -28,8 +28,9 @@
 extern "C"
 {
 #endif
-// TODO check endianness
 
+// TODO check endianness
+// TODO macro for WRITE/READ on ADDRESSES ie:(REG << 1 | R)
 /**
  * REG addresses for the MAX30003 biopotential AFE
  **/
@@ -382,7 +383,6 @@ typedef enum {
         SPS_128		= 2,
         RESERVED	= 3
 } MAX30003_CNFG_ECG_RATE_512_PROG_VAL;
-
 
 /***
  * CNFG_RTOR1 register's masks and values
