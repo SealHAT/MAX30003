@@ -92,13 +92,51 @@ typedef enum {
 } MAX30003_EN_INT_MASKS;
 
 typedef enum {
-    ENINTINTB_DISABLED    = 0,
-    CMOS_DRIVER = 1,
-    NMOS_DRIVER = 2,
-    NMOS_WITH_PU= 3
-} MAX30003_EN_INT_INTB_VAL;
+    INTBTYPE_DISABLED    = 0,   /* Disabled (three-state) */
+    INTBTYPE_CMOS_DRIVER = 1,   /* CMOS Driver */
+    INTBTYPE_NMOS_DRIVER = 2,   /* Open-Drain NMOS Driver */
+    INTBTYPE_NMOS_WITH_PU= 3    /* Open-Drain NMOS Driver w/ Internal 125k Pullup */
+} MAX30003_ENINT_INTBTYPE_VAL;
 
-// TODO add ENABLE,DISABLE enums for the EN_* fields
+typedef enum {
+    ENPLLINT_DISABLED   = 0,
+    ENPLLINT_ENABLED    = 1
+} MAX30003_ENINT_ENPLLINT_VAL;
+
+typedef enum {
+    ENSAMP_DISABLED = 0,
+    ENSAMP_ENABLED  = 1
+} MAX30003_ENINT_ENSAMP_VAL;
+
+typedef enum {
+    ENRRINT_DISABLED    = 0,
+    ENRRINT_ENABLED     = 1
+} MAX30003_ENINT_ENRRINT_VAL;
+
+typedef enum {
+    ENLONINT_DISABLED   = 0,
+    ENLONINT_ENABLED    = 1
+} MAX30003_ENINT_ENLONINT_VAL;
+
+typedef enum {
+    ENDCLOFFINT_DISABLED    = 0,
+    ENDCLOFFINT_ENABLED     = 1
+} MAX30003_ENINT_ENDCLOFFINT_VAL;
+
+typedef enum {
+    ENFSTINT_DISABLED   = 0,
+    ENFSTINT_ENABLED    = 1
+} MAX30003_ENINT_ENFSTINT_VAL;
+
+typedef enum {
+    ENEOVF_DISABLED = 0,
+    ENEOVF_ENABLED  = 1
+} MAX30003_ENINT_ENEOVF_VAL;
+
+typedef enum {
+    ENINT_DISABLED  = 0,
+    ENINT_ENABLED   = 1
+} MAX30003_ENINT_ENINT_VAL;
 
 /***
  * MNG_INT register's masks and values
@@ -113,28 +151,28 @@ typedef enum {
 } MAX30003_MNGR_INT_MASKS;
 
 typedef enum {
-    EVERY_INST  = 0,
-    EVERY_2ND   = 1,
-    EVERY_4TH   = 2,
-    EVERY_16TH  = 3
-} MAX30003_MNGR_INT_SAMP_IT_VAL;
+    SAMPIT_EVERY_INST   = 0,
+    SAMPIT_EVERY_2ND    = 1,
+    SAMPIT_EVERY_4TH    = 2,
+    SAMPIT_EVERY_16TH   = 3
+} MAX30003_MNGRINT_SAMPIT_VAL;
 
 typedef enum {
-    CLEAR_ON_READ   = 0,
-    SELF_CLEAR      = 1
-} MAX30003_MNGR_INT_CLR_SAMP_VAL;
+    CLRSAMP_ON_READ = 0,
+    CLRSAMP_SELF    = 1
+} MAX30003_MNGRINT_CLRSAMP_VAL;
 
 typedef enum {
-    CLEAR_ON_STATUS = 0,
-    CLEAR_ON_RTOR   = 1,
-    SELF_CLEAR      = 2,
-    RESERVED        = 3
-} MAX30003_MNGR_INT_CLR_RRINT_VAL;
+    CLRRINT_ON_STATUS = 0,
+    CLRRINT_ON_RTOR   = 1,
+    CLRRINT_SELF      = 2,
+    _CLRRINT_RESERVED = 3
+} MAX30003_MNGRINT_CLRRRINT_VAL;
 
 typedef enum {
-    CLEAR_ON_FAST   = 0,
-    CLEAR_ON_STATUS = 1
-} MAX30003_MNGR_INT_CLR_FAST_VAL;
+    CLRFAST_ON_FAST   = 0,
+    CLRFAST_ON_STATUS = 1
+} MAX30003_MNGRINT_CLRFAST_VAL;
 
 // TODO enum for 0000 = 1 to 1111 = 32 to enforce "off-by-one" behaviour
 typedef uint32_t MAX30003_MNGR_INT_EFIT_VAL;
@@ -148,12 +186,15 @@ typedef enum {
     RESERVED    = 0x00FFFF
 } MAX30003_MNGR_DYN_MASKS;
 
+// TODO do something about 
+typedef uint8_t MAX30003_MNGR_DYN_FASTTH_VAL;
+
 typedef enum {
-    NORMAL_MODE = 0,
-    MANUAL_FAST = 1,
-    AUTO_FAST   = 2,
-    RESERVED    = 3
-} MAX30003_MNGR_DYN_FAST_VAL;
+    FAST_NORMAL     = 0,
+    FAST_MANUAL     = 1,
+    FAST_AUTO       = 2,
+    _FAST_RESERVED  = 3
+} MAX30003_MNGRDYN_FAST_VAL;
 
 //TODO SW_RST, SYNCH, FIFO_RST
 
@@ -184,11 +225,15 @@ typedef enum {
     RESERVED    = 0x07C000
 } MAX30003_CNFG_GEN_MASKS;
 
-/* for RBIASN and RBIASP */
 typedef enum {
-    NOT_CONNECTED   = 0,
-    CONNECTED       = 1
-} MAX30003_CNFG_GEN_RBIASNP_VAL;
+    RBIASN_NOT_CONNECTED    = 0,
+    RBIASN_CONNECTED        = 1
+} MAX30003_CNFG_GEN_RBIASN_VAL;
+
+typedef enum {
+    RBIASP_NOT_CONNECTED    = 0,
+    RBIASP_CONNECTED        = 1
+} MAX30003_CNFG_GEN_RBIASP_VAL;
 
 typedef enum {
     RBIAS_50_MOHM   = 0,
