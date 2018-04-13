@@ -62,12 +62,14 @@ MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals)
 
 void ecg_init_spi( int32_t(*spi_xfer_function)(void *, void *), void *ecg_spi_desc)
 {
-
+    ecg_spi_xfer = spi_xfer_function;
+    ECG_SPI_DESC = ecg_spi_desc;
 }
 
 void ecg_init_csb( void(*csb_pin_level_function)(const uint8_t , const bool), const uint8_t ecg_csb_pin)
 {
-
+    ecg_set_csb = csb_pin_level_function;
+    ECG_CSB_PIN = ecg_csb_pin;
 }
 
 
@@ -88,17 +90,5 @@ void ecg_write_cnfg_gen(MAX30003_CNFG_GEN_MASKS MASKS, const MAX30003_CNFG_GEN_V
 
     msg.command = ((uint8_t)CNFG_GEN << 1) | MAX30003_W_INDICATOR;
     msg.data[0] = data[0];
-
-}
-
-/* example */
-void ex() {
-    MAX30003_CNFG_GEN_VALS values;
-
-    ecg_read_cnfg_gen(&values);
-
-    values.en_dcloff = MAX30003_CNFG_GEN_EN_DCLOFF_VAL.LOFF_DISABLED;
-
-    ecg_write_cnfg_gen(MAX30003_CNFG_GEN_MASKS.EN_DCLOFF | EN_ECG, values);
 
 }

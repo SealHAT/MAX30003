@@ -24,14 +24,16 @@
 #ifndef MAX30003_H
 #define MAX30003_H
 
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "max30003types.h"
+
 #ifdef __cplusplus
 extern "C"
 {
-#endif
+#endif // __cplusplu
 
-#include "max30003types.h"
-#include <stdbool.h>
-#include <stdint.h>
 
 typedef struct MAX30003_DATA_t { char byte[3]; } MAX30003_DATA_t;
 typedef char MAX30003_ADDR_t;
@@ -58,4 +60,6 @@ void ecg_write_cnfg_gen(MAX30003_CNFG_GEN_MASKS MASKS, const MAX30003_CNFG_GEN_V
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
+
+#endif /* MAX30003_H */
