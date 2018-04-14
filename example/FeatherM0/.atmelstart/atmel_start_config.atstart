@@ -824,6 +824,13 @@ pads:
     mode: Digital input
     user_label: MISO
     configuration: null
+  CS:
+    name: PA13
+    definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::pad::PA13
+    mode: Digital output
+    user_label: CS
+    configuration:
+      pad_initial_level: High
   LED_BUILTIN:
     name: PA17
     definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::pad::PA17

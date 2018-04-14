@@ -35,6 +35,16 @@ extern "C"
 #endif // __cplusplu
 
 
+#define ECG_BUF_SZ  (32)
+
+enum ECG_WORD_POS {
+    ECG_CMND_POS = 0,
+    ECG_DATA_POS = 1
+};
+
+extern uint8_t ECG_BUF_I[ECG_BUF_SZ];
+extern uint8_t ECG_BUF_O[ECG_BUF_SZ];
+
 typedef struct MAX30003_DATA_t { char byte[3]; } MAX30003_DATA_t;
 typedef char MAX30003_ADDR_t;
 
@@ -44,17 +54,19 @@ typedef struct MAX30003_MSG
     uint8_t data[3];
 } MAX30003_MSG;
 
-void ecg_init_spi( int32_t(*spi_xfer_function)(void *, void *), void *ecg_spi_desc);
+void ecg_init_spi( int32_t(*spi_xfer_function)(void *, const void *), void *spi_desc, void *spi_msg);
 void ecg_init_csb( void(*csb_pin_level_function)(const uint8_t , const bool), const uint8_t ecg_csb_pin);
-
+void ecg_clear_ibuf();
+void ecg_clear_obuf();
+void ecg_clear_iobuf();
 uint8_t ecg_write(MAX30003_MSG msg);
 
 
-MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals);
+MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, MAX30003_CNFG_GEN_MASKS MASKS);
 
 void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
 
-void ecg_write_cnfg_gen(MAX30003_CNFG_GEN_MASKS MASKS, const MAX30003_CNFG_GEN_VALS VALS);
+void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_CNFG_GEN_MASKS MASKS);
 
 
 

@@ -23,16 +23,17 @@
  
 #include "max30003.h"
 
-int32_t (*ecg_spi_xfer)(void * descriptor, void *buffer);
+int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);
 void    (*ecg_set_csb)(const uint8_t pin, const bool level);
 
 static void *ECG_SPI_DESC;
+static void *ECG_SPI_MSG;
 static uint8_t ECG_CSB_PIN;
-static uint8_t ECG_BUF[64];
-static uint8_t ECG_IBUFF[32];
-static uint8_t ECG_OBUFF[32];
+/*static uint8_t ECG_BUF[64];*/
+uint8_t ECG_BUF_I[ECG_BUF_SZ];
+uint8_t ECG_BUF_O[ECG_BUF_SZ];
 
-MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals)
+MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, MAX30003_CNFG_GEN_MASKS MASK)
 {
     uint32_t word;
     MAX30003_DATA_t data;
@@ -52,6 +53,8 @@ MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals)
     word |= vals.fmstr         << 16;
     word |= vals.en_ulp_lon    << 20;
 
+    word &= (uint32_t)MASK;
+
     /* extract and assign bytes from data word to be endian safe */
     data.byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
     data.byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
@@ -60,10 +63,11 @@ MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals)
     return data;
 }
 
-void ecg_init_spi( int32_t(*spi_xfer_function)(void *, void *), void *ecg_spi_desc)
+void ecg_init_spi( int32_t(*spi_xfer_function)(void *, const void *), void *spi_desc, void *spi_msg)
 {
     ecg_spi_xfer = spi_xfer_function;
-    ECG_SPI_DESC = ecg_spi_desc;
+    ECG_SPI_DESC = spi_desc;
+    ECG_SPI_MSG  = spi_msg;
 }
 
 void ecg_init_csb( void(*csb_pin_level_function)(const uint8_t , const bool), const uint8_t ecg_csb_pin)
@@ -72,21 +76,58 @@ void ecg_init_csb( void(*csb_pin_level_function)(const uint8_t , const bool), co
     ECG_CSB_PIN = ecg_csb_pin;
 }
 
+void ecg_clear_ibuf()
+{
+    int i;
+    for(i = 0; i < ECG_BUF_SZ; i++) {
+        ECG_BUF_I[i] = 0;
+    }
+}
+void ecg_clear_obuf()
+{
+    int i;
+    for(i = 0; i < ECG_BUF_SZ; i++) {
+        ECG_BUF_O[i] = 0;
+    }
+}
+void ecg_clear_iobuf()
+{
+    ecg_clear_ibuf();
+    ecg_clear_obuf();
+}
 
 void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 {
-    ECG_OBUFF[0] = ((uint8_t)CNFG_GEN << 1) | MAX30003_R_INDICATOR;
+    /* create a config general (read) command */
+    ecg_clear_obuf();
+    ECG_BUF_O[ECG_CMND_POS] = ((uint8_t)CNFG_GEN << 1) | MAX30003_R_INDICATOR;
 
-    /* TODO spi xfer */
+    /* send command over spi */
     ecg_set_csb(ECG_CSB_PIN, false);
-    ecg_spi_xfer(ECG_SPI_DESC, ECG_BUF);
+    ecg_spi_xfer(ECG_SPI_DESC, ECG_SPI_MSG);
+    ecg_set_csb(ECG_CSB_PIN, true);
 }
 
-void ecg_write_cnfg_gen(MAX30003_CNFG_GEN_MASKS MASKS, const MAX30003_CNFG_GEN_VALS VALS) {
+void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_CNFG_GEN_MASKS MASKS) 
+{
     MAX30003_MSG msg;
+    MAX30003_CNFG_GEN_VALS oldvals;
     uint8_t *data;
+    
+    /* read the current configuration */
+    ecg_read_cnfg_gen(&oldvals);
+    /* format and mask out the values to be modified */
 
-    data = (uint8_t*)ecg_set_cnfg_gen(VALS).byte;
+
+
+    
+    /* arrange the selected values as the ECG data word for sending over SPI */
+    data = (uint8_t*)ecg_set_cnfg_gen(VALS,MASKS).byte ;
+
+    /* mask out the values that are not to be modified */
+    
+    /* combine the two data buffers to a complete message */
+    //data = ((uint32_t*)&data[0]) & ~(uint32_t)MASKS);
 
     msg.command = ((uint8_t)CNFG_GEN << 1) | MAX30003_W_INDICATOR;
     msg.data[0] = data[0];
