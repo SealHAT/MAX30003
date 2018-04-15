@@ -63,13 +63,28 @@ MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, MAX30003_CNFG_GEN_
     return data;
 }
 
-MAX30003_CNFG_GEN_VALS ecg_get_cnfg_gen(const MAX30003_DATA_t data)
+void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals, const MAX30003_DATA_t data)
 {
-	MAX30003_CNFG_GEN_VALS vals;
+	uint32_t word;
 	
-	vals.rbiasn = (MAX30003_CNFG_GEN_RBIASN_VAL)(data.byte[0] & CNFGGEN_RBIASN);
+	word = 0x00000000;
+	/* extract and assign bytes from data word to be endian safe */
+	word |= ((uint32_t)(data.byte[2]) << 16);
+	word |= ((uint32_t)(data.byte[1]) << 8 );
+	word |= ((uint32_t)(data.byte[0]) << 0 );
 	
-	return vals;
+	/* shift values from the 24-bit data word into the value struct */
+	vals->rbiasn		= (MAX30003_CNFG_GEN_RBIASN_VAL)( (word & CNFGGEN_RBIASN) >> 0 );
+	vals->rbiasp		= (MAX30003_CNFG_GEN_RBIASP_VAL)( (word & CNFGGEN_RBIASN) >> 1 );
+	vals->rbiasv		= (MAX30003_CNFG_GEN_RBIASV_VAL)( (word & CNFGGEN_RBIASV) >> 2 );
+	vals->en_rbias		= (MAX30003_CNFG_GEN_EN_RBIAS_VAL)( (word & CNFGGEN_EN_RBIAS) >> 4);
+	vals->vth			= (MAX30003_CNFG_GEN_DCLOFF_VTH_VAL)( (word & CNFGGEN_VTH) >> 6);
+	vals->imag			= (MAX30003_CNFG_GEN_DCLOFF_IMAG_VAL)( (word & CNFGGEN_IMAG) >> 8);
+	vals->ipol			= (MAX30003_CNFG_GEN_DCLOFF_IPOL_VAL)( (word & CNFGGEN_IPOL) >> 11);
+	vals->en_dcloff		= (MAX30003_CNFG_GEN_EN_DCLOFF_VAL)( (word & CNFGGEN_EN_DCLOFF) >> 12);
+	vals->en_ecg		= (MAX30003_CNFG_GEN_EN_ECG_VAL)( (word & CNFGGEN_EN_ECG) >> 15);
+	vals->fmstr			= (MAX30003_CNFG_GEN_FMSTR_VAL)( (word & CNFGGEN_FMSTR) >> 16);
+	vals->en_ulp_lon	= (MAX30003_CNFG_GEN_EN_ULP_LON_VAL)( (word & CNFGGEN_EN_ULP_LON) >> 20);
 }
 
 void ecg_init_spi(void *spi_desc, const void *spi_msg)
@@ -105,6 +120,8 @@ void ecg_clear_iobuf()
 
 void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 {
+	MAX30003_DATA_t data;
+	
     /* create a config general (read) command */
     ecg_clear_obuf();
     ECG_BUF_O[ECG_CMND_POS] = ((uint8_t)CNFG_GEN << 1) | MAX30003_R_INDICATOR;
@@ -113,6 +130,13 @@ void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
     ecg_set_csb_level(ECG_CSB_PIN, false);
     ecg_spi_xfer(ECG_SPI_DESC, ECG_SPI_MSG);
     ecg_set_csb_level(ECG_CSB_PIN, true);
+	
+	/* extract data from input buffer */
+	data.byte[0] = ECG_BUF_I[0];
+	data.byte[1] = ECG_BUF_I[1];
+	data.byte[2] = ECG_BUF_I[2];
+	
+	ecg_get_cnfg_gen(vals, &data);
 }
 
 void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_CNFG_GEN_MASKS MASKS) 
