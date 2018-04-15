@@ -23,11 +23,11 @@
  
 #include "max30003.h"
 
-int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);
-void    (*ecg_set_csb)(const uint8_t pin, const bool level);
+// int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);
+// void    (*ecg_set_csb)(const uint8_t pin, const bool level);
 
 static void *ECG_SPI_DESC;
-static void *ECG_SPI_MSG;
+static const void *ECG_SPI_MSG;
 static uint8_t ECG_CSB_PIN;
 /*static uint8_t ECG_BUF[64];*/
 uint8_t ECG_BUF_I[ECG_BUF_SZ];
@@ -63,16 +63,23 @@ MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, MAX30003_CNFG_GEN_
     return data;
 }
 
-void ecg_init_spi( int32_t(*spi_xfer_function)(void *, const void *), void *spi_desc, void *spi_msg)
+MAX30003_CNFG_GEN_VALS ecg_get_cnfg_gen(const MAX30003_DATA_t data)
 {
-    ecg_spi_xfer = spi_xfer_function;
+	MAX30003_CNFG_GEN_VALS vals;
+	
+	vals.rbiasn = (MAX30003_CNFG_GEN_RBIASN_VAL)(data.byte[0] & CNFGGEN_RBIASN);
+	
+	return vals;
+}
+
+void ecg_init_spi(void *spi_desc, const void *spi_msg)
+{
     ECG_SPI_DESC = spi_desc;
     ECG_SPI_MSG  = spi_msg;
 }
 
-void ecg_init_csb( void(*csb_pin_level_function)(const uint8_t , const bool), const uint8_t ecg_csb_pin)
+void ecg_init_csb(const uint8_t ecg_csb_pin)
 {
-    ecg_set_csb = csb_pin_level_function;
     ECG_CSB_PIN = ecg_csb_pin;
 }
 
@@ -103,9 +110,9 @@ void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
     ECG_BUF_O[ECG_CMND_POS] = ((uint8_t)CNFG_GEN << 1) | MAX30003_R_INDICATOR;
 
     /* send command over spi */
-    ecg_set_csb(ECG_CSB_PIN, false);
+    ecg_set_csb_level(ECG_CSB_PIN, false);
     ecg_spi_xfer(ECG_SPI_DESC, ECG_SPI_MSG);
-    ecg_set_csb(ECG_CSB_PIN, true);
+    ecg_set_csb_level(ECG_CSB_PIN, true);
 }
 
 void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_CNFG_GEN_MASKS MASKS) 

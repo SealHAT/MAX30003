@@ -15,7 +15,7 @@
 #include <hpl_adc_base.h>
 
 struct crc_sync_descriptor   hash_chk;
-struct spi_m_sync_descriptor spi_dev;
+struct spi_m_sync_descriptor ECG_SPI_DEV_0;
 
 struct adc_sync_descriptor analog_in;
 
@@ -98,7 +98,7 @@ void wire_init(void)
 	wire_PORT_init();
 }
 
-void spi_dev_PORT_init(void)
+void ECG_SPI_DEV_0_PORT_init(void)
 {
 
 	// Set pin direction to input
@@ -139,17 +139,17 @@ void spi_dev_PORT_init(void)
 	gpio_set_pin_function(SCK, PINMUX_PB11D_SERCOM4_PAD3);
 }
 
-void spi_dev_CLOCK_init(void)
+void ECG_SPI_DEV_0_CLOCK_init(void)
 {
 	_pm_enable_bus_clock(PM_BUS_APBC, SERCOM4);
 	_gclk_enable_channel(SERCOM4_GCLK_ID_CORE, CONF_GCLK_SERCOM4_CORE_SRC);
 }
 
-void spi_dev_init(void)
+void ECG_SPI_DEV_0_init(void)
 {
-	spi_dev_CLOCK_init();
-	spi_m_sync_init(&spi_dev, SERCOM4);
-	spi_dev_PORT_init();
+	ECG_SPI_DEV_0_CLOCK_init();
+	spi_m_sync_init(&ECG_SPI_DEV_0, SERCOM4);
+	ECG_SPI_DEV_0_PORT_init();
 }
 
 void delay_driver_init(void)
@@ -308,7 +308,7 @@ void system_init(void)
 
 	wire_init();
 
-	spi_dev_init();
+	ECG_SPI_DEV_0_init();
 
 	delay_driver_init();
 

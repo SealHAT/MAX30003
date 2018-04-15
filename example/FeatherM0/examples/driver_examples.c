@@ -84,17 +84,17 @@ void wire_example(void)
 }
 
 /**
- * Example of using spi_dev to write "Hello World" using the IO abstraction.
+ * Example of using ECG_SPI_DEV_0 to write "Hello World" using the IO abstraction.
  */
-static uint8_t example_spi_dev[12] = "Hello World!";
+static uint8_t example_ECG_SPI_DEV_0[12] = "Hello World!";
 
-void spi_dev_example(void)
+void ECG_SPI_DEV_0_example(void)
 {
 	struct io_descriptor *io;
-	spi_m_sync_get_io_descriptor(&spi_dev, &io);
+	spi_m_sync_get_io_descriptor(&ECG_SPI_DEV_0, &io);
 
-	spi_m_sync_enable(&spi_dev);
-	io_write(io, example_spi_dev, 12);
+	spi_m_sync_enable(&ECG_SPI_DEV_0);
+	io_write(io, example_ECG_SPI_DEV_0, 12);
 }
 
 void delay_example(void)

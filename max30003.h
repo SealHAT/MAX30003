@@ -48,14 +48,19 @@ extern uint8_t ECG_BUF_O[ECG_BUF_SZ];
 typedef struct MAX30003_DATA_t { char byte[3]; } MAX30003_DATA_t;
 typedef char MAX30003_ADDR_t;
 
+
 typedef struct MAX30003_MSG
 {
     uint8_t command;
     uint8_t data[3];
 } MAX30003_MSG;
 
-void ecg_init_spi( int32_t(*spi_xfer_function)(void *, const void *), void *spi_desc, void *spi_msg);
-void ecg_init_csb( void(*csb_pin_level_function)(const uint8_t , const bool), const uint8_t ecg_csb_pin);
+/* ASF function pointers for using SAML21 calls without cluttering the MAX30003 namespace */
+int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
+void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_pin_level */
+
+void ecg_init_spi(void *spi_desc, const void *spi_msg);
+void ecg_init_csb(const uint8_t ecg_csb_pin);
 void ecg_clear_ibuf();
 void ecg_clear_obuf();
 void ecg_clear_iobuf();

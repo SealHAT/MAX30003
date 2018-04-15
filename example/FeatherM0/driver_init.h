@@ -36,7 +36,7 @@ extern struct adc_sync_descriptor analog_in;
 extern struct crc_sync_descriptor hash_chk;
 
 extern struct i2c_m_sync_desc       wire;
-extern struct spi_m_sync_descriptor spi_dev;
+extern struct spi_m_sync_descriptor ECG_SPI_DEV_0;
 
 void analog_in_PORT_init(void);
 void analog_in_CLOCK_init(void);
@@ -46,9 +46,9 @@ void wire_CLOCK_init(void);
 void wire_init(void);
 void wire_PORT_init(void);
 
-void spi_dev_PORT_init(void);
-void spi_dev_CLOCK_init(void);
-void spi_dev_init(void);
+void ECG_SPI_DEV_0_PORT_init(void);
+void ECG_SPI_DEV_0_CLOCK_init(void);
+void ECG_SPI_DEV_0_init(void);
 
 void delay_driver_init(void);
 

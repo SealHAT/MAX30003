@@ -282,8 +282,8 @@ drivers:
         configuration:
           core_gclk_selection: Generic clock generator 0
           slow_gclk_selection: Generic clock generator 1
-  spi_dev:
-    user_label: spi_dev
+  ECG_SPI_DEV_0:
+    user_label: ECG_SPI_DEV_0
     definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::SERCOM4::driver_config_definition::SPI.Master::HAL:Driver:SPI.Master.Sync
     functionality: SPI
     api: HAL:Driver:SPI_Master_Sync
