@@ -33,7 +33,7 @@ static uint8_t ECG_CSB_PIN;
 uint8_t ECG_BUF_I[ECG_BUF_SZ];
 uint8_t ECG_BUF_O[ECG_BUF_SZ];
 
-MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, MAX30003_CNFG_GEN_MASKS MASK)
+MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, const MAX30003_CNFG_GEN_MASKS MASK)
 {
     uint32_t word;
     MAX30003_DATA_t data;
@@ -120,26 +120,28 @@ void ecg_clear_iobuf()
 
 void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 {
-	MAX30003_DATA_t data;
+	MAX30003_MSG msg;
 	
     /* create a config general (read) command */
-    ecg_clear_obuf();
-    ECG_BUF_O[ECG_CMND_POS] = ((uint8_t)CNFG_GEN << 1) | MAX30003_R_INDICATOR;
-
+	msg.command = (uint8_t)(CNFG_GEN << 1) | MAX30003_R_INDICATOR;
+	
     /* send command over spi */
+	ecg_clear_obuf();
+	ECG_BUF_O[ECG_CMND_POS] = (uint8_t)msg.command;
+	
     ecg_set_csb_level(ECG_CSB_PIN, false);
     ecg_spi_xfer(ECG_SPI_DESC, ECG_SPI_MSG);
     ecg_set_csb_level(ECG_CSB_PIN, true);
 	
 	/* extract data from input buffer */
-	data.byte[0] = ECG_BUF_I[0];
-	data.byte[1] = ECG_BUF_I[1];
-	data.byte[2] = ECG_BUF_I[2];
+	msg.data.byte[0] = ECG_BUF_I[0];
+	msg.data.byte[1] = ECG_BUF_I[1];
+	msg.data.byte[2] = ECG_BUF_I[2];
 	
-	ecg_get_cnfg_gen(vals, &data);
+	ecg_get_cnfg_gen(vals, msg.data);
 }
 
-void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_CNFG_GEN_MASKS MASKS) 
+void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS) 
 {
     MAX30003_MSG msg;
     MAX30003_CNFG_GEN_VALS oldvals;
@@ -149,18 +151,16 @@ void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_CNFG_GEN_MAS
     ecg_read_cnfg_gen(&oldvals);
     /* format and mask out the values to be modified */
 
-
-
-    
     /* arrange the selected values as the ECG data word for sending over SPI */
-    data = (uint8_t*)ecg_set_cnfg_gen(VALS,MASKS).byte ;
+	msg.command = ((uint8_t)CNFG_GEN << 1) | MAX30003_W_INDICATOR;
+    msg.data = ecg_set_cnfg_gen(VALS, MASKS);
 
     /* mask out the values that are not to be modified */
     
     /* combine the two data buffers to a complete message */
     //data = ((uint32_t*)&data[0]) & ~(uint32_t)MASKS);
 
-    msg.command = ((uint8_t)CNFG_GEN << 1) | MAX30003_W_INDICATOR;
-    msg.data[0] = data[0];
+    
+    msg.data.byte[0] = data[0];
 
 }

@@ -45,14 +45,15 @@ enum ECG_WORD_POS {
 extern uint8_t ECG_BUF_I[ECG_BUF_SZ];
 extern uint8_t ECG_BUF_O[ECG_BUF_SZ];
 
-typedef struct MAX30003_DATA_t { char byte[3]; } MAX30003_DATA_t;
-typedef char MAX30003_ADDR_t;
+typedef struct MAX30003_DATA_t { uint8_t byte[3]; } MAX30003_DATA_t;
+//typedef uint8_t MAX30003_DATA_t[3];
+typedef uint8_t MAX30003_ADDR_t;
 
 
 typedef struct MAX30003_MSG
 {
     uint8_t command;
-    uint8_t data[3];
+    MAX30003_DATA_t data;
 } MAX30003_MSG;
 
 /* ASF function pointers for using SAML21 calls without cluttering the MAX30003 namespace */
@@ -67,11 +68,11 @@ void ecg_clear_iobuf();
 uint8_t ecg_write(MAX30003_MSG msg);
 
 
-MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, MAX30003_CNFG_GEN_MASKS MASKS);
+MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, const MAX30003_CNFG_GEN_MASKS MASKS);
 
 void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
 
-void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_CNFG_GEN_MASKS MASKS);
+void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS);
 
 
 
