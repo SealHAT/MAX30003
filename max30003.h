@@ -56,6 +56,20 @@ typedef struct MAX30003_MSG
     MAX30003_DATA_t data;
 } MAX30003_MSG;
 
+typedef struct MAX30003_CNFG_GEN_VALS {
+    MAX30003_CNFG_GEN_RBIASN_VAL        rbiasn;
+    MAX30003_CNFG_GEN_RBIASP_VAL        rbiasp;
+    MAX30003_CNFG_GEN_RBIASV_VAL        rbiasv;
+    MAX30003_CNFG_GEN_EN_RBIAS_VAL      en_rbias;
+    MAX30003_CNFG_GEN_DCLOFF_VTH_VAL    vth;
+    MAX30003_CNFG_GEN_DCLOFF_IMAG_VAL   imag;
+    MAX30003_CNFG_GEN_DCLOFF_IPOL_VAL   ipol;
+    MAX30003_CNFG_GEN_EN_DCLOFF_VAL     en_dcloff;
+    MAX30003_CNFG_GEN_EN_ECG_VAL        en_ecg;
+    MAX30003_CNFG_GEN_FMSTR_VAL         fmstr;
+    MAX30003_CNFG_GEN_EN_ULP_LON_VAL    en_ulp_lon;
+} MAX30003_CNFG_GEN_VALS;
+
 /* ASF function pointers for using SAML21 calls without cluttering the MAX30003 namespace */
 int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
 void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_pin_level */
@@ -66,7 +80,6 @@ void ecg_clear_ibuf();
 void ecg_clear_obuf();
 void ecg_clear_iobuf();
 uint8_t ecg_write(MAX30003_MSG msg);
-
 
 MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, const MAX30003_CNFG_GEN_MASKS MASKS);
 

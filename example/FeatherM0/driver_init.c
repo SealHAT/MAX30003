@@ -275,7 +275,7 @@ void system_init(void)
 {
 	init_mcu();
 
-	// GPIO on PA13
+	// GPIO on PA11
 
 	// Set pin direction to output
 	gpio_set_pin_direction(CS, GPIO_DIRECTION_OUT);

@@ -300,20 +300,6 @@ typedef enum {
     _ENULPLON_RESERVED2     = 3
 } MAX30003_CNFG_GEN_EN_ULP_LON_VAL;
 
-typedef struct MAX30003_CNFG_GEN_VALS {
-    MAX30003_CNFG_GEN_RBIASN_VAL        rbiasn;
-    MAX30003_CNFG_GEN_RBIASP_VAL        rbiasp;
-    MAX30003_CNFG_GEN_RBIASV_VAL        rbiasv;
-    MAX30003_CNFG_GEN_EN_RBIAS_VAL      en_rbias;
-    MAX30003_CNFG_GEN_DCLOFF_VTH_VAL    vth;
-    MAX30003_CNFG_GEN_DCLOFF_IMAG_VAL   imag;
-    MAX30003_CNFG_GEN_DCLOFF_IPOL_VAL   ipol;
-    MAX30003_CNFG_GEN_EN_DCLOFF_VAL     en_dcloff;
-    MAX30003_CNFG_GEN_EN_ECG_VAL        en_ecg;
-    MAX30003_CNFG_GEN_FMSTR_VAL         fmstr;
-    MAX30003_CNFG_GEN_EN_ULP_LON_VAL    en_ulp_lon;
-} MAX30003_CNFG_GEN_VALS;
-
 /***
  * CNFG_CAL register's masks and values
  ***/

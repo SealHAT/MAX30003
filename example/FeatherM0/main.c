@@ -24,11 +24,20 @@ void ecg_init(struct spi_m_sync_descriptor *_ecg_spi_descriptor, struct spi_msg 
 int main(void)
 {
 	struct spi_msg ecg_spi_msg;
+    MAX30003_CNFG_GEN_VALS vals;
 	
 	atmel_start_init();
+
+    /* TODO abstract to ecg_init_spi */
+    spi_m_sync_set_mode(&ECG_SPI_DEV_0, SPI_MODE_0);
+    spi_m_sync_enable(&ECG_SPI_DEV_0);
+
+    gpio_set_pin_level(CS,true);
+
 	ecg_init(&ECG_SPI_DEV_0, &ecg_spi_msg, CS);    
     	
 	for(;;) {		
-
+        ecg_read_cnfg_gen(&vals);
+        delay_ms(1000);
 	}
 } 

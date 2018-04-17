@@ -96,6 +96,7 @@ void ecg_init_spi(void *spi_desc, const void *spi_msg)
 void ecg_init_csb(const uint8_t ecg_csb_pin)
 {
     ECG_CSB_PIN = ecg_csb_pin;
+    ecg_set_csb_level(ECG_CSB_PIN, true);
 }
 
 void ecg_clear_ibuf()
