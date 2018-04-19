@@ -22,6 +22,7 @@
  */
  
 #include "max30003.h"
+#include "driver_init.h"
 
 // int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);
 // void    (*ecg_set_csb)(const uint8_t pin, const bool level);
@@ -115,24 +116,22 @@ void ecg_clear_obuf()
 }
 void ecg_clear_iobuf()
 {
-    ecg_clear_ibuf();
-    ecg_clear_obuf();
+    int i;
+    for(i = 0; i < ECG_BUF_SZ; i++) {
+        ECG_BUF_I[i] = ECG_BUF_CLR;
+        ECG_BUF_O[i] = ECG_BUF_CLR;
+    }
 }
 
 void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 {
 	MAX30003_MSG msg;
 	
-    /* create a config general (read) command */
-	msg.command = (uint8_t)(CNFG_GEN << 1) | MAX30003_R_INDICATOR;
-	
-    /* send command over spi */
-	ecg_clear_obuf();
-	ECG_BUF_O[ECG_CMND_POS] = (uint8_t)msg.command;
-	
-    ecg_set_csb_level(ECG_CSB_PIN, false);
-    ecg_spi_xfer(ECG_SPI_DESC, ECG_SPI_MSG);
-    ecg_set_csb_level(ECG_CSB_PIN, true);
+    /* create a (read) command by shifting in the read indicator */
+    msg.command = ECG_REG_R(CNFG_GEN);
+
+	/* perform the spi read action */
+    ecg_read(&msg);
 	
 	/* extract data from input buffer */
 	msg.data.byte[0] = ECG_BUF_I[0];
@@ -150,7 +149,12 @@ void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_G
     
     /* read the current configuration */
     ecg_read_cnfg_gen(&oldvals);
+
     /* format and mask out the values to be modified */
+    if(VALS == oldvals) {
+        /* nothing to change, don't bother writing */
+        return;
+    }
 
     /* arrange the selected values as the ECG data word for sending over SPI */
 	msg.command = ((uint8_t)CNFG_GEN << 1) | MAX30003_W_INDICATOR;
@@ -164,4 +168,56 @@ void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_G
     
     msg.data.byte[0] = data[0];
 
+}
+
+
+uint8_t ecg_read(MAX30003_MSG *msg)
+{
+    uint8_t xfer_bytes;
+
+    /* add the command message to the TX buffer */
+    ecg_clear_obuf();
+    ECG_BUF_O[ECG_CMND_POS] = (uint8_t)msg->command;
+
+    /* perform spi transfer */
+    ecg_set_csb_level(ECG_CSB_PIN, false);
+    xfer_bytes = ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
+    ecg_set_csb_level(ECG_CSB_PIN, true);
+
+    /* return the bytes transfered, data is also updated */
+    return xfer_bytes;
+}
+
+uint8_t ecg_write(MAX30003_MSG *msg)
+{
+    uint8_t xfer_bytes;
+
+    /* add the command and data words to the TX buffer */
+    ecg_clear_ibuf();
+    ECG_BUF_O[ECG_CMND_POS] = (uint8_t)msg->command;
+    ECG_BUF_I[ECG_DATA_POS] = (uint32_t*)msg->data;
+
+    /* perform spi transfer */
+    ecg_set_csb_level(ECG_CSB_PIN, false);
+    xfer_bytes = ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
+    ecg_set_csb_level(ECG_CSB_PIN, true);
+
+    return xfer_bytes;
+}
+
+uint8_t ecg_xfer(MAX30003_MSG *msg)
+{
+    uint8_t xfer_bytes;
+
+    /* add the command and data words to the TX buffer */
+    ecg_clear_iobuf();
+    ECG_BUF_O[ECG_CMND_POS] = (uint8_t)msg->command;
+    ECG_BUF_I[ECG_DATA_POS] = (uint32_t*)msg->data;
+
+    /* perform spi transfer */
+    ecg_set_csb_level(ECG_CSB_PIN, false);
+    xfer_bytes = ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
+    ecg_set_csb_level(ECG_CSB_PIN, true);
+
+    return xfer_bytes;
 }

@@ -24,18 +24,21 @@
 #ifndef MAX30003_H
 #define MAX30003_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "max30003types.h"
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif // __cplusplu
 
+#include <stdbool.h>
+#include <stdint.h>
 
-#define ECG_BUF_SZ  (32)
+#include "max30003types.h"
+(uint8_t)(CNFG_GEN << 1) | MAX30003_R_INDICATOR
+
+#define ECG_REG_R(R)    ( (uint8_t)(R << 1) | MAX30003_R_INDICATOR) )
+#define ECG_REG_W(R)    ( (uint8_t)(R << 1) | MAX30003_W_INDICATOR) )
+#define ECG_BUF_SZ      (64)
+#define ECG_BUF_CLR     (0x00)
 
 enum ECG_WORD_POS {
     ECG_CMND_POS = 0,
