@@ -33,10 +33,9 @@ extern "C"
 #include <stdint.h>
 
 #include "max30003types.h"
-(uint8_t)(CNFG_GEN << 1) | MAX30003_R_INDICATOR
 
-#define ECG_REG_R(R)    ( (uint8_t)(R << 1) | MAX30003_R_INDICATOR) )
-#define ECG_REG_W(R)    ( (uint8_t)(R << 1) | MAX30003_W_INDICATOR) )
+#define ECG_REG_R(REG)  ( (uint8_t)(REG << 1) | MAX30003_R_INDICATOR )
+#define ECG_REG_W(REG)  ( (uint8_t)(REG << 1) | MAX30003_W_INDICATOR )
 #define ECG_BUF_SZ      (64)
 #define ECG_BUF_CLR     (0x00)
 
@@ -59,6 +58,35 @@ typedef struct MAX30003_MSG
     MAX30003_DATA_t data;
 } MAX30003_MSG;
 
+/* all active high */
+typedef struct MAX30003_STATUS_VALS
+{
+    bool ldoff_nl;
+    bool ldoff_nh;
+    bool ldoff_pl;
+    bool ldoff_ph;
+    bool pllint;
+    bool samp;
+    bool rrint;
+    bool lonint;
+    bool dcloffint;
+    bool fstint;
+    bool eovf;
+    bool eint;
+} MAX30003_STATUS_VALS;
+
+typedef struct MAX30003_EN_INT_VALS {
+    ENINT_INTBTYPE_VAL     intb_type;
+    ENINT_ENPLLINT_VAL     en_pllint;
+    ENINT_ENSAMP_VAL       en_samp;
+    ENINT_ENRRINT_VAL      en_rrint;
+    ENINT_ENLONINT_VAL     en_lonint;
+    ENINT_ENDCLOFFINT_VAL  en_dcloffint;
+    ENINT_ENFSTINT_VAL     en_fstint;
+    ENINT_ENEOVF_VAL       en_eovf;
+    ENINT_ENEINT_VAL       en_eint;
+} MAX30003_EN_INT_VALS;
+
 typedef struct MAX30003_CNFG_GEN_VALS {
     MAX30003_CNFG_GEN_RBIASN_VAL        rbiasn;
     MAX30003_CNFG_GEN_RBIASP_VAL        rbiasp;
@@ -77,20 +105,34 @@ typedef struct MAX30003_CNFG_GEN_VALS {
 int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
 void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_pin_level */
 
+/* initialization functions, run before using device */
 void ecg_init_spi(void *spi_desc, const void *spi_msg);
 void ecg_init_csb(const uint8_t ecg_csb_pin);
-void ecg_clear_ibuf();
-void ecg_clear_obuf();
-void ecg_clear_iobuf();
-uint8_t ecg_write(MAX30003_MSG msg);
+
+/* ecg register access functions */
+void ecg_get_status(MAX30003_STATUS_VALS *vals);
+void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
+void ecg_set_en_int(MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
 
 MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, const MAX30003_CNFG_GEN_MASKS MASKS);
 
 void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
-
 void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS);
 
+/* internal register functions */
+void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t data);
+void ecg_encode_en_int(const MAX30003_EN_INT_VALS VALS, MAX30003_DATA_t *data);
+void ecg_decode_en_int(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t data);
+//void ecg_encode_en_int(MAX30003_EN_INT_VALS *vals, con)
 
+/* internal helper functions */
+void ecg_clear_ibuf();
+void ecg_clear_obuf();
+void ecg_clear_iobuf();
+
+uint8_t ecg_read(MAX30003_MSG *msg);
+uint8_t ecg_write(MAX30003_MSG *msg);
+uint8_t ecg_burst();
 
 #ifdef __cplusplus
 }

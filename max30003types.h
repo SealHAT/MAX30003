@@ -33,33 +33,34 @@ extern "C"
 
 #define MAX30003_W_INDICATOR    (0)
 #define MAX30003_R_INDICATOR    (1)
-
+#define MAX30003_DATA_BYTES     (3)
+#define MAX30003_CMND_BYTES     (1)
 // TODO check endianness
 // TODO macro for WRITE/READ on ADDRESSES ie:(REG << 1 | R)
 /**
  * REG addresses for the MAX30003 biopotential AFE
  **/
 typedef enum {
-    NO_OP          = 0x00,  /* RW - no internal effect. DOUT = 0 during R, W ignored */
-    STATUS         = 0x01,  /* R  - */
-    EN_INT         = 0x02,  /* RW - */
-    EN_INT2        = 0x03,  /* RW - */
-    MNGR_INT       = 0x04,  /* RW - */
-    MNGR_DYN       = 0x05,  /* RW - */
-    SW_RST         = 0x08,  /* W  - */
-    SYNCH          = 0x09,  /* W  - */
-    FIFO_RST       = 0x0A,  /* W  - */
-    INFO           = 0x0F,  /* R  - */
-    CNFG_GEN       = 0x10,  /* RW - */
-    CNFG_CAL       = 0x12,  /* RW - */
-    CNFG_EMUX      = 0x14,  /* RW - */
-    CNFG_ECG       = 0x15,  /* RW - */
-    CNFG_RTOR1     = 0x1D,  /* RW - */
-    CNFG_RTOR2     = 0x1E,  /* RW - */
-    ECG_FIFO_BURST = 0x20,  /* R+ - */
-    ECG_FIFO       = 0x21,  /* R  - */
-    RTOR           = 0x25,  /* R  - */
-    NO_OP2         = 0x7F   /* RW - no internal effect. DOUT = 0 during R, W ignored */
+    REG_NO_OP          = 0x00,  /* RW - no internal effect. DOUT = 0 during R, W ignored */
+    REG_STATUS         = 0x01,  /* R  - */
+    REG_EN_INT         = 0x02,  /* RW - */
+    REG_EN_INT2        = 0x03,  /* RW - */
+    REG_MNGR_INT       = 0x04,  /* RW - */
+    REG_MNGR_DYN       = 0x05,  /* RW - */
+    REG_SW_RST         = 0x08,  /* W  - */
+    REG_SYNCH          = 0x09,  /* W  - */
+    REG_FIFO_RST       = 0x0A,  /* W  - */
+    REG_INFO           = 0x0F,  /* R  - */
+    REG_CNFG_GEN       = 0x10,  /* RW - */
+    REG_CNFG_CAL       = 0x12,  /* RW - */
+    REG_CNFG_EMUX      = 0x14,  /* RW - */
+    REG_CNFG_ECG       = 0x15,  /* RW - */
+    REG_CNFG_RTOR1     = 0x1D,  /* RW - */
+    REG_CNFG_RTOR2     = 0x1E,  /* RW - */
+    REG_ECG_FIFO_BURST = 0x20,  /* R+ - */
+    REG_ECG_FIFO       = 0x21,  /* R  - */
+    REG_RTOR           = 0x25,  /* R  - */
+    REG_NO_OP2         = 0x7F   /* RW - no internal effect. DOUT = 0 during R, W ignored */
 } MAX30003_REG;
 
 typedef enum {
@@ -98,47 +99,47 @@ typedef enum {
     INTBTYPE_CMOS_DRIVER = 1,   /* CMOS Driver */
     INTBTYPE_NMOS_DRIVER = 2,   /* Open-Drain NMOS Driver */
     INTBTYPE_NMOS_WITH_PU= 3    /* Open-Drain NMOS Driver w/ Internal 125k Pullup */
-} MAX30003_ENINT_INTBTYPE_VAL;
+} ENINT_INTBTYPE_VAL;
 
 typedef enum {
     ENPLLINT_DISABLED   = 0,
     ENPLLINT_ENABLED    = 1
-} MAX30003_ENINT_ENPLLINT_VAL;
+} ENINT_ENPLLINT_VAL;
 
 typedef enum {
     ENSAMP_DISABLED = 0,
     ENSAMP_ENABLED  = 1
-} MAX30003_ENINT_ENSAMP_VAL;
+} ENINT_ENSAMP_VAL;
 
 typedef enum {
     ENRRINT_DISABLED    = 0,
     ENRRINT_ENABLED     = 1
-} MAX30003_ENINT_ENRRINT_VAL;
+} ENINT_ENRRINT_VAL;
 
 typedef enum {
     ENLONINT_DISABLED   = 0,
     ENLONINT_ENABLED    = 1
-} MAX30003_ENINT_ENLONINT_VAL;
+} ENINT_ENLONINT_VAL;
 
 typedef enum {
     ENDCLOFFINT_DISABLED    = 0,
     ENDCLOFFINT_ENABLED     = 1
-} MAX30003_ENINT_ENDCLOFFINT_VAL;
+} ENINT_ENDCLOFFINT_VAL;
 
 typedef enum {
     ENFSTINT_DISABLED   = 0,
     ENFSTINT_ENABLED    = 1
-} MAX30003_ENINT_ENFSTINT_VAL;
+} ENINT_ENFSTINT_VAL;
 
 typedef enum {
     ENEOVF_DISABLED = 0,
     ENEOVF_ENABLED  = 1
-} MAX30003_ENINT_ENEOVF_VAL;
+} ENINT_ENEOVF_VAL;
 
 typedef enum {
     ENINT_DISABLED  = 0,
     ENINT_ENABLED   = 1
-} MAX30003_ENINT_ENINT_VAL;
+} ENINT_ENEINT_VAL;
 
 /***
  * MNG_INT register's masks and values
