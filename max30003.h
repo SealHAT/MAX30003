@@ -48,7 +48,6 @@ extern uint8_t ECG_BUF_I[ECG_BUF_SZ];
 extern uint8_t ECG_BUF_O[ECG_BUF_SZ];
 
 typedef struct MAX30003_DATA_t { uint8_t byte[3]; } MAX30003_DATA_t;
-//typedef uint8_t MAX30003_DATA_t[3];
 typedef uint8_t MAX30003_ADDR_t;
 
 
