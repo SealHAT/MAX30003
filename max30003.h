@@ -130,6 +130,27 @@ typedef struct MAX30003_CNFG_EMUX_VALS {
 	CNFGEMUX_POL_VAL		pol;
 } MAX30003_CNFG_EMUX_VALS;
 
+typedef struct MAX30003_CNFG_ECG_VALS {
+	CNFGECG_DLPF_VAL	dlpf;
+	CNFGECG_DHPF_VAL	dhpf;
+	CNFGECG_GAIN_VAL	gain;
+	CNFGECG_RATE_VAL	rate;
+} MAX30003_CNFG_ECG_VALS;
+
+typedef struct MAX30003_CNFG_RTOR1_VALS {
+	CNFGRTOR1_PTSF_VAL		ptsf;
+	CNFGRTOR1_PAVG_VAL		pavg;
+	CNFGRTOR1_EN_RTOR_VAL	en_rtor;
+	CNFGRTOR1_GAIN_VAL		gain;
+	CNFGRTOR1_WNDW_VAL		wndw;
+} MAX30003_CNFG_RTOR1_VALS;
+
+typedef struct MAX30003_CNFG_RTOR2_VALS {
+	CNFGRTOR2_RHSF_VAL	rhsf;
+	CNFGRTOR2_RAVG_VAL	ravg;
+	CNFGRTOR2_HOFF_VAL	hoff;
+} MAX30003_CNFG_RTOR2_VALS;
+
 /* ASF function pointers for using SAML21 calls without cluttering the MAX30003 namespace */
 int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
 void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_pin_level */
@@ -154,12 +175,20 @@ void ecg_decode_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals, const MAX30003_DATA_t DAT
 //void ecg_decode_info(MAX30003_INFO_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_cnfg_emux(MAX30003_CNFG_EMUX_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_cnfg_ecg(MAX30003_CNFG_ECG_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_cnfg_rtor1(MAX30003_CNFG_RTOR1_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_cnfg_rtor2(MAX30003_CNFG_RTOR2_VALS *vals, const MAX30003_DATA_t DATA);
 
 void ecg_encode_en_int(const MAX30003_EN_INT_VALS VALS, MAX30003_DATA_t *data);
 void ecg_encode_mngr_int(const MAX30003_MNGR_INT_VALS VALS, MAX30003_DATA_t *data);
 void ecg_encode_mngr_dyn(const MAX30003_MNGR_DYN_VALS VALS, MAX30003_DATA_t *data);
 void ecg_encode_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_DATA_t *data);
 void ecg_encode_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, MAX30003_DATA_t *data);
+void ecg_encode_cnfg_emux(const MAX30003_CNFG_EMUX_VALS VALS, MAX30003_DATA_t *data);
+void ecg_encode_cnfg_ecg(const MAX30003_CNFG_ECG_VALS VALS, MAX30003_DATA_t *data);
+void ecg_encode_cnfg_rtor1(const MAX30003_CNFG_RTOR1_VALS VALS, MAX30003_DATA_t *data);
+void ecg_encode_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, MAX30003_DATA_t *data);
 
 /* internal helper functions */
 void ecg_clear_ibuf();

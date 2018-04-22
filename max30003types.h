@@ -310,7 +310,7 @@ typedef enum {
     CNFGCAL_FCAL        = 0x007800,
     CNFGCAL_VMAG        = 0x100000,
     CNFGCAL_VMODE       = 0x200000,
-    CNFGCAL_EN_VCAL      = 0x400000,
+    CNFGCAL_EN_VCAL     = 0x400000,
     CNFGCAL_RESERVED    = 0x8F8000
 } MAX30003_CNFG_CAL_MASKS;
 
@@ -352,12 +352,12 @@ typedef enum {
  * CNFG_EMUX register's masks and values
  ***/
 typedef enum {
-    CALN_SEL    = 0x030000,
-    CALP_SEL    = 0x0C0000,
-    OPENN       = 0x100000,
-    OPENP       = 0x200000,
-    POL         = 0x800000,
-    RESERVED    = 0x40FFFF
+    CNFGEMUX_CALN_SEL    = 0x030000,
+    CNFGEMUX_CALP_SEL    = 0x0C0000,
+    CNFGEMUX_OPENN       = 0x100000,
+    CNFGEMUX_OPENP       = 0x200000,
+    CNFGEMUX_POL         = 0x800000,
+    _CNFGEMUX_RESERVED   = 0x40FFFF
 } MAX30003_CNFG_EMUX_MASKS;
 
 typedef enum {
@@ -420,6 +420,13 @@ typedef enum {
 } CNFGECG_GAIN_VAL;
 
 typedef enum {
+	RATE_MAX_SPS	= 0,
+	RATE_MED_SPS	= 1,
+	RATE_MIN_SPS	= 2,
+	RATE_RESERVED	= 3
+} CNFGECG_RATE_VAL;
+
+typedef enum {
     _RATE199_RESERVED1	= 0,
     _RATE199_RESERVED2  = 1,
     RATE199_SPS_199	    = 2,
@@ -451,12 +458,12 @@ typedef enum {
  * CNFG_RTOR1 register's masks and values
  ***/
 typedef enum {
-    RTOR1_PTSF		= 0x000F00,
-    RTOR1_PAVG		= 0x003000,
-    RTOR1_EN_RTOR	= 0x008000,
-    RTOR1_GAIN		= 0x0F0000,
-    RTOR1_WNDW		= 0xF00000,
-    RTOR1_RESERVED  = 0x0040FF
+    CNFGRTOR1_PTSF		= 0x000F00,
+    CNFGRTOR1_PAVG		= 0x003000,
+    CNFGRTOR1_EN_RTOR	= 0x008000,
+    CNFGRTOR1_GAIN		= 0x0F0000,
+    CNFGRTOR1_WNDW		= 0xF00000,
+    CNFGRTOR1_RESERVED  = 0x0040FF
 } MAX30003_CNFG_RTOR1_MASKS;
 
 // TODO enforce 1 to 16 or remove
@@ -474,14 +481,52 @@ typedef enum {
     ENRTOR_ENABLED  = 1
 } CNFGRTOR1_EN_RTOR_VAL;
 
+typedef enum {
+	GAIN_RTOR_1		= 0x0,
+	GAIN_RTOR_2		= 0x1,
+	GAIN_RTOR_4		= 0x2,
+	GAIN_RTOR_8		= 0x3,
+	GAIN_RTOR_16	= 0x4,
+	GAIN_RTOR_32	= 0x5,
+	GAIN_RTOR_64	= 0x6,
+	GAIN_RTOR_128	= 0x7,
+	GAIN_RTOR_256	= 0x8,
+	GAIN_RTOR_512	= 0x9,
+	GAIN_RTOR_1024	= 0xA,
+	GAIN_RTOR_2048	= 0xB,
+	GAIN_RTOR_4096	= 0xC,
+	GAIN_RTOR_8192	= 0xD,
+	GAIN_RTOR_16384	= 0xE,
+	GAIN_RTOR_AUTO	= 0xF
+} CNFGRTOR1_GAIN_VAL;
+
+typedef enum {
+	WNDW_RTOR_6		= 0x0,
+	WNDW_RTOR_8		= 0x1,
+	WNDW_RTOR_10	= 0x2,
+	WNDW_RTOR_12	= 0x3,
+	WNDW_RTOR_14	= 0x4,
+	WNDW_RTOR_16	= 0x5,
+	WNDW_RTOR_18	= 0x6,
+	WNDW_RTOR_20	= 0x7,
+	WNDW_RTOR_22	= 0x8,
+	WNDW_RTOR_24	= 0x9,
+	WNDW_RTOR_26	= 0xA,
+	WNDW_RTOR_28	= 0xB,
+	WNDW_RESERVED1	= 0xC,
+	WNDW_RESERVED2	= 0xD,
+	WNDW_RESERVED3	= 0xE,
+	WNDW_RESERVED4	= 0xF
+} CNFGRTOR1_WNDW_VAL;
+
 /***
  * CNFG_RTOR2 register's masks and values
  ***/
 typedef enum {
-    RTOR2_RHSF		= 0x000700,
-    RTOR2_RAVG		= 0x003000,
-    RTOR2_HOFF		= 0x3F0000,
-    RTOR2_RESERVED	= 0xC0C8FF
+    CNFGRTOR2_RHSF		= 0x000700,
+    CNFGRTOR2_RAVG		= 0x003000,
+    CNFGRTOR2_HOFF		= 0x3F0000,
+    CNFGRTOR2_RESERVED	= 0xC0C8FF
 } MAX30003_CNFG_RTOR2_MASKS;
 
 // TODO enforce 0-7 size or remove
