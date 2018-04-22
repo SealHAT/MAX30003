@@ -86,19 +86,49 @@ typedef struct MAX30003_EN_INT_VALS {
     ENINT_ENEINT_VAL       en_eint;
 } MAX30003_EN_INT_VALS;
 
+typedef struct MAX30003_MNGR_INT_VALS {
+	MNGRINT_SAMPIT_VAL		samp_it;
+	MNGRINT_CLRSAMP_VAL		clr_samp;
+	MNGRINT_CLRRRINT_VAL	clr_rrint;
+	MNGRINT_CLRFAST_VAL		clr_fast;
+	MNGRINT_EFIT_VAL		efit;
+} MAX30003_MNGR_INT_VALS;
+
+typedef struct MAX30003_MNGR_DYN_VALS {
+	MNGRDYN_FASTTH_VAL		fast_th;
+	MNGRDYN_FAST_VAL		fast;
+} MAX30003_MNGR_DYN_VALS;
+
 typedef struct MAX30003_CNFG_GEN_VALS {
-    MAX30003_CNFG_GEN_RBIASN_VAL        rbiasn;
-    MAX30003_CNFG_GEN_RBIASP_VAL        rbiasp;
-    MAX30003_CNFG_GEN_RBIASV_VAL        rbiasv;
-    MAX30003_CNFG_GEN_EN_RBIAS_VAL      en_rbias;
-    MAX30003_CNFG_GEN_DCLOFF_VTH_VAL    vth;
-    MAX30003_CNFG_GEN_DCLOFF_IMAG_VAL   imag;
-    MAX30003_CNFG_GEN_DCLOFF_IPOL_VAL   ipol;
-    MAX30003_CNFG_GEN_EN_DCLOFF_VAL     en_dcloff;
-    MAX30003_CNFG_GEN_EN_ECG_VAL        en_ecg;
-    MAX30003_CNFG_GEN_FMSTR_VAL         fmstr;
-    MAX30003_CNFG_GEN_EN_ULP_LON_VAL    en_ulp_lon;
+    CNFGGEN_RBIASN_VAL        rbiasn;
+    CNFGGEN_RBIASP_VAL        rbiasp;
+    CNFGGEN_RBIASV_VAL        rbiasv;
+    CNFGGEN_EN_RBIAS_VAL      en_rbias;
+    CNFGGEN_DCLOFF_VTH_VAL    vth;
+    CNFGGEN_DCLOFF_IMAG_VAL   imag;
+    CNFGGEN_DCLOFF_IPOL_VAL   ipol;
+    CNFGGEN_EN_DCLOFF_VAL     en_dcloff;
+    CNFGGEN_EN_ECG_VAL        en_ecg;
+    CNFGGEN_FMSTR_VAL         fmstr;
+    CNFGGEN_EN_ULP_LON_VAL    en_ulp_lon;
 } MAX30003_CNFG_GEN_VALS;
+
+typedef struct MAX30003_CNFG_CAL_VALS {
+	CNFGCAL_THIGH_VAL	thigh;
+	CNFGCAL_FIFTY_VAL	fifty;
+	CNFGCAL_FCAL_VAL	fcal;
+	CNFGCAL_VMAG_VAL	vmag;
+	CNFGCAL_VMODE_VAL	vmode;
+	CNFGCAL_EN_VCAL_VAL	en_vcal;
+} MAX30003_CNFG_CAL_VALS;
+
+typedef struct MAX30003_CNFG_EMUX_VALS {
+	CNFGEMUX_CALN_SEL_VAL	caln_sel;
+	CNFGEMUX_CALP_SEL_VAL	calp_sel;
+	CNFGEMUX_OPENN_VAL		openn;
+	CNFGEMUX_OPENP_VAL		openp;
+	CNFGEMUX_POL_VAL		pol;
+} MAX30003_CNFG_EMUX_VALS;
 
 /* ASF function pointers for using SAML21 calls without cluttering the MAX30003 namespace */
 int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
@@ -111,18 +141,25 @@ void ecg_init_csb(const uint8_t ecg_csb_pin);
 /* ecg register access functions */
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
-void ecg_set_en_int(MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
+void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
 
-MAX30003_DATA_t ecg_set_cnfg_gen(MAX30003_CNFG_GEN_VALS vals, const MAX30003_CNFG_GEN_MASKS MASKS);
-
-void ecg_read_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
-void ecg_write_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS);
+void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
+void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS);
 
 /* internal register functions */
-void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t data);
+void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_en_int(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_mngr_int(MAX30003_MNGR_INT_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals, const MAX30003_DATA_t DATA);
+//void ecg_decode_info(MAX30003_INFO_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals, const MAX30003_DATA_t DATA);
+
 void ecg_encode_en_int(const MAX30003_EN_INT_VALS VALS, MAX30003_DATA_t *data);
-void ecg_decode_en_int(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t data);
-//void ecg_encode_en_int(MAX30003_EN_INT_VALS *vals, con)
+void ecg_encode_mngr_int(const MAX30003_MNGR_INT_VALS VALS, MAX30003_DATA_t *data);
+void ecg_encode_mngr_dyn(const MAX30003_MNGR_DYN_VALS VALS, MAX30003_DATA_t *data);
+void ecg_encode_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_DATA_t *data);
+void ecg_encode_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, MAX30003_DATA_t *data);
 
 /* internal helper functions */
 void ecg_clear_ibuf();

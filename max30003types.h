@@ -158,27 +158,27 @@ typedef enum {
     SAMPIT_EVERY_2ND    = 1,
     SAMPIT_EVERY_4TH    = 2,
     SAMPIT_EVERY_16TH   = 3
-} MAX30003_MNGRINT_SAMPIT_VAL;
+} MNGRINT_SAMPIT_VAL;
 
 typedef enum {
     CLRSAMP_ON_READ = 0,
     CLRSAMP_SELF    = 1
-} MAX30003_MNGRINT_CLRSAMP_VAL;
+} MNGRINT_CLRSAMP_VAL;
 
 typedef enum {
     CLRRINT_ON_STATUS = 0,
     CLRRINT_ON_RTOR   = 1,
     CLRRINT_SELF      = 2,
     _CLRRINT_RESERVED = 3
-} MAX30003_MNGRINT_CLRRRINT_VAL;
+} MNGRINT_CLRRRINT_VAL;
 
 typedef enum {
     CLRFAST_ON_FAST   = 0,
     CLRFAST_ON_STATUS = 1
-} MAX30003_MNGRINT_CLRFAST_VAL;
+} MNGRINT_CLRFAST_VAL;
 
 // TODO enum for 0000 = 1 to 1111 = 32 to enforce "off-by-one" behaviour
-typedef uint32_t MAX30003_MNGR_INT_EFIT_VAL;
+typedef uint8_t MNGRINT_EFIT_VAL;
 
 /***
  * MNG_DYN register's masks and values
@@ -190,14 +190,14 @@ typedef enum {
 } MAX30003_MNGR_DYN_MASKS;
 
 // TODO do something about 
-typedef uint8_t MAX30003_MNGR_DYN_FASTTH_VAL;
+typedef uint8_t MNGRDYN_FASTTH_VAL;
 
 typedef enum {
     FAST_NORMAL     = 0,
     FAST_MANUAL     = 1,
     FAST_AUTO       = 2,
     _FAST_RESERVED  = 3
-} MAX30003_MNGRDYN_FAST_VAL;
+} MNGRDYN_FAST_VAL;
 
 //TODO SW_RST, SYNCH, FIFO_RST
 
@@ -231,33 +231,33 @@ typedef enum {
 typedef enum {
     RBIASN_NOT_CONNECTED    = 0,
     RBIASN_CONNECTED        = 1
-} MAX30003_CNFG_GEN_RBIASN_VAL;
+} CNFGGEN_RBIASN_VAL;
 
 typedef enum {
     RBIASP_NOT_CONNECTED    = 0,
     RBIASP_CONNECTED        = 1
-} MAX30003_CNFG_GEN_RBIASP_VAL;
+} CNFGGEN_RBIASP_VAL;
 
 typedef enum {
     RBIASV_50_MOHM      = 0,
     RBIASV_100_MOHM     = 1,
     RBIASV_200_MOHM     = 2,
     _RBIASV_RESERVED    = 3
-} MAX30003_CNFG_GEN_RBIASV_VAL;
+} CNFGGEN_RBIASV_VAL;
 
 typedef enum {
     ENRBIAS_DISABLED    = 0,
     EBRBIAS_ENABLED     = 1,
     _ENRBIAS_RESERVED1  = 2,
     _ENRBIAS_RESERVED2  = 3
-} MAX30003_CNFG_GEN_EN_RBIAS_VAL;
+} CNFGGEN_EN_RBIAS_VAL;
 
 typedef enum {
     DCLOFFVTH_300_mV    = 0,
     DCLOFFVTH_400_mV    = 1,
     DCLOFFVTH_450_mV    = 2,
     DCLOFFVTH_500_mV    = 3
-} MAX30003_CNFG_GEN_DCLOFF_VTH_VAL;
+} CNFGGEN_DCLOFF_VTH_VAL;
 
 typedef enum {
     DCLOFFIMAG_0_nA         = 0,
@@ -268,38 +268,38 @@ typedef enum {
     DCLOFFIMAG_100_nA       = 5,
     _DCLOFFIMAG_RESERVED1   = 6,
     _DCLOFFIMAG_RESERVED2   = 7
-} MAX30003_CNFG_GEN_DCLOFF_IMAG_VAL;
+} CNFGGEN_DCLOFF_IMAG_VAL;
 
 typedef enum {
     DCLOFFIPOL_P_UP_N_DOWN  = 0,
     DCLOFFIPOL_P_DOWN_N_UP  = 1
-} MAX30003_CNFG_GEN_DCLOFF_IPOL_VAL;
+} CNFGGEN_DCLOFF_IPOL_VAL;
 
 typedef enum {
     ENDCLOFF_DISABLED   = 0,
     ENDCLOFF_ENABLED    = 1,
     _ENDCLOFF_RESERVED1 = 2,
     _ENDCLOFF_RESERVED2 = 3
-} MAX30003_CNFG_GEN_EN_DCLOFF_VAL;
+} CNFGGEN_EN_DCLOFF_VAL;
 
 typedef enum {
     ENECG_DISABLED  = 0,
     ENECG_ENABLED   = 1
-} MAX30003_CNFG_GEN_EN_ECG_VAL;
+} CNFGGEN_EN_ECG_VAL;
 
 typedef enum {
     FMSTR_512_HZ    = 0, /* Fmstr = 32768Hz, Tres = 15.26us */
     FMSTR_500_HZ    = 1, /* Fmstr = 32000Hz, Tres = 15.63us */
     FMSTR_200_HZ    = 2, /* Fmstr = 32000Hz, Tres = 15.63us */
     FMSTR_199_HZ    = 3  /* (199.8049Hz) Fmstr = 31968.78Hz, Tres = 15.64us */
-} MAX30003_CNFG_GEN_FMSTR_VAL;
+} CNFGGEN_FMSTR_VAL;
 
 typedef enum {
     ENULPLON_DISABLED       = 0,
     ENULPLON_ENABLED        = 1,
     _ENULPLON_RESERVED1     = 2,
     _ENULPLON_RESERVED2     = 3
-} MAX30003_CNFG_GEN_EN_ULP_LON_VAL;
+} CNFGGEN_EN_ULP_LON_VAL;
 
 /***
  * CNFG_CAL register's masks and values
@@ -310,17 +310,17 @@ typedef enum {
     CNFGCAL_FCAL        = 0x007800,
     CNFGCAL_VMAG        = 0x100000,
     CNFGCAL_VMODE       = 0x200000,
-    CNFGCAL_EN_CAL      = 0x400000,
+    CNFGCAL_EN_VCAL      = 0x400000,
     CNFGCAL_RESERVED    = 0x8F8000
 } MAX30003_CNFG_CAL_MASKS;
 
 // TODO enforce 3 bytes
-typedef uint32_t MAX30003_CNFG_CAL_THIGH_VAL;
+typedef uint16_t CNFGCAL_THIGH_VAL;
 
 typedef enum {
     FIFTY_CAL_THIGH     = 0,
     FIFTY_50_PERCENT    = 1
-} MAX30003_CNFG_CAL_FIFTY_VAL;
+} CNFGCAL_FIFTY_VAL;
 
 typedef enum {
     FCAL_FREQ_256_HZ    = 0,
@@ -331,22 +331,22 @@ typedef enum {
     FCAL_FREQ_1_4_HZ    = 5,
     FCAL_FREQ_1_16_HZ   = 6,
     FCAL_FREQ_1_64_HZ   = 7
-} MAX30003_CNFG_CAL_FCAL_VAL;
+} CNFGCAL_FCAL_VAL;
 
 typedef enum {
     VMAG_250_uV = 0,
     VMAG_500_uV = 1
-} MAX30003_CNFG_CAL_VMAG_VAL;
+} CNFGCAL_VMAG_VAL;
 
 typedef enum {
     VMODE_UNIPOLAR  = 0,
     VMODE_BIPOLAR   = 1
-} MAX30003_CNFG_CAL_VMODE_VAL;
+} CNFGCAL_VMODE_VAL;
 
 typedef enum {
     ENVCAL_DISABLED = 0,
     ENVCAL_ENABLED  = 1
-} MAX30003_CNFG_CAL_EN_VCAL_VAL;
+} CNFGCAL_EN_VCAL_VAL;
 
 /***
  * CNFG_EMUX register's masks and values
@@ -365,29 +365,29 @@ typedef enum {
     CALNSEL_IN_VMID     = 1,
     CALNSEL_IN_VCALP    = 2,
     CALNSEL_IN_VCALN    = 3
-} MAX30003_CNFG_EMUX_CALN_SEL_VAL;
+} CNFGEMUX_CALN_SEL_VAL;
 
 typedef enum {
     CALPSEL_IN_NONE     = 0,
     CALPSEL_IN_VMID     = 1,
     CALPSEL_IN_VCALP    = 2,
     CALPSEL_IN_VCALN    = 3
-} MAX30003_CNFG_EMUX_CALP_SEL_VAL;
+} CNFGEMUX_CALP_SEL_VAL;
 
 typedef enum {
     OPENN_CONNECTED = 0,
     OPENN_ISOLATED  = 1
-} MAX30003_CNFG_EMUX_OPENN_VAL;
+} CNFGEMUX_OPENN_VAL;
 
 typedef enum {
     OPENP_CONNECTED = 0,
     OPENP_ISOLATED  = 1
-} MAX30003_CNFG_EMUX_OPENP_VAL;
+} CNFGEMUX_OPENP_VAL;
 
 typedef enum {
     POL_NON_INVERTED    = 0,
     POL_INVERTED        = 1
-} MAX30003_CNFG_EMUX_POL_VAL;
+} CNFGEMUX_POL_VAL;
 
 /***
  * CNFG_ECG register's masks and values
@@ -405,47 +405,47 @@ typedef enum {
     DLPF_40_HZ	= 1,
     DLPF_100_HZ	= 2,
     DLPF_150_HZ	= 3
-} MAX30003_CNFG_ECG_DLPF_VAL;
+} CNFGECG_DLPF_VAL;
 
 typedef enum {
     DHPF_BYPASS	= 0,
     DHPF_HALF	= 1
-} MAX30003_CNFG_ECG_DHPF_VAL;
+} CNFGECG_DHPF_VAL;
 
 typedef enum {
     GAIN_20_V	= 0,
     GAIN_40_V	= 1,
     GAIN_80_V	= 2,
     GAIN_160_V	= 3
-} MAX30003_CNFG_ECG_GAIN_VAL;
+} CNFGECG_GAIN_VAL;
 
 typedef enum {
     _RATE199_RESERVED1	= 0,
     _RATE199_RESERVED2  = 1,
     RATE199_SPS_199	    = 2,
     _RATE199_RESERVED3  = 3
-} MAX30003_CNFG_ECG_RATE_199_PROG_VAL;
+} CNFGECG_RATE_199_PROG_VAL;
 
 typedef enum {
     _RATE200_RESERVED1	= 0,
     _RATE200_RESERVED2	= 1,
     RATE200_SPS_200		= 2,
     _RATE200_RESERVED3 	= 3
-} MAX30003_CNFG_ECG_RATE_200_PROG_VAL;
+} CNFGECG_RATE_200_PROG_VAL;
 
 typedef enum {
     RATE500_SPS_500		= 0,
     RATE500_SPS_250		= 1,
     RATE500_SPS_125		= 2,
     _RATE500_RESERVED	= 3
-} MAX30003_CNFG_ECG_RATE_500_PROG_VAL;
+} CNFGECG_RATE_500_PROG_VAL;
 
 typedef enum {
     RATE512_SPS_512		= 0,
     RATE512_SPS_256		= 1,
     RATE512_SPS_128		= 2,
     _RATE512_RESERVED	= 3
-} MAX30003_CNFG_ECG_RATE_512_PROG_VAL;
+} CNFGECG_RATE_512_PROG_VAL;
 
 /***
  * CNFG_RTOR1 register's masks and values
@@ -460,19 +460,19 @@ typedef enum {
 } MAX30003_CNFG_RTOR1_MASKS;
 
 // TODO enforce 1 to 16 or remove
-typedef uint8_t MAX30003_CNFG_RTOR1_PTSF_VAL;
+typedef uint8_t CNFGRTOR1_PTSF_VAL;
 
 typedef enum {
     PAVG_WEIGHT_2	= 0,
     PAVG_WEIGHT_4	= 1,
     PAVG_WEIGHT_8	= 2,
     PAVG_WEIGHT_16  = 3
-} MAX30003_CNFG_RTOR1_PAVG_VAL;
+} CNFGRTOR1_PAVG_VAL;
 
 typedef enum {
     ENRTOR_DISABLED	= 0,
     ENRTOR_ENABLED  = 1
-} MAX30003_CNFG_RTOR1_EN_RTOR_VAL;
+} CNFGRTOR1_EN_RTOR_VAL;
 
 /***
  * CNFG_RTOR2 register's masks and values
@@ -485,17 +485,17 @@ typedef enum {
 } MAX30003_CNFG_RTOR2_MASKS;
 
 // TODO enforce 0-7 size or remove
-typedef uint8_t MAX30003_CNFG_RTOR2_RHSF_VAL;
+typedef uint8_t CNFGRTOR2_RHSF_VAL;
 
 typedef enum {
     RAVG_WEIGHT_2	= 0,
     RAVG_WEIGHT_4	= 1,
     RAVG_WEIGHT_8	= 2,
     RAVG_WEIGHT_16	= 3
-} MAX30003_CNFG_RTOR2_RAVG_VAL;
+} CNFGRTOR2_RAVG_VAL;
 
 // TODO enforce 0 to 63 or remove
-typedef uint8_t MAX30003_CNFG_RTOR2_HOFF_VAL;
+typedef uint8_t CNFGRTOR2_HOFF_VAL;
 
 #ifdef __cplusplus
 }
