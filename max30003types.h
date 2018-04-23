@@ -552,9 +552,9 @@ typedef uint8_t CNFGRTOR2_HOFF_VAL;
  * FIFO register's masks and values
  ***/
 typedef enum {
-	ECGFIFO_PTAG	= 0x000007;	// TODO what is this?
-	ECGFIFO_ETAG	= 0x000038;
-	ECGFIFO_DATA	= 0xFFFFC0;
+	ECGFIFO_PTAG	= 0x000007,	// TODO what is this?
+	ECGFIFO_ETAG	= 0x000038,
+	ECGFIFO_DATA	= 0xFFFFC0,
 } MAX30003_ECG_FIFO_MASKS;
 
 typedef enum {

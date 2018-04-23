@@ -70,7 +70,7 @@ void ecg_get(void *vals, const MAX30003_REG REG)
 			case REG_CNFG_RTOR1	: ecg_decode_cnfg_rtor1(vals, ecg_msg.data); break;
 			case REG_CNFG_RTOR2	: ecg_decode_cnfg_rtor2(vals, ecg_msg.data); break;
 			case REG_ECG_FIFO	: ecg_decode_ecg_fifo(vals, ecg_msg.data); break;							
-			default: /* error handling */
+			default : break; /* error handling */
 		}
 	}
 }
@@ -451,9 +451,9 @@ void ecg_encode_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_DATA_t *dat
 	word |= VALS.en_ulp_lon    << 20;
 
 	/* extract and assign bytes from data word to be endian safe */
-	data.byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
-	data.byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
-	data.byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
+	data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
+	data->byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
+	data->byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
 }
 void ecg_encode_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, MAX30003_DATA_t *data)
 {
@@ -470,9 +470,9 @@ void ecg_encode_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, MAX30003_DATA_t *dat
 	word |= VALS.en_vcal	<< 22;
 
 	/* extract and assign bytes from data word to be endian safe */
-	data.byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
-	data.byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
-	data.byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
+	data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
+	data->byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
+	data->byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
 }
 void ecg_encode_cnfg_emux(const MAX30003_CNFG_EMUX_VALS VALS, MAX30003_DATA_t *data)
 {
@@ -488,9 +488,9 @@ void ecg_encode_cnfg_emux(const MAX30003_CNFG_EMUX_VALS VALS, MAX30003_DATA_t *d
 	word |= VALS.pol		<< 23;
 
 	/* extract and assign bytes from data word to be endian safe */
-	data.byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
-	data.byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
-	data.byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
+	data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
+	data->byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
+	data->byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
 }
 void ecg_encode_cnfg_ecg(const MAX30003_CNFG_ECG_VALS VALS, MAX30003_DATA_t *data)
 {
@@ -505,9 +505,9 @@ void ecg_encode_cnfg_ecg(const MAX30003_CNFG_ECG_VALS VALS, MAX30003_DATA_t *dat
 	word |= VALS.rate	<< 22;
 
 	/* extract and assign bytes from data word to be endian safe */
-	data.byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
-	data.byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
-	data.byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
+	data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
+	data->byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
+	data->byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
 }
 void ecg_encode_cnfg_rtor1(const MAX30003_CNFG_RTOR1_VALS VALS, MAX30003_DATA_t *data)
 {
@@ -523,9 +523,9 @@ void ecg_encode_cnfg_rtor1(const MAX30003_CNFG_RTOR1_VALS VALS, MAX30003_DATA_t 
 	word |= VALS.wndw		<< 20;
 
 	/* extract and assign bytes from data word to be endian safe */
-	data.byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
-	data.byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
-	data.byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
+	data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
+	data->byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
+	data->byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );
 }
 void ecg_encode_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, MAX30003_DATA_t *data)
 {
@@ -539,9 +539,9 @@ void ecg_encode_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, MAX30003_DATA_t 
 	word |= VALS.hoff	<< 16;
 
 	/* extract and assign bytes from data word to be endian safe */
-	data.byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
-	data.byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
-	data.byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );	
+	data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
+	data->byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
+	data->byte[2] = (uint8_t)( (word >> 16 ) & ( 0x00FFFFFF >> 0  ) );	
 }
 
 

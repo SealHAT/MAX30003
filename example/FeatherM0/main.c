@@ -41,8 +41,6 @@ int main(void)
     vals.fmstr  = FMSTR_512_HZ;
         	
 	for(;;) {		
-        //ecg_read_cnfg_gen(&vals);
-        ecg_write_cnfg_gen(vals, CNFGGEN_EN_ECG | CNFGGEN_FMSTR);
 
         delay_ms(1000);
 	}
