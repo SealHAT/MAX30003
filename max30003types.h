@@ -542,6 +542,40 @@ typedef enum {
 // TODO enforce 0 to 63 or remove
 typedef uint8_t CNFGRTOR2_HOFF_VAL;
 
+/***
+ * FIFO register's masks and values
+ ***/
+typedef enum {
+	FIFO_PTAG	= 0x000007;	// TODO what is this?
+	FIFO_ETAG	= 0x000038;
+	FIFO_DATA	= 0xFFFFC0;
+} MAX30003_FIFO_MASKS;
+
+typedef enum {
+	PTAG_BLANK	= 0,	// TODO what values for ptag?
+} FIFO_PTAG_VAL;
+
+typedef enum {
+	ETAG_VALID			= 0,
+	ETAG_FAST			= 1,
+	ETAG_VALID_EOF		= 2,
+	ETAG_FAST_EOF		= 3,
+	_ETAG_RESERVED1		= 4,
+	_ETAG_RESERVED2		= 5,
+	ETAG_FIFO_EMPTY		= 6,
+	ETAG_FIFO_OVERFLOW	= 7
+} FIFO_ETAG_VAL;
+
+typedef uint32_t FIFO_DATA_VAL;
+
+/***
+ * RTOR register's masks and values
+ ***/
+typedef enum {
+	RTOR_DATA		= 0xFFFC00,
+	_RTOR_RESERVED  = 0x0003FF /* should be 0s */
+} MAX30003_RTOR_MASKS;
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

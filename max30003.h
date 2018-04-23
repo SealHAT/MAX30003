@@ -160,14 +160,15 @@ void ecg_init_spi(void *spi_desc, const void *spi_msg);
 void ecg_init_csb(const uint8_t ecg_csb_pin);
 
 /* ecg register access functions */
+void ecg_get(void *vals, const MAX30003_REG REG);
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
-void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
-
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
+
+void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
 void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS);
 
-/* internal register functions */
+/* internal register functions for shifting and masking values out of words */
 void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_en_int(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_mngr_int(MAX30003_MNGR_INT_VALS *vals, const MAX30003_DATA_t DATA);

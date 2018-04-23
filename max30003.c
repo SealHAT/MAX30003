@@ -40,6 +40,51 @@ static const MAX30003_DATA_t NULL_DATA = {
     .byte[2] = 0x00,
 };
 
+void ecg_get(void *vals, const MAX30003_REG REG)
+{
+	ecg_msg.command = ECG_REG_R(REG);
+	ecg_msg.data	= NULL_DATA;
+	
+	if(ecg_read(&ecg_msg) != MAX30003_DATA_BYTES) {
+		/* missing data */
+	} else {
+		switch(REG) {
+// 			REG_NO_OP          = 0x00,  /* RW - no internal effect. DOUT = 0 during R, W ignored */
+// 			REG_STATUS         = 0x01,  /* R  - */
+// 			REG_EN_INT         = 0x02,  /* RW - */
+// 			REG_EN_INT2        = 0x03,  /* RW - */
+// 			REG_MNGR_INT       = 0x04,  /* RW - */
+// 			REG_MNGR_DYN       = 0x05,  /* RW - */
+// 			REG_SW_RST         = 0x08,  /* W  - */
+// 			REG_SYNCH          = 0x09,  /* W  - */
+// 			REG_FIFO_RST       = 0x0A,  /* W  - */
+// 			REG_INFO           = 0x0F,  /* R  - */
+// 			REG_CNFG_GEN       = 0x10,  /* RW - */
+// 			REG_CNFG_CAL       = 0x12,  /* RW - */
+// 			REG_CNFG_EMUX      = 0x14,  /* RW - */
+// 			REG_CNFG_ECG       = 0x15,  /* RW - */
+// 			REG_CNFG_RTOR1     = 0x1D,  /* RW - */
+// 			REG_CNFG_RTOR2     = 0x1E,  /* RW - */
+// 			REG_ECG_FIFO_BURST = 0x20,  /* R+ - */
+// 			REG_ECG_FIFO       = 0x21,  /* R  - */
+// 			REG_RTOR           = 0x25,  /* R  - */
+// 			REG_NO_OP2         = 0x7F   /* RW - no internal effect. DOUT = 0 during R, W ignored */
+			case REG_STATUS		: ecg_decode_status(vals, ecg_msg.data); break;
+			case REG_EN_INT		: ecg_decode_en_int(vals, ecg_msg.data); break;
+			case REG_EN_INT2	: ecg_decode_en_int(vals, ecg_msg.data); break;
+			case REG_MNGR_INT	: ecg_decode_mngr_int(vals, ecg_msg.data); break;
+			case REG_MNGR_DYN	: ecg_decode_mngr_dyn(vals, ecg_msg.data); break;
+			//case REG_INFO		: ecg_decode_info(vals, ecg_msg.data); break;
+			case REG_CNFG_GEN	: ecg_decode_cnfg_gen(vals, ecg_msg.data); break;
+			case REG_CNFG_CAL	: ecg_decode_cnfg_cal(vals, ecg_msg.data); break;
+			case REG_CNFG_EMUX	: ecg_decode_cnfg_emux(vals, ecg_msg.data); break;
+			case REG_CNFG_ECG	: ecg_decode_cnfg_ecg(vals, ecg_msg.data); break;
+			case REG_CNFG_RTOR1	: ecg_decode_cnfg_rtor1(vals, ecg_msg.data); break;
+			case REG_CNFG_RTOR2	: ecg_decode_cnfg_rtor2(vals, ecg_msg.data); break;						
+			default: /* error handling */
+		}
+	}
+}
 void ecg_get_status(MAX30003_STATUS_VALS *vals)
 {
     uint8_t bytes;
