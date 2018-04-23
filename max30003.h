@@ -99,6 +99,14 @@ typedef struct MAX30003_MNGR_DYN_VALS {
 	MNGRDYN_FAST_VAL		fast;
 } MAX30003_MNGR_DYN_VALS;
 
+// TODO verify info data before settling on this
+typedef struct MAX30003_INFO_VALS {
+	uint8_t				_verification;
+	INFO_REV_ID_VAL		rev_id;
+	uint8_t				_partid;
+	uint16_t			_serialnumber;
+} MAX30003_INFO_VALS;
+
 typedef struct MAX30003_CNFG_GEN_VALS {
     CNFGGEN_RBIASN_VAL        rbiasn;
     CNFGGEN_RBIASP_VAL        rbiasp;
@@ -151,6 +159,16 @@ typedef struct MAX30003_CNFG_RTOR2_VALS {
 	CNFGRTOR2_HOFF_VAL	hoff;
 } MAX30003_CNFG_RTOR2_VALS;
 
+typedef struct MAX30003_FIFO_VALS {
+	ECGFIFO_PTAG_VAL	ptag;
+	ECGFIFO_ETAG_VAL	etag;
+	ECGFIFO_DATA_VAL	data;
+} MAX30003_FIFO_VALS;
+
+typedef struct MAX30003_RTOR_VALS {
+	RTOR_DATA_VAL	data;
+} MAX30003_RTOR_VALS;
+
 /* ASF function pointers for using SAML21 calls without cluttering the MAX30003 namespace */
 int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
 void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_pin_level */
@@ -160,25 +178,28 @@ void ecg_init_spi(void *spi_desc, const void *spi_msg);
 void ecg_init_csb(const uint8_t ecg_csb_pin);
 
 /* ecg register access functions */
+void ecg_get(void *vals, const MAX30003_REG REG);
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
-void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
-
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
+
+void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
 void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS);
 
-/* internal register functions */
+/* internal register functions for shifting and masking values out of words */
 void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_en_int(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_mngr_int(MAX30003_MNGR_INT_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals, const MAX30003_DATA_t DATA);
-//void ecg_decode_info(MAX30003_INFO_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_info(MAX30003_INFO_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_cnfg_emux(MAX30003_CNFG_EMUX_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_cnfg_ecg(MAX30003_CNFG_ECG_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_cnfg_rtor1(MAX30003_CNFG_RTOR1_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_cnfg_rtor2(MAX30003_CNFG_RTOR2_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_ecg_fifo(MAX30003_FIFO_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_rtor(MAX30003_RTOR_VALS *vals, const MAX30003_DATA_t DATA);
 
 void ecg_encode_en_int(const MAX30003_EN_INT_VALS VALS, MAX30003_DATA_t *data);
 void ecg_encode_mngr_int(const MAX30003_MNGR_INT_VALS VALS, MAX30003_DATA_t *data);

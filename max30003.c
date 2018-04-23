@@ -40,6 +40,40 @@ static const MAX30003_DATA_t NULL_DATA = {
     .byte[2] = 0x00,
 };
 
+void ecg_get(void *vals, const MAX30003_REG REG)
+{
+	ecg_msg.command = ECG_REG_R(REG);
+	ecg_msg.data	= NULL_DATA;
+	
+	if(ecg_read(&ecg_msg) != MAX30003_DATA_BYTES) {
+		/* missing data */
+	} else {
+		switch(REG) {
+// 			REG_NO_OP          = 0x00,  /* RW - no internal effect. DOUT = 0 during R, W ignored */
+// 			REG_SW_RST         = 0x08,  /* W  - */
+// 			REG_SYNCH          = 0x09,  /* W  - */
+// 			REG_FIFO_RST       = 0x0A,  /* W  - */
+// 			REG_INFO           = 0x0F,  /* R  - */
+// 			REG_ECG_FIFO_BURST = 0x20,  /* R+ - */
+// 			REG_RTOR           = 0x25,  /* R  - */
+// 			REG_NO_OP2         = 0x7F   /* RW - no internal effect. DOUT = 0 during R, W ignored */
+			case REG_STATUS		: ecg_decode_status(vals, ecg_msg.data); break;
+			case REG_EN_INT		: ecg_decode_en_int(vals, ecg_msg.data); break;
+			case REG_EN_INT2	: ecg_decode_en_int(vals, ecg_msg.data); break;
+			case REG_MNGR_INT	: ecg_decode_mngr_int(vals, ecg_msg.data); break;
+			case REG_MNGR_DYN	: ecg_decode_mngr_dyn(vals, ecg_msg.data); break;
+			//case REG_INFO		: ecg_decode_info(vals, ecg_msg.data); break;
+			case REG_CNFG_GEN	: ecg_decode_cnfg_gen(vals, ecg_msg.data); break;
+			case REG_CNFG_CAL	: ecg_decode_cnfg_cal(vals, ecg_msg.data); break;
+			case REG_CNFG_EMUX	: ecg_decode_cnfg_emux(vals, ecg_msg.data); break;
+			case REG_CNFG_ECG	: ecg_decode_cnfg_ecg(vals, ecg_msg.data); break;
+			case REG_CNFG_RTOR1	: ecg_decode_cnfg_rtor1(vals, ecg_msg.data); break;
+			case REG_CNFG_RTOR2	: ecg_decode_cnfg_rtor2(vals, ecg_msg.data); break;
+			case REG_ECG_FIFO	: ecg_decode_ecg_fifo(vals, ecg_msg.data); break;							
+			default: /* error handling */
+		}
+	}
+}
 void ecg_get_status(MAX30003_STATUS_VALS *vals)
 {
     uint8_t bytes;
@@ -213,6 +247,10 @@ void ecg_decode_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals, const MAX30003_DATA_t DAT
 	vals->fast_th   = (MNGRDYN_FASTTH_VAL)( (word & MNGRDYN_FAST_TH) >> 0 );
 	vals->fast		= (MNGRDYN_FAST_VAL  )( (word & MNGRDYN_FAST   ) >> 6 );
 }
+void ecg_decode_info(MAX30003_INFO_VALS *vals, const MAX30003_DATA_t DATA)
+{
+	// TODO check to see if bits other than REV_ID are meaningful
+}
 void ecg_decode_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals, const MAX30003_DATA_t DATA)
 {
 	uint32_t word;
@@ -314,6 +352,34 @@ void ecg_decode_cnfg_rtor2(MAX30003_CNFG_RTOR2_VALS *vals, const MAX30003_DATA_t
 	vals->rhsf	= (CNFGRTOR2_RHSF_VAL)( (word & CNFGRTOR2_RHSF) >> 8);
 	vals->ravg	= (CNFGRTOR2_RAVG_VAL)( (word & CNFGRTOR2_RAVG) >> 12);
 	vals->hoff	= (CNFGRTOR2_HOFF_VAL)( (word & CNFGRTOR2_HOFF) >> 16);
+}
+void ecg_decode_ecg_fifo(MAX30003_FIFO_VALS *vals, const MAX30003_DATA_t DATA)
+{
+	uint32_t word;
+	
+	word = 0x00000000;
+	/* extract and assign bytes from data word to be endian safe */
+	word |= ((uint32_t)(DATA.byte[2]) << 16);
+	word |= ((uint32_t)(DATA.byte[1]) << 8 );
+	word |= ((uint32_t)(DATA.byte[0]) << 0 );
+	
+	/* shift values from the 24-bit data word into the value struct */
+	vals->ptag	= (ECGFIFO_PTAG_VAL)( (word & ECGFIFO_PTAG) >> 0);
+	vals->etag	= (ECGFIFO_ETAG_VAL)( (word & ECGFIFO_ETAG) >> 3);
+	vals->data	= (ECGFIFO_DATA_VAL)( (word & ECGFIFO_DATA) >> 6);
+}
+void ecg_decode_rtor(MAX30003_RTOR_VALS *vals, const MAX30003_DATA_t DATA)
+{
+	uint32_t word;
+	
+	word = 0x00000000;
+	/* extract and assign bytes from data word to be endian safe */
+	word |= ((uint32_t)(DATA.byte[2]) << 16);
+	word |= ((uint32_t)(DATA.byte[1]) << 8 );
+	word |= ((uint32_t)(DATA.byte[0]) << 0 );
+	
+	/* shift values from the 24-bit data word into the value struct */
+	vals->data	= (RTOR_DATA_VAL)( (word & RTOR_DATA) >> 10);
 }
 
 void ecg_encode_en_int(const MAX30003_EN_INT_VALS VALS, MAX30003_DATA_t *data)

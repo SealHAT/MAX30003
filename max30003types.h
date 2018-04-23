@@ -207,8 +207,14 @@ typedef enum {
 typedef enum {
     INFO_REV_ID      = 0x0F0000,
     INFO_RESERVED    = 0x00CFFF,
-    INFO_REQUIRED    = 0x503000
+    INFO_REQUIRED    = 0xF03000
 } MAX30003_INFO_MASKS;
+
+typedef uint8_t INFO_REV_ID_VAL;
+
+typedef enum {
+	REQUIRED_INFO	= 0x503000
+} INFO_REQUIRED_VAL;
 
 /***
  * CNFG_GEN register's masks and values
@@ -541,6 +547,42 @@ typedef enum {
 
 // TODO enforce 0 to 63 or remove
 typedef uint8_t CNFGRTOR2_HOFF_VAL;
+
+/***
+ * FIFO register's masks and values
+ ***/
+typedef enum {
+	ECGFIFO_PTAG	= 0x000007;	// TODO what is this?
+	ECGFIFO_ETAG	= 0x000038;
+	ECGFIFO_DATA	= 0xFFFFC0;
+} MAX30003_ECG_FIFO_MASKS;
+
+typedef enum {
+	PTAG_BLANK	= 0,	// TODO what values for ptag?
+} ECGFIFO_PTAG_VAL;
+
+typedef enum {
+	ETAG_VALID			= 0,
+	ETAG_FAST			= 1,
+	ETAG_VALID_EOF		= 2,
+	ETAG_FAST_EOF		= 3,
+	_ETAG_RESERVED1		= 4,
+	_ETAG_RESERVED2		= 5,
+	ETAG_FIFO_EMPTY		= 6,
+	ETAG_FIFO_OVERFLOW	= 7
+} ECGFIFO_ETAG_VAL;
+
+typedef uint32_t ECGFIFO_DATA_VAL;
+
+/***
+ * RTOR register's masks and values
+ ***/
+typedef enum {
+	RTOR_DATA		= 0xFFFC00,
+	_RTOR_RESERVED  = 0x0003FF /* should be 0s */
+} MAX30003_RTOR_MASKS;
+
+typedef uint32_t RTOR_DATA_VAL;
 
 #ifdef __cplusplus
 }
