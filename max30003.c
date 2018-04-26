@@ -42,10 +42,12 @@ static const MAX30003_DATA_t NULL_DATA = {
 
 void ecg_get(void *vals, const MAX30003_REG REG)
 {
+    uint8_t bytes;
 	ecg_msg.command = ECG_REG_R(REG);
 	ecg_msg.data	= NULL_DATA;
 	
-	if(ecg_read(&ecg_msg) != MAX30003_DATA_BYTES) {
+    bytes = ecg_read(&ecg_msg);
+	if(bytes != ECG_BUF_SZ) {
 		/* missing data */
 	} else {
 		switch(REG) {
@@ -62,7 +64,7 @@ void ecg_get(void *vals, const MAX30003_REG REG)
 			case REG_EN_INT2	: ecg_decode_en_int(vals, ecg_msg.data); break;
 			case REG_MNGR_INT	: ecg_decode_mngr_int(vals, ecg_msg.data); break;
 			case REG_MNGR_DYN	: ecg_decode_mngr_dyn(vals, ecg_msg.data); break;
-			//case REG_INFO		: ecg_decode_info(vals, ecg_msg.data); break;
+			case REG_INFO		: ecg_decode_info(vals, ecg_msg.data); break;
 			case REG_CNFG_GEN	: ecg_decode_cnfg_gen(vals, ecg_msg.data); break;
 			case REG_CNFG_CAL	: ecg_decode_cnfg_cal(vals, ecg_msg.data); break;
 			case REG_CNFG_EMUX	: ecg_decode_cnfg_emux(vals, ecg_msg.data); break;
@@ -74,6 +76,42 @@ void ecg_get(void *vals, const MAX30003_REG REG)
 		}
 	}
 }
+
+void ecg_set(void *VALS, const uint32_t MASKS, const MAX30003_REG REG)
+{
+	MAX30003_MSG msg;
+	MAX30003_DATA_t newdata;
+
+	msg.command = ECG_REG_R(REG);
+	msg.data    = NULL_DATA;
+
+	/* get the 24-bit data word for the current and new configurations */
+	ecg_read(&msg);
+
+    //ecg_encode_cnfg_gen(VALS, &newdata);
+    switch(REG) {
+        case REG_EN_INT		: ecg_encode_en_int((MAX30003_EN_INT_VALS)VALS, &newdata); break;
+        case REG_EN_INT2	: ecg_encode_en_int((MAX30003_EN_INT_VALS)VALS, &newdata); break;
+        case REG_MNGR_INT	: ecg_encode_mngr_int((MAX30003_MNGR_DYN_VALS)VALS, &newdata); break;
+        case REG_MNGR_DYN	: ecg_encode_mngr_dyn(VALS, &newdata); break;
+        case REG_CNFG_GEN	: ecg_encode_cnfg_gen(VALS, &newdata); break;
+        case REG_CNFG_CAL	: ecg_encode_cnfg_cal(VALS, &newdata); break;
+        case REG_CNFG_EMUX	: ecg_encode_cnfg_emux(VALS, &newdata); break;
+        case REG_CNFG_ECG	: ecg_encode_cnfg_ecg(VALS, &newdata); break;
+        case REG_CNFG_RTOR1	: ecg_encode_cnfg_rtor1(VALS, &newdata); break;
+        case REG_CNFG_RTOR2	: ecg_encode_cnfg_rtor2(VALS, &newdata); break;
+        default : break; /* error handling */   
+    }
+
+	/* modify the current data with the new data */
+	msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+	msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+	msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+	/* write out the message */
+	ecg_write(&msg);
+}
+
 void ecg_get_status(MAX30003_STATUS_VALS *vals)
 {
     uint8_t bytes;
@@ -85,7 +123,7 @@ void ecg_get_status(MAX30003_STATUS_VALS *vals)
     /* transfer over SPI and populate the msg */
     bytes = ecg_read(&ecg_msg);
 
-    if(bytes != MAX30003_DATA_BYTES) {
+    if(bytes != ECG_BUF_SZ) {
         /* missing data */
         // TODO error
         } else {
@@ -103,7 +141,7 @@ void ecg_get_en_int(MAX30003_EN_INT_VALS *vals)
 
     bytes = ecg_read(&msg);
 
-    if(bytes != MAX30003_DATA_BYTES) {
+    if(bytes != ECG_BUF_SZ) {
         /* missing data */
         // TODO error
     } else {
@@ -121,7 +159,7 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 	msg.data		= NULL_DATA;
 
 	/* perform the spi read action */
-	if(ecg_read(&msg) != MAX30003_DATA_BYTES) {
+	if(ecg_read(&msg) != ECG_BUF_SZ) {
 		/* missing data */
 		// TODO error
 		} else {
@@ -250,6 +288,18 @@ void ecg_decode_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals, const MAX30003_DATA_t DAT
 void ecg_decode_info(MAX30003_INFO_VALS *vals, const MAX30003_DATA_t DATA)
 {
 	// TODO check to see if bits other than REV_ID are meaningful
+    uint32_t word;
+    	
+    word = 0x00000000;
+    /* extract and assign bytes from data word to be endian safe */
+    word |= ((uint32_t)(DATA.byte[2]) << 16);
+    word |= ((uint32_t)(DATA.byte[1]) << 8 );
+    word |= ((uint32_t)(DATA.byte[0]) << 0 );
+    
+    vals->_serialnumber = (uint16_t         )( (word & 0x000FFF) >> 0 );
+    vals->_partid       = (uint8_t          )( (word & 0x00F000) >> 12);
+    vals->rev_id        = (INFO_REV_ID_VAL  )( (word & INFO_REV_ID) >> 16 );
+    vals->_verification = (uint8_t          )( (word & 0xF00000) >> 20);
 }
 void ecg_decode_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals, const MAX30003_DATA_t DATA)
 {
@@ -592,6 +642,11 @@ uint8_t ecg_read(MAX30003_MSG *msg)
     ecg_set_csb_level(ECG_CSB_PIN, false);
     xfer_bytes = ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
     ecg_set_csb_level(ECG_CSB_PIN, true);
+
+    /* arrange the MISO bytes into the data bins */
+    msg->data.byte[0] = ECG_BUF_I[3];
+    msg->data.byte[1] = ECG_BUF_I[2];
+    msg->data.byte[2] = ECG_BUF_I[1];
 
     /* return the bytes transfered, data is also updated */
     return xfer_bytes;
