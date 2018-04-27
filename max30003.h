@@ -185,7 +185,15 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
 
 void ecg_set(void *VALS, const uint32_t MASKS, const MAX30003_REG REG);
 void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
+void ecg_set_en_int2(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
+void ecg_set_mngr_int(const MAX30003_MNGR_INT_VALS VALS, const MAX30003_MNGR_INT_MASKS MASKS);
+void ecg_set_mngr_dyn(const MAX30003_MNGR_DYN_VALS VALS, const MAX30003_MNGR_DYN_MASKS MASKS);
 void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS);
+void ecg_set_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, const MAX30003_CNFG_CAL_MASKS MASKS);
+void ecg_set_cnfg_emux(const MAX30003_CNFG_EMUX_VALS VALS, const MAX30003_CNFG_EMUX_MASKS MASKS);
+void ecg_set_cnfg_ecg(const MAX30003_CNFG_ECG_VALS VALS, const MAX30003_CNFG_ECG_MASKS MASKS);
+void ecg_set_cnfg_rtor1(const MAX30003_CNFG_RTOR1_VALS VALS, const MAX30003_CNFG_RTOR1_MASKS MASKS);
+void ecg_set_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, const MAX30003_CNFG_RTOR2_MASKS MASKS);
 
 /* internal register functions for shifting and masking values out of words */
 void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t DATA);

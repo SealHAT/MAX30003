@@ -77,40 +77,42 @@ void ecg_get(void *vals, const MAX30003_REG REG)
 	}
 }
 
-void ecg_set(void *VALS, const uint32_t MASKS, const MAX30003_REG REG)
-{
-	MAX30003_MSG msg;
-	MAX30003_DATA_t newdata;
-
-	msg.command = ECG_REG_R(REG);
-	msg.data    = NULL_DATA;
-
-	/* get the 24-bit data word for the current and new configurations */
-	ecg_read(&msg);
-
-    //ecg_encode_cnfg_gen(VALS, &newdata);
-    switch(REG) {
-        case REG_EN_INT		: ecg_encode_en_int((MAX30003_EN_INT_VALS)VALS, &newdata); break;
-        case REG_EN_INT2	: ecg_encode_en_int((MAX30003_EN_INT_VALS)VALS, &newdata); break;
-        case REG_MNGR_INT	: ecg_encode_mngr_int((MAX30003_MNGR_DYN_VALS)VALS, &newdata); break;
-        case REG_MNGR_DYN	: ecg_encode_mngr_dyn(VALS, &newdata); break;
-        case REG_CNFG_GEN	: ecg_encode_cnfg_gen(VALS, &newdata); break;
-        case REG_CNFG_CAL	: ecg_encode_cnfg_cal(VALS, &newdata); break;
-        case REG_CNFG_EMUX	: ecg_encode_cnfg_emux(VALS, &newdata); break;
-        case REG_CNFG_ECG	: ecg_encode_cnfg_ecg(VALS, &newdata); break;
-        case REG_CNFG_RTOR1	: ecg_encode_cnfg_rtor1(VALS, &newdata); break;
-        case REG_CNFG_RTOR2	: ecg_encode_cnfg_rtor2(VALS, &newdata); break;
-        default : break; /* error handling */   
-    }
-
-	/* modify the current data with the new data */
-	msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-	msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-	msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
-
-	/* write out the message */
-	ecg_write(&msg);
-}
+// void ecg_set(void *VALS, const uint32_t MASKS, const MAX30003_REG REG)
+// {
+// 	MAX30003_MSG msg;
+// 	MAX30003_DATA_t newdata;
+// 
+// 	msg.command = ECG_REG_R(REG);
+// 	msg.data    = NULL_DATA;
+// 
+// 	/* get the 24-bit data word for the current and new configurations */
+// 	ecg_read(&msg);
+// 
+//     //ecg_encode_cnfg_gen(VALS, &newdata);
+//     switch(REG) {
+//         case REG_EN_INT		: 
+//             const MAX30003_EN_INT_VALS evals = VALS;
+//             ecg_encode_en_int((const MAX30003_EN_INT_VALS)VALS, &newdata); break;
+//         case REG_EN_INT2	: ecg_encode_en_int((MAX30003_EN_INT_VALS)VALS, &newdata); break;
+//         case REG_MNGR_INT	: ecg_encode_mngr_int((MAX30003_MNGR_DYN_VALS)VALS, &newdata); break;
+//         case REG_MNGR_DYN	: ecg_encode_mngr_dyn(VALS, &newdata); break;
+//         case REG_CNFG_GEN	: ecg_encode_cnfg_gen(VALS, &newdata); break;
+//         case REG_CNFG_CAL	: ecg_encode_cnfg_cal(VALS, &newdata); break;
+//         case REG_CNFG_EMUX	: ecg_encode_cnfg_emux(VALS, &newdata); break;
+//         case REG_CNFG_ECG	: ecg_encode_cnfg_ecg(VALS, &newdata); break;
+//         case REG_CNFG_RTOR1	: ecg_encode_cnfg_rtor1(VALS, &newdata); break;
+//         case REG_CNFG_RTOR2	: ecg_encode_cnfg_rtor2(VALS, &newdata); break;
+//         default : break; /* error handling */   
+//     }
+// 
+// 	/* modify the current data with the new data */
+// 	msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+// 	msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+// 	msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+// 
+// 	/* write out the message */
+// 	ecg_write(&msg);
+// }
 
 void ecg_get_status(MAX30003_STATUS_VALS *vals)
 {
@@ -159,7 +161,8 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 	msg.data		= NULL_DATA;
 
 	/* perform the spi read action */
-	if(ecg_read(&msg) != ECG_BUF_SZ) {
+    bytes = ecg_read(&msg);
+	if(bytes != ECG_BUF_SZ) {
 		/* missing data */
 		// TODO error
 		} else {
@@ -186,7 +189,71 @@ void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS
     msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
 
     /* write out the message */
+    msg.command = ECG_REG_W(REG_EN_INT);
     ecg_write(&msg);    
+}
+void ecg_set_en_int2(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS)
+{
+    MAX30003_MSG msg;
+    MAX30003_DATA_t newdata;
+
+    msg.command = ECG_REG_R(REG_EN_INT2);
+    msg.data    = NULL_DATA;
+
+    /* get the 24-bit data word for the current and new configurations */
+    ecg_read(&msg);
+    ecg_encode_en_int(VALS, &newdata);
+
+    /* modify the current data with the new data */
+    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+    /* write out the message */
+    msg.command = ECG_REG_W(REG_EN_INT2);
+    ecg_write(&msg);
+}
+void ecg_set_mngr_int(const MAX30003_MNGR_INT_VALS VALS, const MAX30003_MNGR_INT_MASKS MASKS)
+{
+    MAX30003_MSG msg;
+    MAX30003_DATA_t newdata;
+
+    msg.command = ECG_REG_R(REG_MNGR_INT);
+    msg.data    = NULL_DATA;
+
+    /* get the 24-bit data word for the current and new configurations */
+    ecg_read(&msg);
+    ecg_encode_mngr_int(VALS, &newdata);
+
+    /* modify the current data with the new data */
+    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+    /* write out the message */
+    msg.command = ECG_REG_W(REG_MNGR_INT);
+    ecg_write(&msg);
+}
+void ecg_set_mngr_dyn(const MAX30003_MNGR_DYN_VALS VALS, const MAX30003_MNGR_DYN_MASKS MASKS)
+{
+    MAX30003_MSG msg;
+    MAX30003_DATA_t newdata;
+
+    msg.command = ECG_REG_R(REG_MNGR_DYN);
+    msg.data    = NULL_DATA;
+
+    /* get the 24-bit data word for the current and new configurations */
+    ecg_read(&msg);
+    ecg_encode_mngr_dyn(VALS, &newdata);
+
+    /* modify the current data with the new data */
+    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+    /* write out the message */
+    msg.command = ECG_REG_W(REG_MNGR_DYN);
+    ecg_write(&msg);
 }
 void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN_MASKS MASKS)
 {
@@ -206,9 +273,114 @@ void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN
 	msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
 
 	/* write out the message */
+    msg.command = ECG_REG_W(REG_CNFG_GEN);
 	ecg_write(&msg);
 }
+void ecg_set_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, const MAX30003_CNFG_CAL_MASKS MASKS)
+{
+    MAX30003_MSG msg;
+    MAX30003_DATA_t newdata;
 
+    msg.command = ECG_REG_R(REG_CNFG_CAL);
+    msg.data    = NULL_DATA;
+
+    /* get the 24-bit data word for the current and new configurations */
+    ecg_read(&msg);
+    ecg_encode_cnfg_cal(VALS, &newdata);
+
+    /* modify the current data with the new data */
+    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+    /* write out the message */
+    msg.command = ECG_REG_W(REG_CNFG_CAL);
+    ecg_write(&msg);
+}
+void ecg_set_cnfg_emux(const MAX30003_CNFG_EMUX_VALS VALS, const MAX30003_CNFG_EMUX_MASKS MASKS)
+{
+    MAX30003_MSG msg;
+    MAX30003_DATA_t newdata;
+
+    msg.command = ECG_REG_R(REG_CNFG_EMUX);
+    msg.data    = NULL_DATA;
+
+    /* get the 24-bit data word for the current and new configurations */
+    ecg_read(&msg);
+    ecg_encode_cnfg_emux(VALS, &newdata);
+
+    /* modify the current data with the new data */
+    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+    /* write out the message */
+    msg.command = ECG_REG_W(REG_CNFG_EMUX);
+    ecg_write(&msg);
+}
+void ecg_set_cnfg_ecg(const MAX30003_CNFG_ECG_VALS VALS, const MAX30003_CNFG_ECG_MASKS MASKS)
+{
+    MAX30003_MSG msg;
+    MAX30003_DATA_t newdata;
+
+    msg.command = ECG_REG_R(REG_CNFG_ECG);
+    msg.data    = NULL_DATA;
+
+    /* get the 24-bit data word for the current and new configurations */
+    ecg_read(&msg);
+    ecg_encode_cnfg_ecg(VALS, &newdata);
+
+    /* modify the current data with the new data */
+    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+    /* write out the message */
+    msg.command = ECG_REG_W(REG_CNFG_ECG);
+    ecg_write(&msg);
+}
+void ecg_set_cnfg_rtor1(const MAX30003_CNFG_RTOR1_VALS VALS, const MAX30003_CNFG_RTOR1_MASKS MASKS)
+{
+    MAX30003_MSG msg;
+    MAX30003_DATA_t newdata;
+
+    msg.command = ECG_REG_R(REG_CNFG_RTOR1);
+    msg.data    = NULL_DATA;
+
+    /* get the 24-bit data word for the current and new configurations */
+    ecg_read(&msg);
+    ecg_encode_cnfg_rtor1(VALS, &newdata);
+
+    /* modify the current data with the new data */
+    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+    /* write out the message */
+    msg.command = ECG_REG_W(REG_CNFG_RTOR1);
+    ecg_write(&msg);
+}
+void ecg_set_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, const MAX30003_CNFG_RTOR2_MASKS MASKS)
+{
+    MAX30003_MSG msg;
+    MAX30003_DATA_t newdata;
+
+    msg.command = ECG_REG_R(REG_CNFG_RTOR2);
+    msg.data    = NULL_DATA;
+
+    /* get the 24-bit data word for the current and new configurations */
+    ecg_read(&msg);
+    ecg_encode_cnfg_rtor2(VALS, &newdata);
+
+    /* modify the current data with the new data */
+    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+
+    /* write out the message */
+    msg.command = ECG_REG_W(REG_CNFG_RTOR2);
+    ecg_write(&msg);
+}
 void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t data)
 {
 	uint32_t word; /* store the 3x 8-bit data words into a 32-bit number */

@@ -25,7 +25,8 @@ void ecg_init(struct spi_m_sync_descriptor *_ecg_spi_descriptor, struct spi_xfer
 int main(void)
 {
 	struct spi_xfer ecg_spi_msg;
-    MAX30003_CNFG_GEN_VALS vals;
+    //MAX30003_CNFG_GEN_VALS vals;
+    MAX30003_INFO_VALS  info_vals;
 	
 	atmel_start_init();
 
@@ -36,12 +37,9 @@ int main(void)
     gpio_set_pin_level(CS,true);
 
 	ecg_init(&ECG_SPI_DEV_0, &ecg_spi_msg, CS);    
-    
-    vals.en_ecg = ENECG_ENABLED;
-    vals.fmstr  = FMSTR_512_HZ;
         	
 	for(;;) {		
-
+        ecg_get(&info_vals, REG_INFO);
         delay_ms(1000);
 	}
 } 
