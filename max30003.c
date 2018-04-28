@@ -485,6 +485,7 @@ void ecg_decode_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals, const MAX30003_DATA_t DAT
 	
 	/* shift values from the 24-bit data word into the value struct */
 	vals->rbiasn		= (CNFGGEN_RBIASN_VAL     )( (word & CNFGGEN_RBIASN) >> 0 );
+    vals->rbiasp        = (CNFGGEN_RBIASP_VAL     )( (word & CNFGGEN_RBIASP) >> 1 );
 	vals->rbiasv		= (CNFGGEN_RBIASV_VAL     )( (word & CNFGGEN_RBIASV) >> 2 );
 	vals->en_rbias		= (CNFGGEN_EN_RBIAS_VAL   )( (word & CNFGGEN_EN_RBIAS) >> 4);
 	vals->vth			= (CNFGGEN_DCLOFF_VTH_VAL )( (word & CNFGGEN_VTH) >> 6);
@@ -830,8 +831,13 @@ uint8_t ecg_write(MAX30003_MSG *msg)
 
     /* add the command and data words to the TX buffer */
     ecg_clear_ibuf();
-    ECG_BUF_O[ECG_CMND_POS] = msg->command;
-    ECG_BUF_I[ECG_DATA_POS] = ((uint32_t*)msg->data.byte)[0];
+    ECG_BUF_O[ECG_CMND_POS]     = msg->command;
+
+    /* load up the data word into the TX buffer */
+    ECG_BUF_O[ECG_DATA_POS]     = msg->data.byte[2];
+    ECG_BUF_O[ECG_DATA_POS + 1] = msg->data.byte[1];
+    ECG_BUF_O[ECG_DATA_POS + 2] = msg->data.byte[0];
+
 
     /* perform spi transfer */
     ecg_set_csb_level(ECG_CSB_PIN, false);
