@@ -179,6 +179,8 @@ void ecg_init_csb(const uint8_t ecg_csb_pin);
 
 /* ecg register access functions */
 void ecg_get(void *vals, const MAX30003_REG REG);
+void ecg_get_sample(MAX30003_FIFO_VALS *vals);
+
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);

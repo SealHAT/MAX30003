@@ -846,3 +846,28 @@ uint8_t ecg_write(MAX30003_MSG *msg)
 
     return xfer_bytes;
 }
+
+void ecg_get_sample(MAX30003_FIFO_VALS *vals)
+{
+	MAX30003_MSG msg;
+	uint8_t		 bytes;
+	
+	/* create a (read) command by shifting in the read indicator */
+	ecg_msg.command = ECG_REG_R(REG_ECG_FIFO);
+	msg.data		= NULL_DATA;
+
+	/* perform the spi read action */
+	bytes = ecg_read(&msg);
+	if(bytes != ECG_BUF_SZ) {
+		/* missing data */
+		// TODO error
+		} else {
+		ecg_decode_ecg_fifo(vals, msg.data);
+	}
+}
+
+void ecg_get_sample_burst(MAX30003_FIFO_VALS *vals)
+{
+	ecg_get_sample(vals);
+
+}
