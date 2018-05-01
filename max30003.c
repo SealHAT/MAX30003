@@ -32,7 +32,8 @@ static uint8_t ECG_CSB_PIN;
 uint8_t ECG_BUF_I[ECG_BUF_SZ];
 uint8_t ECG_BUF_O[ECG_BUF_SZ];
 
-static MAX30003_MSG ecg_msg;
+// TODO decide if having a static buffer is better
+//static MAX30003_MSG ecg_msg;
 
 static const MAX30003_DATA_t NULL_DATA = {
     .byte[0] = 0x00,
@@ -42,6 +43,7 @@ static const MAX30003_DATA_t NULL_DATA = {
 
 void ecg_get(void *vals, const MAX30003_REG REG)
 {
+    MAX30003_MSG ecg_msg;
     uint8_t bytes;
 	ecg_msg.command = ECG_REG_R(REG);
 	ecg_msg.data	= NULL_DATA;
@@ -116,21 +118,22 @@ void ecg_get(void *vals, const MAX30003_REG REG)
 
 void ecg_get_status(MAX30003_STATUS_VALS *vals)
 {
+    MAX30003_MSG msg;
     uint8_t bytes;
 
     /* build the message to send */
-    ecg_msg.command = ECG_REG_R(REG_STATUS);
-    ecg_msg.data    = NULL_DATA;
+    msg.command = ECG_REG_R(REG_STATUS);
+    msg.data    = NULL_DATA;
 
     /* transfer over SPI and populate the msg */
-    bytes = ecg_read(&ecg_msg);
+    bytes = ecg_read(&msg);
 
     if(bytes != ECG_BUF_SZ) {
         /* missing data */
         // TODO error
         } else {
         /* populate the value struct from the data */
-        ecg_decode_status(vals, ecg_msg.data);
+        ecg_decode_status(vals, msg.data);
     }
 }
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals)
@@ -157,7 +160,7 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 	uint8_t		 bytes;
 	
 	/* create a (read) command by shifting in the read indicator */
-	ecg_msg.command = ECG_REG_R(REG_CNFG_GEN);
+	msg.command = ECG_REG_R(REG_CNFG_GEN);
 	msg.data		= NULL_DATA;
 
 	/* perform the spi read action */
@@ -834,9 +837,9 @@ uint8_t ecg_write(MAX30003_MSG *msg)
     ECG_BUF_O[ECG_CMND_POS]     = msg->command;
 
     /* load up the data word into the TX buffer */
-    ECG_BUF_O[ECG_DATA_POS]     = msg->data.byte[2];
+    ECG_BUF_O[ECG_DATA_POS]     = msg->data.byte[0];
     ECG_BUF_O[ECG_DATA_POS + 1] = msg->data.byte[1];
-    ECG_BUF_O[ECG_DATA_POS + 2] = msg->data.byte[0];
+    ECG_BUF_O[ECG_DATA_POS + 2] = msg->data.byte[2];
 
 
     /* perform spi transfer */
@@ -853,8 +856,8 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 	uint8_t		 bytes;
 	
 	/* create a (read) command by shifting in the read indicator */
-	ecg_msg.command = ECG_REG_R(REG_ECG_FIFO);
-	msg.data		= NULL_DATA;
+	msg.command = ECG_REG_R(REG_ECG_FIFO);
+	msg.data	= NULL_DATA;
 
 	/* perform the spi read action */
 	bytes = ecg_read(&msg);
@@ -870,4 +873,15 @@ void ecg_get_sample_burst(MAX30003_FIFO_VALS *vals)
 {
 	ecg_get_sample(vals);
 
+}
+
+void ecg_fifo_reset()
+{
+    MAX30003_MSG msg;
+    //uint8_t      bytes;
+
+    msg.command = ECG_REG_W(REG_FIFO_RST);
+    msg.data    = NULL_DATA;
+
+    ecg_write(&msg);
 }

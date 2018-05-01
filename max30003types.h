@@ -557,9 +557,10 @@ typedef enum {
 	ECGFIFO_DATA	= 0xFFFFC0,
 } MAX30003_ECG_FIFO_MASKS;
 
-typedef enum {
-	PTAG_BLANK	= 0,	// TODO what values for ptag?
-} ECGFIFO_PTAG_VAL;
+// typedef enum {
+// 	PTAG_BLANK	= 0,	// TODO what values for ptag?
+// } ECGFIFO_PTAG_VAL;
+typedef uint8_t ECGFIFO_PTAG_VAL;
 
 typedef enum {
 	ETAG_VALID			= 0,

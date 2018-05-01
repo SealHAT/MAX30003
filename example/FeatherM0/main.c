@@ -54,12 +54,17 @@ int main(void)
 	vals.en_ecg = ENECG_ENABLED;
 	ecg_set_cnfg_gen(vals, CNFGGEN_EN_ECG);
 	delay_ms(1000);
+    ecg_get_cnfg_gen(&vals);
+    delay_ms(1000);
+    ecg_fifo_reset();
 	for(;;) {
 		if (count < ECG_LOG_SZ) {
 			ecg_get_sample(&fifo);
 			ecg_log[count] = (fifo.data << 6) | (fifo.etag << 3) | fifo.ptag;
 			count++;
-		}
+		} else {
+            delay_ms(1000);
+        }
 		
 	}
 } 

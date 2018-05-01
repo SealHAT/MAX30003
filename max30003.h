@@ -177,6 +177,7 @@ void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_p
 void ecg_init_spi(void *spi_desc, const void *spi_msg);
 void ecg_init_csb(const uint8_t ecg_csb_pin);
 
+void ecg_fifo_reset();
 /* ecg register access functions */
 void ecg_get(void *vals, const MAX30003_REG REG);
 void ecg_get_sample(MAX30003_FIFO_VALS *vals);
