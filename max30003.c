@@ -187,9 +187,7 @@ void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS
     ecg_encode_en_int(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_EN_INT);
@@ -208,9 +206,7 @@ void ecg_set_en_int2(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASK
     ecg_encode_en_int(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_EN_INT2);
@@ -229,9 +225,7 @@ void ecg_set_mngr_int(const MAX30003_MNGR_INT_VALS VALS, const MAX30003_MNGR_INT
     ecg_encode_mngr_int(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_MNGR_INT);
@@ -250,9 +244,7 @@ void ecg_set_mngr_dyn(const MAX30003_MNGR_DYN_VALS VALS, const MAX30003_MNGR_DYN
     ecg_encode_mngr_dyn(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_MNGR_DYN);
@@ -272,9 +264,6 @@ void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN
 	ecg_encode_cnfg_gen(VALS, &newdata);
 
 	/* modify the current data with the new data */
-// 	msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-// 	msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-// 	msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
     ecg_mask(&newdata, msg.data, MASKS);
 
 	/* write out the message */
@@ -295,9 +284,7 @@ void ecg_set_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, const MAX30003_CNFG_CAL
     ecg_encode_cnfg_cal(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_CNFG_CAL);
@@ -316,9 +303,7 @@ void ecg_set_cnfg_emux(const MAX30003_CNFG_EMUX_VALS VALS, const MAX30003_CNFG_E
     ecg_encode_cnfg_emux(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_CNFG_EMUX);
@@ -337,9 +322,7 @@ void ecg_set_cnfg_ecg(const MAX30003_CNFG_ECG_VALS VALS, const MAX30003_CNFG_ECG
     ecg_encode_cnfg_ecg(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_CNFG_ECG);
@@ -358,9 +341,7 @@ void ecg_set_cnfg_rtor1(const MAX30003_CNFG_RTOR1_VALS VALS, const MAX30003_CNFG
     ecg_encode_cnfg_rtor1(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_CNFG_RTOR1);
@@ -379,9 +360,7 @@ void ecg_set_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, const MAX30003_CNFG
     ecg_encode_cnfg_rtor2(VALS, &newdata);
 
     /* modify the current data with the new data */
-    msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-    msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-    msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
     /* write out the message */
     msg.command = ECG_REG_W(REG_CNFG_RTOR2);
