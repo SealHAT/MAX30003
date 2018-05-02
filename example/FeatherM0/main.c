@@ -2,7 +2,7 @@
 #include "max30003.h"
 
 #define ECG_LOG_SZ 2048
-static uint32_t ecg_log[ECG_LOG_SZ];
+static int32_t ecg_log[ECG_LOG_SZ];
 
 void ecg_init(struct spi_m_sync_descriptor *_ecg_spi_descriptor, struct spi_xfer *_ecg_spi_msg, const uint8_t _CS)
 {
@@ -28,7 +28,8 @@ void ecg_init(struct spi_m_sync_descriptor *_ecg_spi_descriptor, struct spi_xfer
 int main(void)
 {
 	struct spi_xfer ecg_spi_msg;
-    MAX30003_CNFG_GEN_VALS vals;
+    MAX30003_CNFG_GEN_VALS cnfggen_vals;
+    MAX30003_CNFG_EMUX_VALS emux_vals;
 	MAX30003_FIFO_VALS fifo;
 	
 	int count;
@@ -48,20 +49,24 @@ int main(void)
 
 	ecg_init(&ECG_SPI_DEV_0, &ecg_spi_msg, CS);    
         	
-	ecg_get(&vals, REG_CNFG_GEN);
+	ecg_get(&cnfggen_vals, REG_CNFG_GEN);
 	delay_ms(1000);
 
-	vals.en_ecg = ENECG_ENABLED;
-	ecg_set_cnfg_gen(vals, CNFGGEN_EN_ECG);
+	cnfggen_vals.en_ecg = ENECG_ENABLED;
+
+	ecg_set_cnfg_gen(cnfggen_vals, CNFGGEN_EN_ECG);
 	delay_ms(1000);
-    ecg_get_cnfg_gen(&vals);
+    ecg_get_cnfg_gen(&cnfggen_vals);
     delay_ms(1000);
+    emux_vals.caln_sel = CALNSEL_IN_VCALN;
+    emux_vals.calp_sel = CALPSEL_IN_VCALP;
+    ecg_set_cnfg_emux(emux_vals, CNFGEMUX_CALN_SEL | CNFGEMUX_CALP_SEL);
     //ecg_fifo_reset();
     ecg_synch();
 	for(;;) {
 		if (count < ECG_LOG_SZ) {
 			ecg_get_sample(&fifo);
-			ecg_log[count] = (fifo.data << 6) | (fifo.etag << 3) | fifo.ptag;
+			ecg_log[count] = (fifo.data << 14) | (fifo.etag << 3) | fifo.ptag;
 			count++;
 		} else {
             delay_ms(1000);
@@ -69,3 +74,10 @@ int main(void)
 		
 	}
 } 
+
+// void ecg_record_clean(const uint8_t SAMPLE_SIZE)
+// {
+//     MAX30003_FIFO_VALS fifo;
+// 
+// 
+// }
