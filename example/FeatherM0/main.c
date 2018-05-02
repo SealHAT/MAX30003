@@ -56,7 +56,8 @@ int main(void)
 	delay_ms(1000);
     ecg_get_cnfg_gen(&vals);
     delay_ms(1000);
-    ecg_fifo_reset();
+    //ecg_fifo_reset();
+    ecg_synch();
 	for(;;) {
 		if (count < ECG_LOG_SZ) {
 			ecg_get_sample(&fifo);

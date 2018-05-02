@@ -262,6 +262,7 @@ void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN
 {
 	MAX30003_MSG msg;
 	MAX30003_DATA_t newdata;
+    uint32_t    *word;
 
 	msg.command = ECG_REG_R(REG_CNFG_GEN);
 	msg.data    = NULL_DATA;
@@ -271,12 +272,14 @@ void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN
 	ecg_encode_cnfg_gen(VALS, &newdata);
 
 	/* modify the current data with the new data */
-	msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
-	msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
-	msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+// 	msg.data.byte[0] = (msg.data.byte[0] & ~MASKS) | (newdata.byte[0] & MASKS);
+// 	msg.data.byte[1] = (msg.data.byte[1] & ~MASKS) | (newdata.byte[1] & MASKS);
+// 	msg.data.byte[2] = (msg.data.byte[2] & ~MASKS) | (newdata.byte[2] & MASKS);
+    ecg_mask(&newdata, msg.data, MASKS);
 
 	/* write out the message */
     msg.command = ECG_REG_W(REG_CNFG_GEN);
+    msg.data    = newdata;
 	ecg_write(&msg);
 }
 void ecg_set_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, const MAX30003_CNFG_CAL_MASKS MASKS)
@@ -487,17 +490,17 @@ void ecg_decode_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals, const MAX30003_DATA_t DAT
 	word |= ((uint32_t)(DATA.byte[0]) << 0 );
 	
 	/* shift values from the 24-bit data word into the value struct */
-	vals->rbiasn		= (CNFGGEN_RBIASN_VAL     )( (word & CNFGGEN_RBIASN) >> 0 );
-    vals->rbiasp        = (CNFGGEN_RBIASP_VAL     )( (word & CNFGGEN_RBIASP) >> 1 );
-	vals->rbiasv		= (CNFGGEN_RBIASV_VAL     )( (word & CNFGGEN_RBIASV) >> 2 );
-	vals->en_rbias		= (CNFGGEN_EN_RBIAS_VAL   )( (word & CNFGGEN_EN_RBIAS) >> 4);
-	vals->vth			= (CNFGGEN_DCLOFF_VTH_VAL )( (word & CNFGGEN_VTH) >> 6);
-	vals->imag			= (CNFGGEN_DCLOFF_IMAG_VAL)( (word & CNFGGEN_IMAG) >> 8);
-	vals->ipol			= (CNFGGEN_DCLOFF_IPOL_VAL)( (word & CNFGGEN_IPOL) >> 11);
+	vals->rbiasn		= (CNFGGEN_RBIASN_VAL     )( (word & CNFGGEN_RBIASN)    >> 0 );
+    vals->rbiasp        = (CNFGGEN_RBIASP_VAL     )( (word & CNFGGEN_RBIASP)    >> 1 );
+	vals->rbiasv		= (CNFGGEN_RBIASV_VAL     )( (word & CNFGGEN_RBIASV)    >> 2 );
+	vals->en_rbias		= (CNFGGEN_EN_RBIAS_VAL   )( (word & CNFGGEN_EN_RBIAS)  >> 4 );
+	vals->vth			= (CNFGGEN_DCLOFF_VTH_VAL )( (word & CNFGGEN_VTH)       >> 6 );
+	vals->imag			= (CNFGGEN_DCLOFF_IMAG_VAL)( (word & CNFGGEN_IMAG)      >> 8 );
+	vals->ipol			= (CNFGGEN_DCLOFF_IPOL_VAL)( (word & CNFGGEN_IPOL)      >> 11);
 	vals->en_dcloff		= (CNFGGEN_EN_DCLOFF_VAL  )( (word & CNFGGEN_EN_DCLOFF) >> 12);
-	vals->en_ecg		= (CNFGGEN_EN_ECG_VAL     )( (word & CNFGGEN_EN_ECG) >> 15);
-	vals->fmstr			= (CNFGGEN_FMSTR_VAL      )( (word & CNFGGEN_FMSTR) >> 16);
-	vals->en_ulp_lon	= (CNFGGEN_EN_ULP_LON_VAL )( (word & CNFGGEN_EN_ULP_LON) >> 20);
+	vals->en_ecg		= (CNFGGEN_EN_ECG_VAL     )( (word & CNFGGEN_EN_ECG)    >> 19);
+	vals->fmstr			= (CNFGGEN_FMSTR_VAL      )( (word & CNFGGEN_FMSTR)     >> 20);
+	vals->en_ulp_lon	= (CNFGGEN_EN_ULP_LON_VAL )( (word & CNFGGEN_EN_ULP_LON)>> 22);
 }
 void ecg_decode_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals, const MAX30003_DATA_t DATA)
 {
@@ -672,9 +675,9 @@ void ecg_encode_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, MAX30003_DATA_t *dat
 	word |= VALS.imag          << 8;
 	word |= VALS.ipol          << 11;
 	word |= VALS.en_dcloff     << 12;
-	word |= VALS.en_ecg        << 15;
-	word |= VALS.fmstr         << 16;
-	word |= VALS.en_ulp_lon    << 20;
+	word |= VALS.en_ecg        << 19;
+	word |= VALS.fmstr         << 20;
+	word |= VALS.en_ulp_lon    << 22;
 
 	/* extract and assign bytes from data word to be endian safe */
 	data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
@@ -837,9 +840,9 @@ uint8_t ecg_write(MAX30003_MSG *msg)
     ECG_BUF_O[ECG_CMND_POS]     = msg->command;
 
     /* load up the data word into the TX buffer */
-    ECG_BUF_O[ECG_DATA_POS]     = msg->data.byte[0];
+    ECG_BUF_O[ECG_DATA_POS]     = msg->data.byte[2];
     ECG_BUF_O[ECG_DATA_POS + 1] = msg->data.byte[1];
-    ECG_BUF_O[ECG_DATA_POS + 2] = msg->data.byte[2];
+    ECG_BUF_O[ECG_DATA_POS + 2] = msg->data.byte[0];
 
 
     /* perform spi transfer */
@@ -885,3 +888,34 @@ void ecg_fifo_reset()
 
     ecg_write(&msg);
 }
+
+void ecg_synch()
+{
+    MAX30003_MSG msg;
+
+    msg.command = ECG_REG_W(REG_SYNCH);
+    msg.data    = NULL_DATA;
+
+    ecg_write(&msg);
+}
+
+void ecg_mask(MAX30003_DATA_t *new_vals, const MAX30003_DATA_t OLD_VALS, const uint32_t MASKS)
+{
+    uint32_t *p;
+    uint32_t old_word;
+    uint32_t new_word;
+
+    /* extract byte values as 32-bit words */
+    p = (uint32_t *)OLD_VALS.byte;
+    old_word = *p;
+    p = (uint32_t *)new_vals->byte;
+    new_word = *p;
+
+    /* mask out old values and mask in new values */
+    new_word = (new_word & MASKS) | (old_word & ~MASKS);
+
+    /* build new data array */
+    new_vals->byte[0] = new_word >> 0;
+    new_vals->byte[1] = new_word >> 8;
+    new_vals->byte[2] = new_word >> 16;
+}   
