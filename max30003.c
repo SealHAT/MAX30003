@@ -154,6 +154,44 @@ void ecg_get_en_int(MAX30003_EN_INT_VALS *vals)
         ecg_decode_en_int(vals, msg.data);
     }
 }
+void ecg_get_mngr_int(MAX30003_MNGR_INT_VALS *vals)
+{
+    MAX30003_MSG msg;
+    uint8_t bytes;
+    
+    msg.command = ECG_REG_R(REG_MNGR_INT);
+    msg.data    = NULL_DATA;
+
+    bytes = ecg_read(&msg);
+
+    if(bytes != ECG_BUF_SZ) {
+	    /* missing data */
+	    // TODO error
+	    } else {
+	    /* populate the value struct from the data */
+	    ecg_decode_mngr_int(vals, msg.data);
+    }
+	
+}
+void ecg_get_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals)
+{
+    MAX30003_MSG msg;
+    uint8_t bytes;
+    
+    msg.command = ECG_REG_R(REG_MNGR_DYN);
+    msg.data    = NULL_DATA;
+
+    bytes = ecg_read(&msg);
+
+    if(bytes != ECG_BUF_SZ) {
+	    /* missing data */
+	    // TODO error
+	    } else {
+	    /* populate the value struct from the data */
+	    ecg_decode_mngr_dyn(vals, msg.data);
+    }
+    
+}
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 {
 	MAX30003_MSG msg;
@@ -173,7 +211,60 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 	}
 	
 }
+void ecg_get_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals)
+{
+	MAX30003_MSG msg;
+	uint8_t		 bytes;
+	
+	/* create a (read) command by shifting in the read indicator */
+	msg.command = ECG_REG_R(REG_CNFG_CAL);
+	msg.data		= NULL_DATA;
 
+	/* perform the spi read action */
+	bytes = ecg_read(&msg);
+	if(bytes != ECG_BUF_SZ) {
+		/* missing data */
+		// TODO error
+		} else {
+		ecg_decode_cnfg_cal(vals, msg.data);
+	}
+}
+void ecg_get_cnfg_emux(MAX30003_CNFG_EMUX_VALS *vals)
+{
+	MAX30003_MSG msg;
+	uint8_t		 bytes;
+	
+	/* create a (read) command by shifting in the read indicator */
+	msg.command = ECG_REG_R(REG_CNFG_EMUX);
+	msg.data		= NULL_DATA;
+
+	/* perform the spi read action */
+	bytes = ecg_read(&msg);
+	if(bytes != ECG_BUF_SZ) {
+		/* missing data */
+		// TODO error
+		} else {
+		ecg_decode_cnfg_emux(vals, msg.data);
+	}
+}
+void ecg_get_cnfg_ecg(MAX30003_CNFG_ECG_VALS *vals)
+{
+	MAX30003_MSG msg;
+	uint8_t		 bytes;
+	
+	/* create a (read) command by shifting in the read indicator */
+	msg.command = ECG_REG_R(REG_CNFG_ECG);
+	msg.data		= NULL_DATA;
+
+	/* perform the spi read action */
+	bytes = ecg_read(&msg);
+	if(bytes != ECG_BUF_SZ) {
+		/* missing data */
+		// TODO error
+		} else {
+		ecg_decode_cnfg_ecg(vals, msg.data);
+	}
+}
 void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS)
 {
     MAX30003_MSG msg;
