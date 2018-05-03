@@ -24,9 +24,10 @@
 #include "max30003.h"
 #include "driver_init.h"
 
-static void *ECG_SPI_DESC;
-static const void *ECG_SPI_MSG;
-static uint8_t ECG_CSB_PIN;
+static void			*ECG_SPI_DESC;
+static const void	*ECG_SPI_MSG;
+static uint32_t		*ecg_spi_msg_sz;
+static uint8_t		ECG_CSB_PIN;
 
 
 uint8_t ECG_BUF_I[ECG_BUF_SZ];
@@ -123,7 +124,6 @@ void ecg_get_status(MAX30003_STATUS_VALS *vals)
 
     /* build the message to send */
     msg.command = ECG_REG_R(REG_STATUS);
-    msg.data    = NULL_DATA;
 
     /* transfer over SPI and populate the msg */
     bytes = ecg_read(&msg);
@@ -142,7 +142,6 @@ void ecg_get_en_int(MAX30003_EN_INT_VALS *vals)
     uint8_t bytes;
     
     msg.command = ECG_REG_R(REG_EN_INT);
-    msg.data    = NULL_DATA;
 
     bytes = ecg_read(&msg);
 
@@ -161,7 +160,6 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 	
 	/* create a (read) command by shifting in the read indicator */
 	msg.command = ECG_REG_R(REG_CNFG_GEN);
-	msg.data		= NULL_DATA;
 
 	/* perform the spi read action */
     bytes = ecg_read(&msg);
@@ -171,7 +169,6 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 		} else {
 		ecg_decode_cnfg_gen(vals, msg.data);
 	}
-	
 }
 
 void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS)
@@ -180,7 +177,6 @@ void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_EN_INT);
-    msg.data    = NULL_DATA;
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
@@ -199,7 +195,6 @@ void ecg_set_en_int2(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASK
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_EN_INT2);
-    msg.data    = NULL_DATA;
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
@@ -218,7 +213,6 @@ void ecg_set_mngr_int(const MAX30003_MNGR_INT_VALS VALS, const MAX30003_MNGR_INT
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_MNGR_INT);
-    msg.data    = NULL_DATA;
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
@@ -237,7 +231,6 @@ void ecg_set_mngr_dyn(const MAX30003_MNGR_DYN_VALS VALS, const MAX30003_MNGR_DYN
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_MNGR_DYN);
-    msg.data    = NULL_DATA;
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
@@ -254,10 +247,8 @@ void ecg_set_cnfg_gen(const MAX30003_CNFG_GEN_VALS VALS, const MAX30003_CNFG_GEN
 {
 	MAX30003_MSG msg;
 	MAX30003_DATA_t newdata;
-    uint32_t    *word;
 
 	msg.command = ECG_REG_R(REG_CNFG_GEN);
-	msg.data    = NULL_DATA;
 
 	/* get the 24-bit data word for the current and new configurations */
 	ecg_read(&msg);
@@ -277,7 +268,6 @@ void ecg_set_cnfg_cal(const MAX30003_CNFG_CAL_VALS VALS, const MAX30003_CNFG_CAL
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_CNFG_CAL);
-    msg.data    = NULL_DATA;
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
@@ -296,7 +286,6 @@ void ecg_set_cnfg_emux(const MAX30003_CNFG_EMUX_VALS VALS, const MAX30003_CNFG_E
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_CNFG_EMUX);
-    msg.data    = NULL_DATA;
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
@@ -315,7 +304,6 @@ void ecg_set_cnfg_ecg(const MAX30003_CNFG_ECG_VALS VALS, const MAX30003_CNFG_ECG
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_CNFG_ECG);
-    msg.data    = NULL_DATA;
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
@@ -334,8 +322,7 @@ void ecg_set_cnfg_rtor1(const MAX30003_CNFG_RTOR1_VALS VALS, const MAX30003_CNFG
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_CNFG_RTOR1);
-    msg.data    = NULL_DATA;
-
+	
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
     ecg_encode_cnfg_rtor1(VALS, &newdata);
@@ -353,7 +340,6 @@ void ecg_set_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, const MAX30003_CNFG
     MAX30003_DATA_t newdata;
 
     msg.command = ECG_REG_R(REG_CNFG_RTOR2);
-    msg.data    = NULL_DATA;
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
@@ -753,10 +739,11 @@ void ecg_encode_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, MAX30003_DATA_t 
 }
 
 
-void ecg_init_spi(void *spi_desc, const void *spi_msg)
+void ecg_init_spi(void *spi_desc, const void *spi_msg, uint32_t* spi_msg_sz)
 {
-    ECG_SPI_DESC = spi_desc;
-    ECG_SPI_MSG  = spi_msg;
+    ECG_SPI_DESC	= spi_desc;
+    ECG_SPI_MSG		= spi_msg;
+	ecg_spi_msg_sz	= spi_msg_sz;
 }
 
 void ecg_init_csb(const uint8_t ecg_csb_pin)
@@ -793,7 +780,6 @@ uint8_t ecg_read(MAX30003_MSG *msg)
     uint8_t xfer_bytes;
 
     /* add the command message to the TX buffer */
-    ecg_clear_obuf();
     ECG_BUF_O[ECG_CMND_POS] = (uint8_t)msg->command;
 
     /* perform spi transfer */
@@ -839,7 +825,6 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 	
 	/* create a (read) command by shifting in the read indicator */
 	msg.command = ECG_REG_R(REG_ECG_FIFO);
-	msg.data	= NULL_DATA;
 
 	/* perform the spi read action */
 	bytes = ecg_read(&msg);
@@ -851,10 +836,24 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 	}
 }
 
-void ecg_get_sample_burst(MAX30003_FIFO_VALS *vals)
+void ecg_get_sample_burst(uint32_t *fifo, const uint8_t SIZE)
 {
-	ecg_get_sample(vals);
+	uint8_t i;
+	MAX30003_FIFO_VALS vals;
+	
+	i = 0;
+	ecg_get_sample(&vals);
+	
+	#if 0
 
+
+	while (vals.etag == ETAG_VALID || vals.etag == ETAG_FAST) {
+		fifo[i % SIZE] = (vals.etag &) // mask in values here
+		ecg_spi_msg_sz = ECG_DATA_SZ;
+		ecg_get_sample(&vals);
+	}
+
+	#endif
 }
 
 void ecg_fifo_reset()

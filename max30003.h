@@ -27,7 +27,7 @@
 #ifdef __cplusplus
 extern "C"
 {
-#endif // __cplusplu
+#endif // __cplusplus
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -36,7 +36,9 @@ extern "C"
 
 #define ECG_REG_R(REG)  ( (uint8_t)(REG << 1) | MAX30003_R_INDICATOR )
 #define ECG_REG_W(REG)  ( (uint8_t)(REG << 1) | MAX30003_W_INDICATOR )
-#define ECG_BUF_SZ      (64)
+#define ECG_BUF_SZ      (4)
+#define ECG_CMND_SZ		(1)
+#define ECG_DATA_SZ		(3)
 #define ECG_BUF_CLR     (0x00)
 
 enum ECG_WORD_POS {
@@ -50,16 +52,24 @@ extern uint8_t ECG_BUF_O[ECG_BUF_SZ];
 typedef struct MAX30003_DATA_t { uint8_t byte[3]; } MAX30003_DATA_t;
 typedef uint8_t MAX30003_ADDR_t;
 
+/* ECG_SAMPLE type
+ *	struct for storing a bitmapped ECG sample in a 32-bit number
+ *	packing and bit order is ignored as the total struct size is 32-bits
+ */
+typedef struct ECG_SAMPLE {
+	uint32_t	tag:3;		/* ETAG data from the ECG_FIFO	*/
+	int32_t		data:18;	/* voltage of the sample		*/
+	uint32_t	step:11;	/* time step of the sample		*/
+} ECG_SAMPLE;
 
-typedef struct MAX30003_MSG
-{
+
+typedef struct MAX30003_MSG {
     uint8_t command;
     MAX30003_DATA_t data;
 } MAX30003_MSG;
 
 /* all active high */
-typedef struct MAX30003_STATUS_VALS
-{
+typedef struct MAX30003_STATUS_VALS {
     bool ldoff_nl;
     bool ldoff_nh;
     bool ldoff_pl;
@@ -174,7 +184,7 @@ int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
 void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_pin_level */
 
 /* initialization functions, run before using device */
-void ecg_init_spi(void *spi_desc, const void *spi_msg);
+void ecg_init_spi(void *spi_desc, const void *spi_msg, uint32_t* spi_msg_sz);
 void ecg_init_csb(const uint8_t ecg_csb_pin);
 
 // TODO sort/rename here

@@ -19,9 +19,8 @@ void ecg_init(struct spi_m_sync_descriptor *_ecg_spi_descriptor, struct spi_xfer
 	_ecg_spi_msg->rxbuf = ECG_BUF_I;
 	_ecg_spi_msg->txbuf = ECG_BUF_O;
 	
-	
 	/* associate the buffers and chip variables select to their ecg counterparts */
-	ecg_init_spi(_ecg_spi_descriptor, _ecg_spi_msg);
+	ecg_init_spi(_ecg_spi_descriptor, _ecg_spi_msg, &_ecg_spi_msg->size);
 	ecg_init_csb(_CS);
 }
 
@@ -61,7 +60,7 @@ int main(void)
     emux_vals.caln_sel = CALNSEL_IN_VCALN;
     emux_vals.calp_sel = CALPSEL_IN_VCALP;
     ecg_set_cnfg_emux(emux_vals, CNFGEMUX_CALN_SEL | CNFGEMUX_CALP_SEL);
-    //ecg_fifo_reset();
+
     ecg_synch();
 	for(;;) {
 		if (count < ECG_LOG_SZ) {
@@ -75,7 +74,7 @@ int main(void)
 	}
 } 
 
-// void ecg_record_clean(const uint8_t SAMPLE_SIZE)
+// void ecg_record(const uint8_t SAMPLE_SIZE)
 // {
 //     MAX30003_FIFO_VALS fifo;
 // 
