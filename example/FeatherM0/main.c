@@ -1,6 +1,6 @@
 #include "atmel_start.h"
 #include "max30003.h"
-//#include "max30003test.h"
+#include "max30003test.h"
 
 #define BURST 0
 /*static int32_t ecg_log[ECG_LOG_SZ];*/
@@ -21,6 +21,9 @@
 
 int main(void)
 {
+    atmel_start_init();
+
+    MAX30003_STATUS_VALS status_vals;
     volatile bool result;
 	uint16_t count;
     uint16_t size;
@@ -28,26 +31,25 @@ int main(void)
     result = false;
 	count = 0;
     size = ECG_LOG_SZ;
-	atmel_start_init();
-	
-	for(int i = 0; i < ECG_LOG_SZ; i++) {
-		ECG_LOG[i] = 0;
-	}
 
     spi_m_sync_set_mode(&ECG_SPI_DEV_0, SPI_MODE_0);
     spi_m_sync_enable(&ECG_SPI_DEV_0);
-
     gpio_set_pin_level(CS,true);
 
+    ecg_spi_msg.size  = ECG_BUF_SZ;
     ecg_spi_msg.rxbuf = ECG_BUF_I;
     ecg_spi_msg.txbuf = ECG_BUF_O;
-    ecg_spi_msg.size  = ECG_BUF_SZ;
 
-//     result = MAX30003_INIT_TEST_ROUND();
-//     delay_ms(1000);
-    MAX30003_INFO_VALS info_vals;
+    for(int i = 0; i < ECG_LOG_SZ; i++) {
+        ECG_LOG[i] = 0;
+    }
+
+    //result = MAX30003_INIT_TEST_ROUND();
+    delay_ms(1000);
+
 	for(;;) {
-        ecg_get(&info_vals, REG_INFO);
+        ecg_get_status(&status_vals);
+        //ecg_get(&info_vals, REG_INFO);
 	}
 } 
 

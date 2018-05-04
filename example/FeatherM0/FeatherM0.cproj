@@ -209,6 +209,7 @@
           <SwdClock>4000000</SwdClock>
         </InterfaceProperties>
         <InterfaceName>SWD</InterfaceName>
+        <JlinkConfigFile>C:\SPB_Data\git\MAX30003\example\FeatherM0\jlink.config</JlinkConfigFile>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
       <ToolNumber>801001700</ToolNumber>
