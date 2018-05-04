@@ -37,18 +37,17 @@ extern "C"
 
 struct spi_xfer ecg_spi_msg;
 
-
-
-
 #define ECG_REG_R(REG)  ( (uint8_t)(REG << 1) | MAX30003_R_INDICATOR )
 #define ECG_REG_W(REG)  ( (uint8_t)(REG << 1) | MAX30003_W_INDICATOR )
-#define ECG_BUF_SZ      (4)
-#define ECG_CMND_SZ		(1)
-#define ECG_DATA_SZ		(3)
+#define ECG_BUF_SZ      (12)
+// #define ECG_CMND_SZ		(1)
+// #define ECG_DATA_SZ		(3)
 #define ECG_BUF_CLR     (0x00)
+#define ECG_LOG_SZ      (1024)
 
 extern uint8_t ECG_BUF_I[ECG_BUF_SZ];
 extern uint8_t ECG_BUF_O[ECG_BUF_SZ];
+extern int32_t ECG_LOG[ECG_LOG_SZ];
 
 enum ECG_WORD_POS {
     ECG_CMND_POS = 0,
@@ -201,7 +200,7 @@ void ecg_synch();
 /* ecg register access functions */
 void ecg_get(void *vals, const MAX30003_REG REG);
 void ecg_get_sample(MAX30003_FIFO_VALS *vals);
-uint16_t ecg_get_sample_burst(int32_t *fifo, const uint16_t SIZE); /* returns number of samples recorded */
+uint16_t ecg_get_sample_burst(int32_t *fifo, uint16_t offset, const uint16_t SIZE); /* returns number of samples recorded */
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);

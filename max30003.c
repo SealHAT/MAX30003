@@ -25,6 +25,7 @@
 
 uint8_t ECG_BUF_I[ECG_BUF_SZ];
 uint8_t ECG_BUF_O[ECG_BUF_SZ];
+int32_t ECG_LOG[ECG_LOG_SZ];
 
 static const MAX30003_DATA_t NULL_DATA = {
     .byte[0] = 0x00,
@@ -715,17 +716,13 @@ uint8_t ecg_read(MAX30003_MSG *msg)
 
     /* perform spi transfer */
     gpio_set_pin_level(CS, false);
-    ecg_spi_msg.size = ECG_CMND_SZ;
     xfer_bytes = spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
-    ecg_spi_msg.size = ECG_DATA_SZ;
-    xfer_bytes += spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
     gpio_set_pin_level(CS, true);
-    ecg_spi_msg.size = ECG_CMND_SZ + ECG_DATA_SZ;
 
     /* arrange the MISO bytes into the data bins */
-    msg->data.byte[0] = ECG_BUF_I[2];
-    msg->data.byte[1] = ECG_BUF_I[1];
-    msg->data.byte[2] = ECG_BUF_I[0];
+    msg->data.byte[0] = ECG_BUF_I[3];
+    msg->data.byte[1] = ECG_BUF_I[2];
+    msg->data.byte[2] = ECG_BUF_I[1];
 
     /* return the bytes transfered, data is also updated */
     return xfer_bytes;
@@ -745,7 +742,6 @@ uint8_t ecg_write(MAX30003_MSG *msg)
 
 
     /* perform spi transfer */
-    ecg_spi_msg.size = ECG_BUF_SZ;
     gpio_set_pin_level(CS, false);
     xfer_bytes = spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
     gpio_set_pin_level(CS, true);
@@ -768,7 +764,7 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 }
 
 
- uint16_t ecg_get_sample_burst(int32_t *fifo, const uint16_t SIZE)
+ uint16_t ecg_get_sample_burst(int32_t *fifo, uint16_t offset, const uint16_t SIZE)
  {
     bool eof;
     uint16_t step;              /* unit-less time increment */
@@ -783,12 +779,13 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
     /* start the burst transfer, but hold csb low */
     ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
 
-    ecg_spi_msg.size = ECG_CMND_SZ;
+/*    ecg_spi_msg.size = ECG_CMND_SZ;*/
     gpio_set_pin_level(CS, false);
     spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
+    ECG_BUF_O[ECG_CMND_POS] = 0x00;
 
     /* start collecting samples from FIFO */
-    ecg_spi_msg.size = ECG_DATA_SZ;
+/*    ecg_spi_msg.size = ECG_DATA_SZ;*/
 
     do {
         spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
@@ -810,10 +807,10 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
                 word |= (uint32_t)vals.etag << 0;
                 word |= (uint32_t)step      << 3;
                 word |= (uint32_t)vals.data << 14;
-                fifo[step % SIZE] = word;
-                if (step == SIZE) {
-                    delay_ms(1000);
+                if (offset + step >= SIZE) { 
+                    delay_ms(10000); 
                 }
+                fifo[offset + step] = word;
                 
                 /* increment, clear, and get next sample */
                 step++;
@@ -822,18 +819,18 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 
             case ETAG_FIFO_OVERFLOW :
                 gpio_set_pin_level(CS, true);
-                ecg_spi_msg.size = ECG_BUF_SZ;
+/*                ecg_spi_msg.size = ECG_BUF_SZ;*/
                 ecg_fifo_reset();
             case ETAG_FIFO_EMPTY    :
                 eof = true;
                 break;
             default :   delay_ms(1000); /* TODO error handling */
         }
-    } while (!eof);
+    } while (!eof && ((step + offset) < SIZE));
     
     /* done sampling spi */
     gpio_set_pin_level(CS, true); 
-    ecg_spi_msg.size = ECG_BUF_SZ;   
+/*    ecg_spi_msg.size = ECG_BUF_SZ;   */
  
     return step;
  }

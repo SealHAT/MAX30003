@@ -1,8 +1,8 @@
 #include "atmel_start.h"
 #include "max30003.h"
 
-#define ECG_LOG_SZ 1024
-int32_t ecg_log[ECG_LOG_SZ];
+#define BURST 0
+/*static int32_t ecg_log[ECG_LOG_SZ];*/
 
 const MAX30003_CNFG_GEN_VALS cnfggen_vals_test = {
     .rbiasn     = RBIASN_NOT_CONNECTED,
@@ -22,15 +22,17 @@ int main(void)
 {
     MAX30003_CNFG_GEN_VALS cnfggen_vals;
     MAX30003_CNFG_EMUX_VALS emux_vals;
-	MAX30003_FIFO_VALS fifo;
-	
-	int count;
+    MAX30003_FIFO_VALS fifo;
+    uint32_t word;
+	uint16_t count;
+    uint16_t size;
 	
 	count = 0;
+    size = ECG_LOG_SZ;
 	atmel_start_init();
 	
 	for(int i = 0; i < ECG_LOG_SZ; i++) {
-		ecg_log[i] = 0;
+		ECG_LOG[i] = 0;
 	}
 
     spi_m_sync_set_mode(&ECG_SPI_DEV_0, SPI_MODE_0);
@@ -40,7 +42,7 @@ int main(void)
 
     ecg_spi_msg.rxbuf = ECG_BUF_I;
     ecg_spi_msg.txbuf = ECG_BUF_O;
-    ecg_spi_msg.size  = ECG_BUF_SZ * 2;
+    ecg_spi_msg.size  = ECG_BUF_SZ;
 
     ecg_sw_reset();
 	cnfggen_vals.en_ecg = ENECG_ENABLED;
@@ -56,23 +58,38 @@ int main(void)
     emux_vals.caln_sel = CALNSEL_IN_VCALN;
     emux_vals.calp_sel = CALPSEL_IN_VCALP;
     ecg_set_cnfg_emux(emux_vals, CNFGEMUX_CALN_SEL | CNFGEMUX_CALP_SEL);
-
+    delay_ms(1000);
     ecg_synch();
     delay_ms(50);
-    count = ecg_get_sample_burst(ecg_log, ECG_LOG_SZ);
-    delay_ms(1000);
-
-    ecg_fifo_reset();
-    delay_ms(50);
-    count = 0;
 	for(;;) {
-		if (count < ECG_LOG_SZ) {
-			ecg_get_sample(&fifo);
-			ecg_log[count] = (fifo.data << 14) | (fifo.etag << 3) | fifo.ptag;
-			count++;
-		} else {
+        #if BURST == 1
+//         if(count + size <= ECG_LOG_SZ) {
+//             count += ecg_get_sample_burst(ECG_LOG, count, size);
+//             size -= count;
+//         } else {
+//             delay_ms(1000);
+//         }
+        #else
+        if(count < ECG_LOG_SZ) {
+            word = 0x000000;
+            ecg_get_sample(&fifo);
+            delay_ms(1);
+            if(fifo.etag == ETAG_FIFO_EMPTY) {
+                /* do nothing */
+            } else if (fifo.etag == ETAG_FIFO_OVERFLOW) {
+                ecg_synch();
+            } else if (fifo.etag == _ETAG_RESERVED1 || fifo.etag == _ETAG_RESERVED2) {
+                delay_ms(1000);
+            } else {
+                word |= (uint32_t)((fifo.etag & 0x01)    << 0);
+                word |= (uint32_t)(count                 << 3);
+                word |= (uint32_t)(fifo.data             << 14);
+                ECG_LOG[count++] = (int32_t)word;
+            }
+        } else {
             delay_ms(1000);
         }
+        #endif
 	}
 } 
 
