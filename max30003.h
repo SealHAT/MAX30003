@@ -33,6 +33,12 @@ extern "C"
 #include <stdint.h>
 
 #include "max30003types.h"
+#include "driver_init.h"
+
+struct spi_xfer ecg_spi_msg;
+
+
+
 
 #define ECG_REG_R(REG)  ( (uint8_t)(REG << 1) | MAX30003_R_INDICATOR )
 #define ECG_REG_W(REG)  ( (uint8_t)(REG << 1) | MAX30003_W_INDICATOR )
@@ -41,13 +47,13 @@ extern "C"
 #define ECG_DATA_SZ		(3)
 #define ECG_BUF_CLR     (0x00)
 
+extern uint8_t ECG_BUF_I[ECG_BUF_SZ];
+extern uint8_t ECG_BUF_O[ECG_BUF_SZ];
+
 enum ECG_WORD_POS {
     ECG_CMND_POS = 0,
     ECG_DATA_POS = 1
 };
-
-extern uint8_t ECG_BUF_I[ECG_BUF_SZ];
-extern uint8_t ECG_BUF_O[ECG_BUF_SZ];
 
 typedef struct MAX30003_DATA_t { uint8_t byte[3]; } MAX30003_DATA_t;
 typedef uint8_t MAX30003_ADDR_t;
@@ -180,21 +186,22 @@ typedef struct MAX30003_RTOR_VALS {
 } MAX30003_RTOR_VALS;
 
 /* ASF function pointers for using SAML21 calls without cluttering the MAX30003 namespace */
-int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
-void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_pin_level */
+//int32_t (*ecg_spi_xfer)(void * descriptor, const void *buffer);		/* spi_xfer */
+//void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_pin_level */
 
 /* initialization functions, run before using device */
-void ecg_init_spi(void *spi_desc, const void *spi_msg, uint32_t* spi_msg_sz);
-void ecg_init_csb(const uint8_t ecg_csb_pin);
+//void ecg_init_spi(void *spi_desc, const void *spi_msg, uint32_t* spi_msg_sz);
+//void ecg_init_csb(const uint8_t ecg_csb_pin);
 
 // TODO sort/rename here
 void ecg_fifo_reset();
+void ecg_sw_reset();
 void ecg_synch();
 
 /* ecg register access functions */
 void ecg_get(void *vals, const MAX30003_REG REG);
 void ecg_get_sample(MAX30003_FIFO_VALS *vals);
-uint16_t ecg_get_sample_burst(uint32_t *fifo, const uint16_t SIZE); /* returns number of samples recorded */
+uint16_t ecg_get_sample_burst(int32_t *fifo, const uint16_t SIZE); /* returns number of samples recorded */
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);

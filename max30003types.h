@@ -35,8 +35,7 @@ extern "C"
 #define MAX30003_R_INDICATOR    (1)
 #define MAX30003_DATA_BYTES     (3)
 #define MAX30003_CMND_BYTES     (1)
-// TODO check endianness
-// TODO macro for WRITE/READ on ADDRESSES ie:(REG << 1 | R)
+
 /**
  * REG addresses for the MAX30003 biopotential AFE
  **/

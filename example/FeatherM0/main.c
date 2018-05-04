@@ -2,7 +2,7 @@
 #include "max30003.h"
 
 #define ECG_LOG_SZ 1024
-static int32_t ecg_log[ECG_LOG_SZ];
+int32_t ecg_log[ECG_LOG_SZ];
 
 const MAX30003_CNFG_GEN_VALS cnfggen_vals_test = {
     .rbiasn     = RBIASN_NOT_CONNECTED,
@@ -18,37 +18,8 @@ const MAX30003_CNFG_GEN_VALS cnfggen_vals_test = {
     .en_ulp_lon = ENULPLON_DISABLED
 };
 
-int32_t _spi_m_sync_transfer_voidparam(void * descriptor, const void * buffer)
-{
-    int32_t r = spi_m_sync_transfer((struct spi_m_sync_descriptor *)descriptor, (const struct spi_xfer*) buffer);
-    return r;
-}
-
-void ecg_init(struct spi_m_sync_descriptor *_ecg_spi_descriptor, struct spi_xfer *_ecg_spi_msg, const uint8_t _CS)
-{
-    uint32_t *sz_p;
-	/* enable the spi descriptor for the ecg */
-	spi_m_sync_set_mode(_ecg_spi_descriptor, SPI_MODE_0);
-	spi_m_sync_enable(_ecg_spi_descriptor);
-	
-	/* associate the transfer and chip select functions to their ecg counterparts */
-	ecg_spi_xfer		= &_spi_m_sync_transfer_voidparam;
-	ecg_set_csb_level	= &gpio_set_pin_level;
-	
-	/* associate the spi transfer buffers */
-    _ecg_spi_msg->size  = ECG_BUF_SZ;
-	_ecg_spi_msg->rxbuf = ECG_BUF_I;
-	_ecg_spi_msg->txbuf = ECG_BUF_O;
-    sz_p = &(_ecg_spi_msg->size);
-	
-	/* associate the buffers and chip variables select to their ecg counterparts */
-	ecg_init_spi(_ecg_spi_descriptor, _ecg_spi_msg, sz_p);
-	ecg_init_csb(_CS);
-}
-
 int main(void)
 {
-	struct spi_xfer ecg_spi_msg;
     MAX30003_CNFG_GEN_VALS cnfggen_vals;
     MAX30003_CNFG_EMUX_VALS emux_vals;
 	MAX30003_FIFO_VALS fifo;
@@ -62,17 +33,16 @@ int main(void)
 		ecg_log[i] = 0;
 	}
 
-    /* TODO abstract to ecg_init_spi */
     spi_m_sync_set_mode(&ECG_SPI_DEV_0, SPI_MODE_0);
     spi_m_sync_enable(&ECG_SPI_DEV_0);
 
     gpio_set_pin_level(CS,true);
 
-	ecg_init(&ECG_SPI_DEV_0, &ecg_spi_msg, CS);    
-        	
-	ecg_get(&cnfggen_vals, REG_CNFG_GEN);
-	delay_ms(1000);
+    ecg_spi_msg.rxbuf = ECG_BUF_I;
+    ecg_spi_msg.txbuf = ECG_BUF_O;
+    ecg_spi_msg.size  = ECG_BUF_SZ * 2;
 
+    ecg_sw_reset();
 	cnfggen_vals.en_ecg = ENECG_ENABLED;
 
 	ecg_set_cnfg_gen(cnfggen_vals_test, CNFGGEN_EN_ECG);
@@ -88,10 +58,12 @@ int main(void)
     ecg_set_cnfg_emux(emux_vals, CNFGEMUX_CALN_SEL | CNFGEMUX_CALP_SEL);
 
     ecg_synch();
-//     count = ecg_get_sample_burst((uint32_t*)ecg_log, ECG_LOG_SZ);
-//     delay_ms(1000);
-// 
-//     ecg_fifo_reset();
+    delay_ms(50);
+    count = ecg_get_sample_burst(ecg_log, ECG_LOG_SZ);
+    delay_ms(1000);
+
+    ecg_fifo_reset();
+    delay_ms(50);
     count = 0;
 	for(;;) {
 		if (count < ECG_LOG_SZ) {
@@ -101,6 +73,6 @@ int main(void)
 		} else {
             delay_ms(1000);
         }
-		
 	}
 } 
+
