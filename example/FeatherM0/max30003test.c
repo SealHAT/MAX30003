@@ -225,7 +225,9 @@ void MAX30003_INIT_SETUP()
 	ecg_set_cnfg_gen(CNFGGEN_VALS_DEFAULT,CNFG_GEN_DEFAULT_MASK);
 	delay_ms(100);
 	ecg_set_cnfg_ecg(CNFECG_VALS_DEFAULT,CNFG_ECG_DEFAULT_MASK);
-	delay_ms(100);	
+	delay_ms(100);
+	ecg_synch();
+	delay_ms(100);
 }
 
 void MAX30003_TEST_TRANS_RATE()
@@ -255,11 +257,15 @@ void MAX30003_TEST_TRANS_RATE()
 	cnfg_ecg_vals.rate = RATE_MED_SPS;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 	delay_ms(100);
+	ecg_synch();
+	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.rate == RATE_MED_SPS){
 		//LED is on
 	}else{
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
+	delay_ms(100);
+	ecg_synch();
 	delay_ms(100);
 	}
 	//if button is clicked, start counting the time and record the data
@@ -282,6 +288,8 @@ void MAX30003_TEST_TRANS_RATE()
 		//LED is on
 		}else{
 		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
+		delay_ms(100);
+		ecg_synch();
 		delay_ms(100);
 	}
 	//if button is clicked, start counting the time and record the data
@@ -323,12 +331,16 @@ void MAX30003_TEST_GAIN()
 	cnfg_ecg_vals.gain = GAIN_40_V;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 	delay_ms(100);
+	ecg_synch();
+	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.gain==GAIN_40_V){
 		//LED is on
 	}else{
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-	delay_ms(100);		
+	delay_ms(100);	
+	ecg_synch();
+	delay_ms(100);	
 	}
 	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
 	//while time is not expired:
@@ -345,12 +357,16 @@ void MAX30003_TEST_GAIN()
 	cnfg_ecg_vals.gain = GAIN_80_V;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 	delay_ms(100);
+	ecg_synch();
+	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.gain==GAIN_80_V){
 		//LED is on
 		}else{
 		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
 		delay_ms(100);
+	ecg_synch();
+	delay_ms(100);
 	}
 	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
 	//while time is not expired:
@@ -366,6 +382,8 @@ void MAX30003_TEST_GAIN()
 	while(nextstep==3){
 	cnfg_ecg_vals.gain = GAIN_160_V;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
+	delay_ms(100);
+	ecg_synch();
 	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.gain==GAIN_160_V){
@@ -413,11 +431,15 @@ void MAX30003_TEST_Fre(){
 		cnfg_ecg_vals.dlpf = DLPF_100_HZ;
 		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 		delay_ms(100);
+	ecg_synch();
+	delay_ms(100);
 		ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 		if(cnfg_ecg_vals.dlpf==DLPF_100_HZ){
 			//LED is on
 			}else{
 			ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
+			delay_ms(100);
+			ecg_synch();
 			delay_ms(100);
 		}
 		//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
@@ -435,11 +457,15 @@ void MAX30003_TEST_Fre(){
 		cnfg_ecg_vals.dlpf = DLPF_150_HZ;
 		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 		delay_ms(100);
+		ecg_synch();
+		delay_ms(100);
 		ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 		if(cnfg_ecg_vals.dlpf==DLPF_150_HZ){
 			//LED is on
 			}else{
 			ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
+			delay_ms(100);
+			ecg_synch();
 			delay_ms(100);
 		}
 		//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
@@ -462,6 +488,8 @@ void MAX30003_TEST_Fre(){
 			//LED is on
 			}else{
 			ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
+			delay_ms(100);
+			ecg_synch();
 			delay_ms(100);
 		}
 		//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
@@ -489,7 +517,10 @@ void MAX30003_TEST_HELLO_WORLD(){
 	// LED is on	
 	}else{//force to open ecg 
 	ecg_sw_reset();
+	delay_ms(100);
 	ecg_set_cnfg_gen(cnfg_gen_vals,CNFGGEN_EN_ECG );
+	delay_ms(100);
+	ecg_synch();
 	delay_ms(100);
 	}
 	//if button is clicked, start the counter and start record the data
@@ -534,8 +565,11 @@ void MAX30003_FIFO_TEST(){
 		//LED is on
 	}else{
 	ecg_sw_reset();
+	delay_ms(100);
 	ecg_set_cnfg_gen(cnfg_gen_vals,CNFGGEN_EN_ECG );
-	delay_ms(100);		
+	delay_ms(100);
+	ecg_synch();
+	delay_ms(100);	
 	}
 	//if button is clicked, next step = 1 and start counter, and !timeexpiered in while loop;
 	while(nextstep==1){
