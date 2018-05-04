@@ -185,6 +185,10 @@ int32_t usb_write(void* outData, uint32_t BUFFER_SIZE)
 	return  err;
 }
 
+bool usb_isInBusy(void) {
+    return (0 != inbuf.waiting);
+    }
+
 
 /************************ RECEIVING DATA ****************************************/
 int32_t usb_available()

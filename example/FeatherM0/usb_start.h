@@ -130,6 +130,8 @@ int32_t usb_get(void);
  */
 int32_t usb_flushRx(void);
 
+bool usb_isInBusy(void);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
