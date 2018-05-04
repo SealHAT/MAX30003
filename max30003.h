@@ -196,6 +196,7 @@ typedef struct MAX30003_RTOR_VALS {
 void ecg_fifo_reset();
 void ecg_sw_reset();
 void ecg_synch();
+void ecg_sw_reset();
 
 /* ecg register access functions */
 void ecg_get(void *vals, const MAX30003_REG REG);
@@ -203,7 +204,13 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals);
 uint16_t ecg_get_sample_burst(int32_t *fifo, uint16_t offset, const uint16_t SIZE); /* returns number of samples recorded */
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
+void ecg_get_mngr_int(MAX30003_MNGR_INT_VALS *vals);
+void ecg_get_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals);
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
+void ecg_get_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals);
+void ecg_get_cnfg_emux(MAX30003_CNFG_EMUX_VALS *vals);
+void ecg_get_cnfg_ecg(MAX30003_CNFG_ECG_VALS *vals);
+
 
 //void ecg_set(void *VALS, const uint32_t MASKS, const MAX30003_REG REG); // TODO make generic later
 void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS);
