@@ -21,6 +21,7 @@
 
 //constant setup for default values in register
 const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
+	//.en_ulp_lon = ENULPLON_ENABLED,
 	.en_ecg = ENECG_ENABLED
 };
 const MAX30003_CNFG_ECG_VALS CNFECG_VALS_DEFAULT = {
@@ -55,4 +56,6 @@ void MAX30003_TEST_TRANS_RATE();
 void MAX30003_TEST_GAIN();
 void MAX30003_TEST_Fre();
 void MAX30003_TEST_HELLO_WORLD();
+void MAX30003_FLAG_TEST();
+void MAX30003_FIFO_TEST();
 	
