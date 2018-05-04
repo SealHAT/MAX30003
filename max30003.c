@@ -88,9 +88,17 @@ void ecg_get_en_int(MAX30003_EN_INT_VALS *vals)
     MAX30003_MSG msg;
     
     msg.command = ECG_REG_R(REG_EN_INT);
+
     ecg_read(&msg);
+    ecg_decode_en_int(vals, msg.data);
+}
+void ecg_get_en_int2(MAX30003_EN_INT_VALS *vals)
+{
+    MAX30003_MSG msg;
+    
+    msg.command = ECG_REG_R(REG_EN_INT2);
 
-
+    ecg_read(&msg);
     ecg_decode_en_int(vals, msg.data);
 }
 void ecg_get_mngr_int(MAX30003_MNGR_INT_VALS *vals)
@@ -101,16 +109,8 @@ void ecg_get_mngr_int(MAX30003_MNGR_INT_VALS *vals)
     msg.command = ECG_REG_R(REG_MNGR_INT);
     msg.data    = NULL_DATA;
 
-    bytes = ecg_read(&msg);
-
-    if(bytes != ECG_BUF_SZ) {
-	    /* missing data */
-	    // TODO error
-	    } else {
-	    /* populate the value struct from the data */
-	    ecg_decode_mngr_int(vals, msg.data);
-    }
-	
+    ecg_read(&msg);
+	ecg_decode_mngr_int(vals, msg.data);
 }
 void ecg_get_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals)
 {
@@ -120,16 +120,8 @@ void ecg_get_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals)
     msg.command = ECG_REG_R(REG_MNGR_DYN);
     msg.data    = NULL_DATA;
 
-    bytes = ecg_read(&msg);
-
-    if(bytes != ECG_BUF_SZ) {
-	    /* missing data */
-	    // TODO error
-	    } else {
-	    /* populate the value struct from the data */
-	    ecg_decode_mngr_dyn(vals, msg.data);
-    }
-    
+    ecg_read(&msg);
+	ecg_decode_mngr_dyn(vals, msg.data);
 }
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 {
@@ -140,7 +132,6 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 
 	/* perform the spi read action */
     ecg_read(&msg);
-
 	ecg_decode_cnfg_gen(vals, msg.data);
 }
 void ecg_get_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals)
@@ -153,49 +144,33 @@ void ecg_get_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals)
 	msg.data		= NULL_DATA;
 
 	/* perform the spi read action */
-	bytes = ecg_read(&msg);
-	if(bytes != ECG_BUF_SZ) {
-		/* missing data */
-		// TODO error
-		} else {
-		ecg_decode_cnfg_cal(vals, msg.data);
-	}
+	ecg_read(&msg);
+	ecg_decode_cnfg_cal(vals, msg.data);
 }
 void ecg_get_cnfg_emux(MAX30003_CNFG_EMUX_VALS *vals)
 {
 	MAX30003_MSG msg;
-	uint8_t		 bytes;
-	
+
 	/* create a (read) command by shifting in the read indicator */
 	msg.command = ECG_REG_R(REG_CNFG_EMUX);
 	msg.data		= NULL_DATA;
 
 	/* perform the spi read action */
-	bytes = ecg_read(&msg);
-	if(bytes != ECG_BUF_SZ) {
-		/* missing data */
-		// TODO error
-		} else {
-		ecg_decode_cnfg_emux(vals, msg.data);
-	}
+	ecg_read(&msg);
+	ecg_decode_cnfg_emux(vals, msg.data);
 }
 void ecg_get_cnfg_ecg(MAX30003_CNFG_ECG_VALS *vals)
 {
 	MAX30003_MSG msg;
-	uint8_t		 bytes;
 	
 	/* create a (read) command by shifting in the read indicator */
 	msg.command = ECG_REG_R(REG_CNFG_ECG);
 	msg.data		= NULL_DATA;
 
 	/* perform the spi read action */
-	bytes = ecg_read(&msg);
-	if(bytes != ECG_BUF_SZ) {
-		/* missing data */
-		// TODO error
-		} else {
-		ecg_decode_cnfg_ecg(vals, msg.data);
-	}
+	ecg_read(&msg);
+
+	ecg_decode_cnfg_ecg(vals, msg.data);
 }
 void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS)
 {
@@ -450,7 +425,7 @@ void ecg_decode_mngr_int(MAX30003_MNGR_INT_VALS *vals, const MAX30003_DATA_t DAT
 	vals->clr_samp      = (MNGRINT_CLRSAMP_VAL  )( (word & MNGRINT_CLR_SAMP ) >> 2 );
 	vals->clr_rrint     = (MNGRINT_CLRRRINT_VAL )( (word & MNGRINT_CLR_RRINT) >> 4 );
 	vals->clr_fast      = (MNGRINT_CLRFAST_VAL  )( (word & MNGRINT_CLR_FAST ) >> 6 );
-	vals->efit          = (MNGRINT_EFIT_VAL     )( (word & MNGRINT_EFIT     ) >> 20);
+	vals->efit          = (MNGRINT_EFIT_VAL     )( (word & MNGRINT_EFIT     ) >> 19);
 }
 void ecg_decode_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals, const MAX30003_DATA_t DATA)
 {
@@ -617,19 +592,19 @@ void ecg_encode_en_int(const MAX30003_EN_INT_VALS VALS, MAX30003_DATA_t *data)
 
     word = 0x00000000;
 
-    word |= VALS.intb_type      << 0;
-    word |= VALS.en_pllint      << 8;
-    word |= VALS.en_samp        << 9;
-    word |= VALS.en_rrint       << 10;
-    word |= VALS.en_lonint      << 11;
-    word |= VALS.en_dcloffint   << 20;
-    word |= VALS.en_fstint      << 21;
-    word |= VALS.en_eovf        << 22;
-    word |= VALS.en_eint        << 23;
+    word |= (uint32_t)VALS.intb_type      << 0;
+    word |= (uint32_t)VALS.en_pllint      << 8;
+    word |= (uint32_t)VALS.en_samp        << 9;
+    word |= (uint32_t)VALS.en_rrint       << 10;
+    word |= (uint32_t)VALS.en_lonint      << 11;
+    word |= (uint32_t)VALS.en_dcloffint   << 20;
+    word |= (uint32_t)VALS.en_fstint      << 21;
+    word |= (uint32_t)VALS.en_eovf        << 22;
+    word |= (uint32_t)VALS.en_eint        << 23;
 
-    data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
-    data->byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
-    data->byte[2] = (uint8_t)( (word >> 16  ) & ( 0x00FFFFFF >> 0  ) );
+    data->byte[0] = (uint8_t)( (word & 0x000000FF) >> 0 );
+    data->byte[1] = (uint8_t)( (word & 0x0000FF00) >> 8 );
+    data->byte[2] = (uint8_t)( (word & 0x00FF0000) >> 16);
 }
 void ecg_encode_mngr_int(const MAX30003_MNGR_INT_VALS VALS, MAX30003_DATA_t *data)
 {
@@ -641,7 +616,7 @@ void ecg_encode_mngr_int(const MAX30003_MNGR_INT_VALS VALS, MAX30003_DATA_t *dat
 	word |= VALS.clr_samp	<< 2;
 	word |= VALS.clr_rrint	<< 4;
 	word |= VALS.clr_fast	<< 6;
-	word |= VALS.efit		<< 20;
+	word |= VALS.efit		<< 19;
 	
 	data->byte[0] = (uint8_t)( (word >> 0  ) & ( 0x00FFFFFF >> 16 ) );
 	data->byte[1] = (uint8_t)( (word >> 8  ) & ( 0x00FFFFFF >> 8  ) );
@@ -949,15 +924,12 @@ void ecg_synch()
 
 void ecg_mask(MAX30003_DATA_t *new_vals, const MAX30003_DATA_t OLD_VALS, const uint32_t MASKS)
 {
-    uint32_t *p;
     uint32_t old_word;
     uint32_t new_word;
 
     /* extract byte values as 32-bit words */
-    p = (uint32_t *)OLD_VALS.byte;
-    old_word = *p;
-    p = (uint32_t *)new_vals->byte;
-    new_word = *p;
+    old_word = ((uint32_t)OLD_VALS.byte[2] << 16) | ((uint32_t)OLD_VALS.byte[1] << 8) | ((uint32_t)OLD_VALS.byte[0] << 0);
+    new_word = ((uint32_t)new_vals->byte[2] << 16) | ((uint32_t)new_vals->byte[1] << 8) | ((uint32_t)new_vals->byte[0] << 0);;
 
     /* mask out old values and mask in new values */
     new_word = (new_word & MASKS) | (old_word & ~MASKS);

@@ -7,6 +7,47 @@
 
 #include "max30003test.h"
 
+const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
+    .rbiasn     = RBIASN_NOT_CONNECTED,
+    .rbiasp     = RBIASP_NOT_CONNECTED,
+    .rbiasv     = RBIASV_100_MOHM,
+    .en_rbias   = ENRBIAS_DISABLED,
+    .vth        = DCLOFFVTH_300_mV,
+    .imag       = DCLOFFIMAG_0_nA,
+    .ipol       = DCLOFFIPOL_P_UP_N_DOWN,
+    .en_dcloff  = ENDCLOFF_DISABLED,
+    .en_ecg     = ENECG_ENABLED,
+    .fmstr      = FMSTR_512_HZ,
+    .en_ulp_lon = ENULPLON_DISABLED
+};
+
+const MAX30003_CNFG_ECG_VALS CNFECG_VALS_DEFAULT = {
+    .dhpf = DHPF_HALF,
+    .dlpf = DLPF_40_HZ,
+    .gain = GAIN_20_V,
+    .rate = RATE_MIN_SPS
+};
+const MAX30003_EN_INT_VALS EN_INT_VALS_DEFAULT = {
+    .en_eint = ENINT_ENABLED,
+    .intb_type = INTBTYPE_NMOS_WITH_PU
+};
+const MAX30003_EN_INT_VALS EN_INT2_VALS_DEFAULT = {
+    .en_lonint = ENLONINT_ENABLED,
+    .intb_type = INTBTYPE_NMOS_WITH_PU
+};
+const MAX30003_MNGR_INT_VALS MNGR_INT_VALS_DEFAULT = {
+    .efit = EFIT_AS_24
+};
+
+//constant of masks in each register
+const MAX30003_CNFG_ECG_MASKS CNFG_ECG_DEFAULT_MASK = CNFGECG_DLPF|CNFGECG_DHPF|CNFGECG_GAIN|CNFGECG_RATE;
+const MAX30003_MNGR_INT_MASKS MNGR_INT_DEFAULT_MASK = MNGRINT_EFIT;
+const MAX30003_EN_INT_MASKS EN_INT_DEFAULT_MASK = ENINT_INTB_TYPE|ENINT_EN_EINT;
+const MAX30003_EN_INT_MASKS EN_INT2_DEFAULT_MASK = ENINT_INTB_TYPE|ENINT_EN_LONINT;
+const MAX30003_CNFG_GEN_MASKS CNFG_GEN_DEFAULT_MASK = CNFGGEN_EN_ECG;
+
+
+
 int nextstep = 0;
 bool FIFO_INTERRUPT = false;//Flag of FIFO interrupt
 bool FLAG_INTERRUPT = false;//Flag of LEAD-On detection
@@ -129,19 +170,21 @@ void MAX30003_INIT_TEST(){
 }
 
 bool MAX30003_INIT_TEST_ROUND(){
-	int success = 0;
-	bool enint_success = false;
-	bool enint2_success = false;
-	bool mngr_int_sucess = false;
-	bool cnfg_gen_sucess = false;
-	bool cnfg_ecg_sucess = false;
-	bool result = false;
+	int success             = 0;
+	bool enint_success      = false;
+	bool enint2_success     = false;
+	bool mngr_int_sucess    = false;
+	bool cnfg_gen_sucess    = false;
+	bool cnfg_ecg_sucess    = false;
+	bool result             = false;
+    MAX30003_EN_INT_VALS    en_int_vals;
+    MAX30003_EN_INT_VALS    en_int_vals2;
+    MAX30003_MNGR_INT_VALS  mngr_int_vals;
+    MAX30003_CNFG_GEN_VALS  cnfg_gen_vals;
+    MAX30003_CNFG_ECG_VALS  cnfg_ecg_vals;
+
 	MAX30003_INIT_SETUP();
-	MAX30003_EN_INT_VALS en_int_vals;
-	MAX30003_EN_INT_VALS en_int_vals2;
-	MAX30003_MNGR_INT_VALS mngr_int_vals;
-	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
-	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
+
 	ecg_get_en_int(&en_int_vals);
 	if(en_int_vals.en_eint == ENINT_ENABLED){
 		success++;
@@ -154,6 +197,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	}else{
 		enint_success = false;
 	}
+
 	ecg_get_en_int2(&en_int_vals2);
 	if(en_int_vals2.en_lonint == ENLONINT_ENABLED){
 		success++;
@@ -166,6 +210,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	}else{
 		enint2_success = false;
 	}
+
 	ecg_get_mngr_int(&mngr_int_vals);
 	if(mngr_int_vals.efit==EFIT_AS_24){
 		success++;
@@ -175,6 +220,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	}else{
 		mngr_int_sucess = false;
 	}
+
 	ecg_get_cnfg_gen(&cnfg_gen_vals);
 	if(cnfg_gen_vals.en_ecg == ENECG_ENABLED){
 		success++;
@@ -184,6 +230,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	}else{
 		cnfg_gen_sucess = false;
 	}
+
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.dhpf == DHPF_HALF){
 		success++;
@@ -201,7 +248,8 @@ bool MAX30003_INIT_TEST_ROUND(){
 		cnfg_ecg_sucess = true;
 	}else{
 		cnfg_ecg_sucess = false;
-	}	
+	}
+    	
 	if(cnfg_ecg_sucess&&cnfg_gen_sucess&&enint2_success&&enint_success&&mngr_int_sucess){
 		//set a counter, LED is on for a while;
 		result = true;

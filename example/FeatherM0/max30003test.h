@@ -5,49 +5,32 @@
  *  Author: dli40
  */ 
 
+#ifndef MAX30003TEST_H
+#define MAX30003TEST_H
 
-#ifndef MAX30003TEST_H_
-#define MAX30003TEST_H_
+#ifdef __cplusplus
+extern "C"
+{
+    #endif // __cplusplus
 
 
 
 
-
-#endif /* MAX30003TEST_H_ */
 
 #include "max30003.h"
-#include "driver_init.h"
-#include "max30003types.h"
+//#include "driver_init.h"
+//#include "max30003types.h"
 
 //constant setup for default values in register
-const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
-	//.en_ulp_lon = ENULPLON_ENABLED,
-	.en_ecg = ENECG_ENABLED
-};
-const MAX30003_CNFG_ECG_VALS CNFECG_VALS_DEFAULT = {
-	.dhpf = DHPF_HALF,
-	.dlpf = DLPF_40_HZ,
-	.gain = GAIN_20_V,
-	.rate = RATE_MIN_SPS
-};
-const MAX30003_EN_INT_VALS EN_INT_VALS_DEFAULT = {
-	.en_eint = ENINT_ENABLED,
-	.intb_type = INTBTYPE_NMOS_WITH_PU
-};
-const MAX30003_EN_INT_VALS EN_INT2_VALS_DEFAULT = {
-	.en_lonint = ENLONINT_ENABLED,
-	.intb_type = INTBTYPE_NMOS_WITH_PU
-};
-const MAX30003_MNGR_INT_VALS MNGR_INT_VALS_DEFAULT = {
-	.efit = EFIT_AS_24
-};
-
-//constant of masks in each register
-const MAX30003_CNFG_ECG_MASKS CNFG_ECG_DEFAULT_MASK = CNFGECG_DLPF|CNFGECG_DHPF|CNFGECG_GAIN|CNFGECG_RATE;
-const MAX30003_MNGR_INT_MASKS MNGR_INT_DEFAULT_MASK = MNGRINT_EFIT;
-const MAX30003_EN_INT_MASKS EN_INT_DEFAULT_MASK = ENINT_INTB_TYPE|ENINT_EN_EINT;
-const MAX30003_EN_INT_MASKS EN_INT2_DEFAULT_MASK = ENINT_INTB_TYPE|ENINT_EN_LONINT;
-const MAX30003_CNFG_GEN_MASKS CNFG_GEN_DEFAULT_MASK = CNFGGEN_EN_ECG;
+// const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
+// 	//.en_ulp_lon = ENULPLON_ENABLED,
+// 	.en_ecg = ENECG_ENABLED
+// };
+extern const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT;
+extern const MAX30003_CNFG_ECG_VALS CNFECG_VALS_DEFAULT;
+extern const MAX30003_EN_INT_VALS EN_INT_VALS_DEFAULT;
+extern const MAX30003_EN_INT_VALS EN_INT2_VALS_DEFAULT;
+extern const MAX30003_MNGR_INT_VALS MNGR_INT_VALS_DEFAULT;
 
 void MAX30003_INIT_TEST();
 bool MAX30003_INIT_TEST_ROUND();
@@ -58,4 +41,9 @@ void MAX30003_TEST_Fre();
 void MAX30003_TEST_HELLO_WORLD();
 void MAX30003_FLAG_TEST();
 void MAX30003_FIFO_TEST();
-	
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* MAX30003TEST_H */
