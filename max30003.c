@@ -784,13 +784,16 @@ uint8_t ecg_read(MAX30003_MSG *msg)
 
     /* perform spi transfer */
     ecg_set_csb_level(ECG_CSB_PIN, false);
+    *ecg_spi_msg_sz = ECG_CMND_SZ;
     xfer_bytes = ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
+    *ecg_spi_msg_sz = ECG_DATA_SZ;
+    xfer_bytes += ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
     ecg_set_csb_level(ECG_CSB_PIN, true);
 
     /* arrange the MISO bytes into the data bins */
-    msg->data.byte[0] = ECG_BUF_I[3];
-    msg->data.byte[1] = ECG_BUF_I[2];
-    msg->data.byte[2] = ECG_BUF_I[1];
+    msg->data.byte[0] = ECG_BUF_I[2];
+    msg->data.byte[1] = ECG_BUF_I[1];
+    msg->data.byte[2] = ECG_BUF_I[0];
 
     /* return the bytes transfered, data is also updated */
     return xfer_bytes;
@@ -811,6 +814,7 @@ uint8_t ecg_write(MAX30003_MSG *msg)
 
 
     /* perform spi transfer */
+    *ecg_spi_msg_sz = ECG_CMND_SZ + ECG_DATA_SZ;
     ecg_set_csb_level(ECG_CSB_PIN, false);
     xfer_bytes = ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
     ecg_set_csb_level(ECG_CSB_PIN, true);
@@ -836,25 +840,60 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 	}
 }
 
-void ecg_get_sample_burst(uint32_t *fifo, const uint8_t SIZE)
-{
-	uint8_t i;
-	MAX30003_FIFO_VALS vals;
-	
-	i = 0;
-	ecg_get_sample(&vals);
-	
-	#if 0
 
-
-	while (vals.etag == ETAG_VALID || vals.etag == ETAG_FAST) {
-		fifo[i % SIZE] = (vals.etag &) // mask in values here
-		ecg_spi_msg_sz = ECG_DATA_SZ;
-		ecg_get_sample(&vals);
-	}
-
-	#endif
-}
+// uint8_t ecg_get_sample_burst(uint32_t *fifo, const uint32_t SIZE)
+// {
+// 	uint16_t step;
+//     uint32_t word;
+//     MAX30003_MSG msg;
+// 	MAX30003_FIFO_VALS vals;
+// 	
+// 	step = 0x0000;
+//     word = 0x00000000;
+//     
+//     /* get the first sample */
+//     ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
+//     ecg_set_csb_level(ECG_CSB_PIN, false);
+//     ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
+//     msg->data.byte[0] = ECG_BUF_I[3];
+//     msg->data.byte[1] = ECG_BUF_I[2];
+//     msg->data.byte[2] = ECG_BUF_I[1];
+//     ecg_decode_ecg_fifo(vals, msg.data);
+// 
+//     /* set the FIFO size to 3bytes for continuous data reading */
+//     *ecg_spi_msg_sz = ECG_DATA_SZ;
+// 	while (vals.etag == ETAG_VALID || vals.etag == ETAG_FAST) {
+//         /* format the sample by {data, time-step, tag} */
+//         word |= (uint32_t)vals.etag << 0;
+//         word |= (uint32_t)step      << 3;
+//         word |= (uint32_t)vals.data << 14;
+// 
+//         /* add sample to the log */
+// 		fifo[step % SIZE] = word;
+// 		
+//         /* increment, clear, and get next sample */
+//         step++;
+//         word = 0x00000000;
+// 		//ecg_get_sample(&vals);
+//         ecg_spi_xfer(&ECG_SPI_DEV_0, ECG_SPI_MSG);
+// 
+// 	}
+// 
+//     /* discard the last sample if FIFO is empty (should be EOF) */
+//     if (vals.etag == ETAG_FIFO_EMPTY) {
+//         step--;
+//     } else {
+//         word |= (uint32_t)vals.etag << 0;
+//         word |= (uint32_t)step      << 3;
+//         word |= (uint32_t)vals.data << 14;
+//         fifo[step % SIZE] = word;
+//     }
+// 
+//     /* reset the SPI_BUF size */
+//     *ecg_spi_msg_sz = ECG_CMND_SZ;
+// 
+//     return step;
+// }
 
 void ecg_fifo_reset()
 {
@@ -897,3 +936,10 @@ void ecg_mask(MAX30003_DATA_t *new_vals, const MAX30003_DATA_t OLD_VALS, const u
     new_vals->byte[1] = new_word >> 8;
     new_vals->byte[2] = new_word >> 16;
 }   
+
+// uint8_t ecg_generate_data(uint32_t *log, const uint8_t SIZE)
+// {
+//     uint8_t i;
+// 
+//     for
+// }

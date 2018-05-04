@@ -4,6 +4,20 @@
 #define ECG_LOG_SZ 2048
 static int32_t ecg_log[ECG_LOG_SZ];
 
+const MAX30003_CNFG_GEN_VALS cnfggen_vals_test = {
+    .rbiasn     = RBIASN_NOT_CONNECTED,
+    .rbiasp     = RBIASP_NOT_CONNECTED,
+    .rbiasv     = RBIASV_100_MOHM,
+    .en_rbias   = ENRBIAS_DISABLED,
+    .vth        = DCLOFFVTH_300_mV,
+    .imag       = DCLOFFIMAG_0_nA,
+    .ipol       = DCLOFFIPOL_P_UP_N_DOWN,
+    .en_dcloff  = ENDCLOFF_DISABLED,
+    .en_ecg     = ENECG_ENABLED,
+    .fmstr      = FMSTR_512_HZ,
+    .en_ulp_lon = ENULPLON_DISABLED
+};
+
 void ecg_init(struct spi_m_sync_descriptor *_ecg_spi_descriptor, struct spi_xfer *_ecg_spi_msg, const uint8_t _CS)
 {
 	/* enable the spi descriptor for the ecg */
@@ -53,30 +67,31 @@ int main(void)
 
 	cnfggen_vals.en_ecg = ENECG_ENABLED;
 
-	ecg_set_cnfg_gen(cnfggen_vals, CNFGGEN_EN_ECG);
+	ecg_set_cnfg_gen(cnfggen_vals_test, CNFGGEN_EN_ECG);
 	delay_ms(1000);
     ecg_get_cnfg_gen(&cnfggen_vals);
     delay_ms(1000);
+
+    if(cnfggen_vals.en_ecg != cnfggen_vals_test.en_ecg) {
+        delay_ms(1000);
+    }
     emux_vals.caln_sel = CALNSEL_IN_VCALN;
     emux_vals.calp_sel = CALPSEL_IN_VCALP;
     ecg_set_cnfg_emux(emux_vals, CNFGEMUX_CALN_SEL | CNFGEMUX_CALP_SEL);
 
     ecg_synch();
+
+    //count = ecg_get_sample_burst((uint32_t*)ecg_log, ECG_LOG_SZ);
+    delay_ms(1000);
+
 	for(;;) {
-		if (count < ECG_LOG_SZ) {
-			ecg_get_sample(&fifo);
-			ecg_log[count] = (fifo.data << 14) | (fifo.etag << 3) | fifo.ptag;
-			count++;
-		} else {
-            delay_ms(1000);
-        }
-		
+// 		if (count < ECG_LOG_SZ) {
+// 			ecg_get_sample(&fifo);
+// 			ecg_log[count] = (fifo.data << 14) | (fifo.etag << 3) | fifo.ptag;
+// 			count++;
+// 		} else {
+//             delay_ms(1000);
+//         }
+// 		
 	}
 } 
-
-// void ecg_record(const uint8_t SAMPLE_SIZE)
-// {
-//     MAX30003_FIFO_VALS fifo;
-// 
-// 
-// }
