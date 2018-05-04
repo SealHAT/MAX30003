@@ -33,43 +33,43 @@ static const MAX30003_DATA_t NULL_DATA = {
     .byte[2] = 0x00,
 };
 
-void ecg_get(void *vals, const MAX30003_REG REG)
-{
-    MAX30003_MSG ecg_msg;
-    uint8_t bytes;
-	ecg_msg.command = ECG_REG_R(REG);
-	ecg_msg.data	= NULL_DATA;
-	
-    bytes = ecg_read(&ecg_msg);
-	if(bytes != ECG_BUF_SZ) {
-		/* missing data */
-	} else {
-		switch(REG) {
-// 			REG_NO_OP          = 0x00,  /* RW - no internal effect. DOUT = 0 during R, W ignored */
-// 			REG_SW_RST         = 0x08,  /* W  - */
-// 			REG_SYNCH          = 0x09,  /* W  - */
-// 			REG_FIFO_RST       = 0x0A,  /* W  - */
-// 			REG_INFO           = 0x0F,  /* R  - */
-// 			REG_ECG_FIFO_BURST = 0x20,  /* R+ - */
-// 			REG_RTOR           = 0x25,  /* R  - */
-// 			REG_NO_OP2         = 0x7F   /* RW - no internal effect. DOUT = 0 during R, W ignored */
-			case REG_STATUS		: ecg_decode_status(vals, ecg_msg.data); break;
-			case REG_EN_INT		: ecg_decode_en_int(vals, ecg_msg.data); break;
-			case REG_EN_INT2	: ecg_decode_en_int(vals, ecg_msg.data); break;
-			case REG_MNGR_INT	: ecg_decode_mngr_int(vals, ecg_msg.data); break;
-			case REG_MNGR_DYN	: ecg_decode_mngr_dyn(vals, ecg_msg.data); break;
-			case REG_INFO		: ecg_decode_info(vals, ecg_msg.data); break;
-			case REG_CNFG_GEN	: ecg_decode_cnfg_gen(vals, ecg_msg.data); break;
-			case REG_CNFG_CAL	: ecg_decode_cnfg_cal(vals, ecg_msg.data); break;
-			case REG_CNFG_EMUX	: ecg_decode_cnfg_emux(vals, ecg_msg.data); break;
-			case REG_CNFG_ECG	: ecg_decode_cnfg_ecg(vals, ecg_msg.data); break;
-			case REG_CNFG_RTOR1	: ecg_decode_cnfg_rtor1(vals, ecg_msg.data); break;
-			case REG_CNFG_RTOR2	: ecg_decode_cnfg_rtor2(vals, ecg_msg.data); break;
-			case REG_ECG_FIFO	: ecg_decode_ecg_fifo(vals, ecg_msg.data); break;							
-			default : break; /* error handling */
-		}
-	}
-}
+// void ecg_get(void *vals, const MAX30003_REG REG)
+// {
+//     MAX30003_MSG ecg_msg;
+//     uint8_t bytes;
+// 	ecg_msg.command = ECG_REG_R(REG);
+// 	ecg_msg.data	= NULL_DATA;
+// 	
+//     bytes = ecg_read(&ecg_msg);
+// 	if(bytes != ECG_BUF_SZ) {
+// 		/* missing data */
+// 	} else {
+// 		switch(REG) {
+// // 			REG_NO_OP          = 0x00,  /* RW - no internal effect. DOUT = 0 during R, W ignored */
+// // 			REG_SW_RST         = 0x08,  /* W  - */
+// // 			REG_SYNCH          = 0x09,  /* W  - */
+// // 			REG_FIFO_RST       = 0x0A,  /* W  - */
+// // 			REG_INFO           = 0x0F,  /* R  - */
+// // 			REG_ECG_FIFO_BURST = 0x20,  /* R+ - */
+// // 			REG_RTOR           = 0x25,  /* R  - */
+// // 			REG_NO_OP2         = 0x7F   /* RW - no internal effect. DOUT = 0 during R, W ignored */
+// 			case REG_STATUS		: ecg_decode_status(vals, ecg_msg.data); break;
+// 			case REG_EN_INT		: ecg_decode_en_int(vals, ecg_msg.data); break;
+// 			case REG_EN_INT2	: ecg_decode_en_int(vals, ecg_msg.data); break;
+// 			case REG_MNGR_INT	: ecg_decode_mngr_int(vals, ecg_msg.data); break;
+// 			case REG_MNGR_DYN	: ecg_decode_mngr_dyn(vals, ecg_msg.data); break;
+// 			case REG_INFO		: ecg_decode_info(vals, ecg_msg.data); break;
+// 			case REG_CNFG_GEN	: ecg_decode_cnfg_gen(vals, ecg_msg.data); break;
+// 			case REG_CNFG_CAL	: ecg_decode_cnfg_cal(vals, ecg_msg.data); break;
+// 			case REG_CNFG_EMUX	: ecg_decode_cnfg_emux(vals, ecg_msg.data); break;
+// 			case REG_CNFG_ECG	: ecg_decode_cnfg_ecg(vals, ecg_msg.data); break;
+// 			case REG_CNFG_RTOR1	: ecg_decode_cnfg_rtor1(vals, ecg_msg.data); break;
+// 			case REG_CNFG_RTOR2	: ecg_decode_cnfg_rtor2(vals, ecg_msg.data); break;
+// 			case REG_ECG_FIFO	: ecg_decode_ecg_fifo(vals, ecg_msg.data); break;							
+// 			default : break; /* error handling */
+// 		}
+// 	}
+// }
 
 void ecg_get_status(MAX30003_STATUS_VALS *vals)
 {
@@ -80,7 +80,6 @@ void ecg_get_status(MAX30003_STATUS_VALS *vals)
 
     /* transfer over SPI and populate the msg */
     ecg_read(&msg);
-
     ecg_decode_status(vals, msg.data);
 }
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals)
@@ -104,7 +103,6 @@ void ecg_get_en_int2(MAX30003_EN_INT_VALS *vals)
 void ecg_get_mngr_int(MAX30003_MNGR_INT_VALS *vals)
 {
     MAX30003_MSG msg;
-    uint8_t bytes;
     
     msg.command = ECG_REG_R(REG_MNGR_INT);
     msg.data    = NULL_DATA;
@@ -115,7 +113,6 @@ void ecg_get_mngr_int(MAX30003_MNGR_INT_VALS *vals)
 void ecg_get_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals)
 {
     MAX30003_MSG msg;
-    uint8_t bytes;
     
     msg.command = ECG_REG_R(REG_MNGR_DYN);
     msg.data    = NULL_DATA;
@@ -137,7 +134,6 @@ void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals)
 void ecg_get_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals)
 {
 	MAX30003_MSG msg;
-	uint8_t		 bytes;
 	
 	/* create a (read) command by shifting in the read indicator */
 	msg.command = ECG_REG_R(REG_CNFG_CAL);
@@ -165,11 +161,10 @@ void ecg_get_cnfg_ecg(MAX30003_CNFG_ECG_VALS *vals)
 	
 	/* create a (read) command by shifting in the read indicator */
 	msg.command = ECG_REG_R(REG_CNFG_ECG);
-	msg.data		= NULL_DATA;
+	msg.data    = NULL_DATA;
 
 	/* perform the spi read action */
 	ecg_read(&msg);
-
 	ecg_decode_cnfg_ecg(vals, msg.data);
 }
 void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS)
@@ -181,6 +176,7 @@ void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS
 
     /* get the 24-bit data word for the current and new configurations */
     ecg_read(&msg);
+
     ecg_encode_en_int(VALS, &newdata);
 
     /* modify the current data with the new data */
@@ -830,76 +826,76 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 }
 
 
- uint16_t ecg_get_sample_burst(int32_t *fifo, uint16_t offset, const uint16_t SIZE)
- {
-    bool eof;
-    uint16_t step;              /* unit-less time increment */
-    uint32_t word;              /* holds a log */
-    MAX30003_MSG msg; 
-    MAX30003_FIFO_VALS vals;
-    
-    eof = false;
-    step = 0x0000;
-    word = 0x00000000;
-     
-    /* start the burst transfer, but hold csb low */
-    ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
-
-/*    ecg_spi_msg.size = ECG_CMND_SZ;*/
-    gpio_set_pin_level(CS, false);
-    spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
-    ECG_BUF_O[ECG_CMND_POS] = 0x00;
-
-    /* start collecting samples from FIFO */
-/*    ecg_spi_msg.size = ECG_DATA_SZ;*/
-
-    do {
-        spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
-
-        /* process sample */
-        msg.data.byte[0] = ECG_BUF_I[2];
-        msg.data.byte[1] = ECG_BUF_I[1];
-        msg.data.byte[2] = ECG_BUF_I[0];
-        ecg_decode_ecg_fifo(&vals, msg.data);
-
-        switch (vals.etag) {
-            case ETAG_VALID_EOF :
-            case ETAG_FAST_EOF  :
-                eof = true; /* exit, but save the sample as a valid sample */
-                vals.etag = (ECGFIFO_ETAG_VAL)( (uint8_t)vals.etag & 0x01);
-            case ETAG_VALID     :
-            case ETAG_FAST      :
-                /* format and store the sample */
-                word |= (uint32_t)vals.etag << 0;
-                word |= (uint32_t)step      << 3;
-                word |= (uint32_t)vals.data << 14;
-                if (offset + step >= SIZE) { 
-                    delay_ms(10000); 
-                }
-                fifo[offset + step] = word;
-                
-                /* increment, clear, and get next sample */
-                step++;
-                word = 0x00000000;
-                break;
-
-            case ETAG_FIFO_OVERFLOW :
-                gpio_set_pin_level(CS, true);
-/*                ecg_spi_msg.size = ECG_BUF_SZ;*/
-                ecg_fifo_reset();
-            case ETAG_FIFO_EMPTY    :
-                eof = true;
-                break;
-            default :   delay_ms(1000); /* TODO error handling */
-        }
-    } while (!eof && ((step + offset) < SIZE));
-    
-    /* done sampling spi */
-    gpio_set_pin_level(CS, true); 
-/*    ecg_spi_msg.size = ECG_BUF_SZ;   */
- 
-    return step;
- }
+//  uint16_t ecg_get_sample_burst(int32_t *fifo, uint16_t offset, const uint16_t SIZE)
+//  {
+//     bool eof;
+//     uint16_t step;              /* unit-less time increment */
+//     uint32_t word;              /* holds a log */
+//     MAX30003_MSG msg; 
+//     MAX30003_FIFO_VALS vals;
+//     
+//     eof = false;
+//     step = 0x0000;
+//     word = 0x00000000;
+//      
+//     /* start the burst transfer, but hold csb low */
+//     ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
+// 
+// /*    ecg_spi_msg.size = ECG_CMND_SZ;*/
+//     gpio_set_pin_level(CS, false);
+//     spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
+//     ECG_BUF_O[ECG_CMND_POS] = 0x00;
+// 
+//     /* start collecting samples from FIFO */
+// /*    ecg_spi_msg.size = ECG_DATA_SZ;*/
+// 
+//     do {
+//         spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
+// 
+//         /* process sample */
+//         msg.data.byte[0] = ECG_BUF_I[2];
+//         msg.data.byte[1] = ECG_BUF_I[1];
+//         msg.data.byte[2] = ECG_BUF_I[0];
+//         ecg_decode_ecg_fifo(&vals, msg.data);
+// 
+//         switch (vals.etag) {
+//             case ETAG_VALID_EOF :
+//             case ETAG_FAST_EOF  :
+//                 eof = true; /* exit, but save the sample as a valid sample */
+//                 vals.etag = (ECGFIFO_ETAG_VAL)( (uint8_t)vals.etag & 0x01);
+//             case ETAG_VALID     :
+//             case ETAG_FAST      :
+//                 /* format and store the sample */
+//                 word |= (uint32_t)vals.etag << 0;
+//                 word |= (uint32_t)step      << 3;
+//                 word |= (uint32_t)vals.data << 14;
+//                 if (offset + step >= SIZE) { 
+//                     delay_ms(10000); 
+//                 }
+//                 fifo[offset + step] = word;
+//                 
+//                 /* increment, clear, and get next sample */
+//                 step++;
+//                 word = 0x00000000;
+//                 break;
+// 
+//             case ETAG_FIFO_OVERFLOW :
+//                 gpio_set_pin_level(CS, true);
+// /*                ecg_spi_msg.size = ECG_BUF_SZ;*/
+//                 ecg_fifo_reset();
+//             case ETAG_FIFO_EMPTY    :
+//                 eof = true;
+//                 break;
+//             default :   delay_ms(1000); /* TODO error handling */
+//         }
+//     } while (!eof && ((step + offset) < SIZE));
+//     
+//     /* done sampling spi */
+//     gpio_set_pin_level(CS, true); 
+// /*    ecg_spi_msg.size = ECG_BUF_SZ;   */
+//  
+//     return step;
+//  }
 
 void ecg_fifo_reset()
 {
@@ -929,15 +925,15 @@ void ecg_mask(MAX30003_DATA_t *new_vals, const MAX30003_DATA_t OLD_VALS, const u
 
     /* extract byte values as 32-bit words */
     old_word = ((uint32_t)OLD_VALS.byte[2] << 16) | ((uint32_t)OLD_VALS.byte[1] << 8) | ((uint32_t)OLD_VALS.byte[0] << 0);
-    new_word = ((uint32_t)new_vals->byte[2] << 16) | ((uint32_t)new_vals->byte[1] << 8) | ((uint32_t)new_vals->byte[0] << 0);;
+    new_word = ((uint32_t)new_vals->byte[2] << 16) | ((uint32_t)new_vals->byte[1] << 8) | ((uint32_t)new_vals->byte[0] << 0);
 
     /* mask out old values and mask in new values */
     new_word = (new_word & MASKS) | (old_word & ~MASKS);
 
     /* build new data array */
-    new_vals->byte[0] = new_word >> 0;
-    new_vals->byte[1] = new_word >> 8;
-    new_vals->byte[2] = new_word >> 16;
+    new_vals->byte[0] = (uint8_t)(new_word >> 0);
+    new_vals->byte[1] = (uint8_t)(new_word >> 8);
+    new_vals->byte[2] = (uint8_t)(new_word >> 16);
 }   
 
 

@@ -61,11 +61,11 @@ typedef uint8_t MAX30003_ADDR_t;
  *	struct for storing a bitmapped ECG sample in a 32-bit number
  *	packing and bit order is ignored as the total struct size is 32-bits
  */
-typedef struct ECG_SAMPLE {
-	uint32_t	tag:3;		/* ETAG data from the ECG_FIFO	*/
-	int32_t		data:18;	/* voltage of the sample		*/
-	uint32_t	step:11;	/* time step of the sample		*/
-} ECG_SAMPLE;
+// typedef struct ECG_SAMPLE {
+// 	uint32_t	tag:3;		/* ETAG data from the ECG_FIFO	*/
+// 	int32_t		data:18;	/* voltage of the sample		*/
+// 	uint32_t	step:11;	/* time step of the sample		*/
+// } ECG_SAMPLE;
 
 
 typedef struct MAX30003_MSG {
@@ -199,9 +199,9 @@ void ecg_synch();
 void ecg_sw_reset();
 
 /* ecg register access functions */
-void ecg_get(void *vals, const MAX30003_REG REG);
+/*void ecg_get(void *vals, const MAX30003_REG REG);*/
 void ecg_get_sample(MAX30003_FIFO_VALS *vals);
-uint16_t ecg_get_sample_burst(int32_t *fifo, uint16_t offset, const uint16_t SIZE); /* returns number of samples recorded */
+// uint16_t ecg_get_sample_burst(int32_t *fifo, uint16_t offset, const uint16_t SIZE); /* returns number of samples recorded */
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
 void ecg_get_en_int2(MAX30003_EN_INT_VALS *vals);
@@ -258,7 +258,6 @@ void ecg_mask(MAX30003_DATA_t *new_vals, const MAX30003_DATA_t OLD_VALS, const u
 
 uint8_t ecg_read(MAX30003_MSG *msg);
 uint8_t ecg_write(MAX30003_MSG *msg);
-uint8_t ecg_burst();
 
 #ifdef __cplusplus
 }

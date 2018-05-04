@@ -60,30 +60,6 @@ void MAX30003_INIT_TEST(){
 	MAX30003_MNGR_INT_VALS mngr_int_vals;
 	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
 	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
-	/* change desired values in the struct */
-	/*en_int_vals.en_eint = ENINT_ENABLED;
-	en_int_vals.intb_type = INTBTYPE_NMOS_WITH_PU;
-	en_int_vals2.en_lonint = ENLONINT_ENABLED;
-	en_int_vals2.intb_type = INTBTYPE_NMOS_WITH_PU;
-	mngr_int_vals.efit = EFIT_AS_24;
-	cnfg_gen_vals.en_ecg = ENECG_ENABLED;
-	cnfg_ecg_vals.rate = RATE_MIN_SPS;
-	cnfg_ecg_vals.gain = GAIN_20_V;
-	cnfg_ecg_vals.dhpf = DHPF_HALF;
-	cnfg_ecg_vals.dlpf = DLPF_40_HZ;
-	/* call the set function with the struct, and bitwise OR of the masks to change */
-	/*ecg_set_en_int(en_int_vals, ENINT_EN_EINT|ENINT_INTB_TYPE);
-	delay_ms(100);
-    ecg_set_en_int2(en_int_vals2, ENINT_EN_EINT|ENINT_INTB_TYPE);
-	delay_ms(100);
-	ecg_set_mngr_int(mngr_int_vals,MNGRINT_EFIT);
-	delay_ms(100);
-	ecg_set_cnfg_gen(cnfg_gen_vals,CNFGGEN_EN_ECG );
-	delay_ms(100);
-	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE|CNFGECG_DLPF|CNFGECG_GAIN|CNFGECG_DHPF);
-	delay_ms(100);
-	// TODO for Tony, change these to match above
-    
 
 	/* before checking, get the register values by passing the struct by reference to the get function */
 	MAX30003_INIT_SETUP();
