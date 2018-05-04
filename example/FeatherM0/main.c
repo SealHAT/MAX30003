@@ -1,7 +1,7 @@
 #include "atmel_start.h"
 #include "max30003.h"
 
-#define ECG_LOG_SZ 2048
+#define ECG_LOG_SZ 1024
 static int32_t ecg_log[ECG_LOG_SZ];
 
 const MAX30003_CNFG_GEN_VALS cnfggen_vals_test = {
@@ -18,23 +18,31 @@ const MAX30003_CNFG_GEN_VALS cnfggen_vals_test = {
     .en_ulp_lon = ENULPLON_DISABLED
 };
 
+int32_t _spi_m_sync_transfer_voidparam(void * descriptor, const void * buffer)
+{
+    int32_t r = spi_m_sync_transfer((struct spi_m_sync_descriptor *)descriptor, (const struct spi_xfer*) buffer);
+    return r;
+}
+
 void ecg_init(struct spi_m_sync_descriptor *_ecg_spi_descriptor, struct spi_xfer *_ecg_spi_msg, const uint8_t _CS)
 {
+    uint32_t *sz_p;
 	/* enable the spi descriptor for the ecg */
 	spi_m_sync_set_mode(_ecg_spi_descriptor, SPI_MODE_0);
 	spi_m_sync_enable(_ecg_spi_descriptor);
 	
 	/* associate the transfer and chip select functions to their ecg counterparts */
-	ecg_spi_xfer		= &spi_m_sync_transfer;
+	ecg_spi_xfer		= &_spi_m_sync_transfer_voidparam;
 	ecg_set_csb_level	= &gpio_set_pin_level;
 	
 	/* associate the spi transfer buffers */
     _ecg_spi_msg->size  = ECG_BUF_SZ;
 	_ecg_spi_msg->rxbuf = ECG_BUF_I;
 	_ecg_spi_msg->txbuf = ECG_BUF_O;
+    sz_p = &(_ecg_spi_msg->size);
 	
 	/* associate the buffers and chip variables select to their ecg counterparts */
-	ecg_init_spi(_ecg_spi_descriptor, _ecg_spi_msg, &_ecg_spi_msg->size);
+	ecg_init_spi(_ecg_spi_descriptor, _ecg_spi_msg, sz_p);
 	ecg_init_csb(_CS);
 }
 
@@ -80,18 +88,19 @@ int main(void)
     ecg_set_cnfg_emux(emux_vals, CNFGEMUX_CALN_SEL | CNFGEMUX_CALP_SEL);
 
     ecg_synch();
-
-    //count = ecg_get_sample_burst((uint32_t*)ecg_log, ECG_LOG_SZ);
-    delay_ms(1000);
-
+//     count = ecg_get_sample_burst((uint32_t*)ecg_log, ECG_LOG_SZ);
+//     delay_ms(1000);
+// 
+//     ecg_fifo_reset();
+    count = 0;
 	for(;;) {
-// 		if (count < ECG_LOG_SZ) {
-// 			ecg_get_sample(&fifo);
-// 			ecg_log[count] = (fifo.data << 14) | (fifo.etag << 3) | fifo.ptag;
-// 			count++;
-// 		} else {
-//             delay_ms(1000);
-//         }
-// 		
+		if (count < ECG_LOG_SZ) {
+			ecg_get_sample(&fifo);
+			ecg_log[count] = (fifo.data << 14) | (fifo.etag << 3) | fifo.ptag;
+			count++;
+		} else {
+            delay_ms(1000);
+        }
+		
 	}
 } 

@@ -187,15 +187,6 @@ void    (*ecg_set_csb_level)(const uint8_t pin, const bool level);	/* gpio_set_p
 void ecg_init_spi(void *spi_desc, const void *spi_msg, uint32_t* spi_msg_sz);
 void ecg_init_csb(const uint8_t ecg_csb_pin);
 
-//////* external helper functions *///////
-/* ecg_parse_log
- *      modifies the log param to only contain 
- *  INPUT: log = ecg samples of 32-bit {data,time-step,tag} format
- *  OUTPUT: 
- */
-uint8_t ecg_parse_log();
-uint8_t ecg_generate_data(uint32_t *log, const uint8_t SIZE);
-
 // TODO sort/rename here
 void ecg_fifo_reset();
 void ecg_synch();
@@ -203,7 +194,7 @@ void ecg_synch();
 /* ecg register access functions */
 void ecg_get(void *vals, const MAX30003_REG REG);
 void ecg_get_sample(MAX30003_FIFO_VALS *vals);
-uint8_t ecg_get_sample_burst(uint32_t *fifo, const uint32_t SIZE); /* returns number of samples recorded */
+uint16_t ecg_get_sample_burst(uint32_t *fifo, const uint16_t SIZE); /* returns number of samples recorded */
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
