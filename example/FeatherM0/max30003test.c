@@ -6,8 +6,51 @@
  */ 
 
 #include "max30003test.h"
+#include "driver_init.h"
+
+const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
+    .rbiasn     = RBIASN_NOT_CONNECTED,
+    .rbiasp     = RBIASP_NOT_CONNECTED,
+    .rbiasv     = RBIASV_100_MOHM,
+    .en_rbias   = ENRBIAS_DISABLED,
+    .vth        = DCLOFFVTH_300_mV,
+    .imag       = DCLOFFIMAG_0_nA,
+    .ipol       = DCLOFFIPOL_P_UP_N_DOWN,
+    .en_dcloff  = ENDCLOFF_DISABLED,
+    .en_ecg     = ENECG_ENABLED,
+    .fmstr      = FMSTR_512_HZ,
+    .en_ulp_lon = ENULPLON_DISABLED
+};
+
+const MAX30003_CNFG_ECG_VALS CNFECG_VALS_DEFAULT = {
+    .dhpf = DHPF_HALF,
+    .dlpf = DLPF_40_HZ,
+    .gain = GAIN_20_V,
+    .rate = RATE_MIN_SPS
+};
+const MAX30003_EN_INT_VALS EN_INT_VALS_DEFAULT = {
+    .en_eint = ENINT_ENABLED,
+    .intb_type = INTBTYPE_NMOS_WITH_PU
+};
+const MAX30003_EN_INT_VALS EN_INT2_VALS_DEFAULT = {
+    .en_lonint = ENLONINT_ENABLED,
+    .intb_type = INTBTYPE_NMOS_WITH_PU
+};
+const MAX30003_MNGR_INT_VALS MNGR_INT_VALS_DEFAULT = {
+    .efit = EFIT_AS_24
+};
+
+//constant of masks in each register
+const MAX30003_CNFG_ECG_MASKS CNFG_ECG_DEFAULT_MASK = CNFGECG_DLPF|CNFGECG_DHPF|CNFGECG_GAIN|CNFGECG_RATE;
+const MAX30003_MNGR_INT_MASKS MNGR_INT_DEFAULT_MASK = MNGRINT_EFIT;
+const MAX30003_EN_INT_MASKS EN_INT_DEFAULT_MASK = ENINT_INTB_TYPE|ENINT_EN_EINT;
+const MAX30003_EN_INT_MASKS EN_INT2_DEFAULT_MASK = ENINT_INTB_TYPE|ENINT_EN_LONINT;
+const MAX30003_CNFG_GEN_MASKS CNFG_GEN_DEFAULT_MASK = CNFGGEN_EN_ECG;
+
+
 
 int nextstep = 0;
+bool FLAG_TIMEOUT   = false; /* flag if a test ran for longer than expected */
 bool FIFO_INTERRUPT = false;//Flag of FIFO interrupt
 bool FLAG_INTERRUPT = false;//Flag of LEAD-On detection
 
@@ -19,30 +62,6 @@ void MAX30003_INIT_TEST(){
 	MAX30003_MNGR_INT_VALS mngr_int_vals;
 	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
 	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
-	/* change desired values in the struct */
-	/*en_int_vals.en_eint = ENINT_ENABLED;
-	en_int_vals.intb_type = INTBTYPE_NMOS_WITH_PU;
-	en_int_vals2.en_lonint = ENLONINT_ENABLED;
-	en_int_vals2.intb_type = INTBTYPE_NMOS_WITH_PU;
-	mngr_int_vals.efit = EFIT_AS_24;
-	cnfg_gen_vals.en_ecg = ENECG_ENABLED;
-	cnfg_ecg_vals.rate = RATE_MIN_SPS;
-	cnfg_ecg_vals.gain = GAIN_20_V;
-	cnfg_ecg_vals.dhpf = DHPF_HALF;
-	cnfg_ecg_vals.dlpf = DLPF_40_HZ;
-	/* call the set function with the struct, and bitwise OR of the masks to change */
-	/*ecg_set_en_int(en_int_vals, ENINT_EN_EINT|ENINT_INTB_TYPE);
-	delay_ms(100);
-    ecg_set_en_int2(en_int_vals2, ENINT_EN_EINT|ENINT_INTB_TYPE);
-	delay_ms(100);
-	ecg_set_mngr_int(mngr_int_vals,MNGRINT_EFIT);
-	delay_ms(100);
-	ecg_set_cnfg_gen(cnfg_gen_vals,CNFGGEN_EN_ECG );
-	delay_ms(100);
-	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE|CNFGECG_DLPF|CNFGECG_GAIN|CNFGECG_DHPF);
-	delay_ms(100);
-	// TODO for Tony, change these to match above
-    
 
 	/* before checking, get the register values by passing the struct by reference to the get function */
 	MAX30003_INIT_SETUP();
@@ -129,19 +148,21 @@ void MAX30003_INIT_TEST(){
 }
 
 bool MAX30003_INIT_TEST_ROUND(){
-	int success = 0;
-	bool enint_success = false;
-	bool enint2_success = false;
-	bool mngr_int_sucess = false;
-	bool cnfg_gen_sucess = false;
-	bool cnfg_ecg_sucess = false;
-	bool result = false;
+	int success             = 0;
+	bool enint_success      = false;
+	bool enint2_success     = false;
+	bool mngr_int_sucess    = false;
+	bool cnfg_gen_sucess    = false;
+	bool cnfg_ecg_sucess    = false;
+	TEST_RESULT result      = TEST_PENDING;
+    MAX30003_EN_INT_VALS    en_int_vals;
+    MAX30003_EN_INT_VALS    en_int_vals2;
+    MAX30003_MNGR_INT_VALS  mngr_int_vals;
+    MAX30003_CNFG_GEN_VALS  cnfg_gen_vals;
+    MAX30003_CNFG_ECG_VALS  cnfg_ecg_vals;
+
 	MAX30003_INIT_SETUP();
-	MAX30003_EN_INT_VALS en_int_vals;
-	MAX30003_EN_INT_VALS en_int_vals2;
-	MAX30003_MNGR_INT_VALS mngr_int_vals;
-	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
-	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
+
 	ecg_get_en_int(&en_int_vals);
 	if(en_int_vals.en_eint == ENINT_ENABLED){
 		success++;
@@ -154,6 +175,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	}else{
 		enint_success = false;
 	}
+
 	ecg_get_en_int2(&en_int_vals2);
 	if(en_int_vals2.en_lonint == ENLONINT_ENABLED){
 		success++;
@@ -166,6 +188,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	}else{
 		enint2_success = false;
 	}
+
 	ecg_get_mngr_int(&mngr_int_vals);
 	if(mngr_int_vals.efit==EFIT_AS_24){
 		success++;
@@ -175,6 +198,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	}else{
 		mngr_int_sucess = false;
 	}
+
 	ecg_get_cnfg_gen(&cnfg_gen_vals);
 	if(cnfg_gen_vals.en_ecg == ENECG_ENABLED){
 		success++;
@@ -184,6 +208,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	}else{
 		cnfg_gen_sucess = false;
 	}
+
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.dhpf == DHPF_HALF){
 		success++;
@@ -201,12 +226,13 @@ bool MAX30003_INIT_TEST_ROUND(){
 		cnfg_ecg_sucess = true;
 	}else{
 		cnfg_ecg_sucess = false;
-	}	
+	}
+    	
 	if(cnfg_ecg_sucess&&cnfg_gen_sucess&&enint2_success&&enint_success&&mngr_int_sucess){
 		//set a counter, LED is on for a while;
-		result = true;
+		result = TEST_SUCCESS;
 	}else{
-		result = false;
+		result = TEST_CFGFAIL;
 	}
 	
 	return result;		
@@ -691,7 +717,27 @@ void MAX30003_FLAG_TEST(){
 }
 
 void MAX30003_FIFO_TEST(){
-	nextstep = 0;
+    /* STEPS:
+        1. Check relevant register values. [do for every test]
+            - (optional) set and check again
+            - (optional) repeat for a FINITE number of times
+            - return ```TEST_CFGFAIL``` if check fails, otherwise continue
+        2. Delay, then reset ecg_fifo, don't delay after.
+        3. Start Timer and enter a loop that checks for interrupt.
+            - document how long the timer will run for
+            - use the function ```gpio_get_pin_level(INT1)```
+                - ```false``` indicates an interrupt
+                - there is also the ```INT2``` pin
+            - increment the counter if there is an interrupt
+        4. Exit the loop after a set number of counts
+            - should also exit after fixed amount of time 
+                - check for global flag ```FLAG_TIMEOUT``` in loop
+                - set ```result = TEST_TIMEOUT``` and exit test
+        5. Stop the timer and calculate if interrupt rate is okay
+            - allow room for error, document calculation and expectations
+        6. Set ```result = TEST_SUCCESS``` or ```result = TEST_FAILURE```, and exit
+    */
+    
 	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
 	cnfg_gen_vals.en_ecg = ENECG_ENABLED;
 	bool INIT_TEST_PASS;
@@ -706,7 +752,15 @@ void MAX30003_FIFO_TEST(){
 	ecg_synch();
 	delay_ms(100);	
 	}
+
+
+
+
 	//if button is clicked, next step = 1 and start counter, and !timeexpiered in while loop;
+    if(gpio_get_pin_level(INT1) == false ) {
+        delay_ms(10000);
+    }
+
 	while(nextstep==1){
 		if(FIFO_INTERRUPT){
 			//LED is on

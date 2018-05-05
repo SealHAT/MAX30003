@@ -29,10 +29,10 @@ extern "C"
 {
 #endif
 
-
-
-
+#include "max30003.h"
+#include "max30003test.h"
 
 #ifdef __cplusplus
 }
+#endif
 #endif
