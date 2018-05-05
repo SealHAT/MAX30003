@@ -8,6 +8,10 @@ char START_TEST[]    = "Please press \"r\" to begin!\n";
 char NEXT_TEST[]     = "Please press \"n\" if you are ready to proceed to the next test.\n";
 char TEST_COMPLETE[] = "Test complete.\n";
 char GOODBYE[]       = "All tests are complete. The device may now be disconnected. Goodbye!\n";
+char PASS[]          = "All tests passed!\n";
+char FAIL[]          = "One or more tests failed :(\n";
+
+//#define HOTHPITAL (0)
 
 
 int main(void)
@@ -22,7 +26,6 @@ int main(void)
     
     /* ATMEL INIT */
 	 atmel_start_init();
-    
     
     /* YOUR INIT CODE HERE */
     result = false;
@@ -50,6 +53,8 @@ int main(void)
     do {
         retVal = usb_write((uint8_t *) WELCOME, sizeof(WELCOME));
     } while((retVal != USB_OK) || !usb_dtr());
+
+#ifdef HOTHPITAL
 	
     /**********
      * TEST 1 *
@@ -181,15 +186,26 @@ int main(void)
     
     do { retVal = usb_write((uint8_t *) TEST_COMPLETE, sizeof(TEST_COMPLETE)); } while((retVal != USB_OK) || !usb_dtr());
     
+    
+
+#endif // HOTHPITAL    
+
+    result = MAX30003_INIT_TEST_ROUND();
+    delay_ms(1000);
+
+    if(result == true)
+    {
+        do { retVal = usb_write((uint8_t *) PASS, sizeof(PASS)); } while((retVal != USB_OK) || !usb_dtr());
+    }
+    else
+    {
+        do { retVal = usb_write((uint8_t *) FAIL, sizeof(FAIL)); } while((retVal != USB_OK) || !usb_dtr());
+    }
+
     /***********
      * GOODBYE *
      ***********/
     do { retVal = usb_write((uint8_t *) GOODBYE, sizeof(GOODBYE)); } while((retVal != USB_OK) || !usb_dtr());
-
-    
-
-    result = MAX30003_INIT_TEST_ROUND();
-    delay_ms(1000);
 
 	for(;;) {
         ecg_get_status(&status_vals);
