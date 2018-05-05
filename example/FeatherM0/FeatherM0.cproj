@@ -247,29 +247,6 @@
     <ListValues>
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
-      <Value>../Config</Value>
-      <Value>../</Value>
-      <Value>../examples</Value>
-      <Value>../hal/include</Value>
-      <Value>../hal/utils/include</Value>
-      <Value>../hpl/adc</Value>
-      <Value>../hpl/core</Value>
-      <Value>../hpl/dmac</Value>
-      <Value>../hpl/dsu</Value>
-      <Value>../hpl/gclk</Value>
-      <Value>../hpl/pac</Value>
-      <Value>../hpl/pm</Value>
-      <Value>../hpl/port</Value>
-      <Value>../hpl/rtc</Value>
-      <Value>../hpl/sercom</Value>
-      <Value>../hpl/sysctrl</Value>
-      <Value>../hpl/systick</Value>
-      <Value>../hpl/usb</Value>
-      <Value>../hri</Value>
-      <Value>../usb</Value>
-      <Value>../usb/class/cdc</Value>
-      <Value>../usb/class/cdc/device</Value>
-      <Value>../usb/device</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -292,58 +269,12 @@
     <ListValues>
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
-      <Value>../Config</Value>
-      <Value>../</Value>
-      <Value>../examples</Value>
-      <Value>../hal/include</Value>
-      <Value>../hal/utils/include</Value>
-      <Value>../hpl/adc</Value>
-      <Value>../hpl/core</Value>
-      <Value>../hpl/dmac</Value>
-      <Value>../hpl/dsu</Value>
-      <Value>../hpl/gclk</Value>
-      <Value>../hpl/pac</Value>
-      <Value>../hpl/pm</Value>
-      <Value>../hpl/port</Value>
-      <Value>../hpl/rtc</Value>
-      <Value>../hpl/sercom</Value>
-      <Value>../hpl/sysctrl</Value>
-      <Value>../hpl/systick</Value>
-      <Value>../hpl/usb</Value>
-      <Value>../hri</Value>
-      <Value>../usb</Value>
-      <Value>../usb/class/cdc</Value>
-      <Value>../usb/class/cdc/device</Value>
-      <Value>../usb/device</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
-      <Value>../Config</Value>
-      <Value>../</Value>
-      <Value>../examples</Value>
-      <Value>../hal/include</Value>
-      <Value>../hal/utils/include</Value>
-      <Value>../hpl/adc</Value>
-      <Value>../hpl/core</Value>
-      <Value>../hpl/dmac</Value>
-      <Value>../hpl/dsu</Value>
-      <Value>../hpl/gclk</Value>
-      <Value>../hpl/pac</Value>
-      <Value>../hpl/pm</Value>
-      <Value>../hpl/port</Value>
-      <Value>../hpl/rtc</Value>
-      <Value>../hpl/sercom</Value>
-      <Value>../hpl/sysctrl</Value>
-      <Value>../hpl/systick</Value>
-      <Value>../hpl/usb</Value>
-      <Value>../hri</Value>
-      <Value>../usb</Value>
-      <Value>../usb/class/cdc</Value>
-      <Value>../usb/class/cdc/device</Value>
-      <Value>../usb/device</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
 </ArmGcc>
@@ -368,29 +299,6 @@
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
       <Value>../../..</Value>
-      <Value>../Config</Value>
-      <Value>../</Value>
-      <Value>../examples</Value>
-      <Value>../hal/include</Value>
-      <Value>../hal/utils/include</Value>
-      <Value>../hpl/adc</Value>
-      <Value>../hpl/core</Value>
-      <Value>../hpl/dmac</Value>
-      <Value>../hpl/dsu</Value>
-      <Value>../hpl/gclk</Value>
-      <Value>../hpl/pac</Value>
-      <Value>../hpl/pm</Value>
-      <Value>../hpl/port</Value>
-      <Value>../hpl/rtc</Value>
-      <Value>../hpl/sercom</Value>
-      <Value>../hpl/sysctrl</Value>
-      <Value>../hpl/systick</Value>
-      <Value>../hpl/usb</Value>
-      <Value>../hri</Value>
-      <Value>../usb</Value>
-      <Value>../usb/class/cdc</Value>
-      <Value>../usb/class/cdc/device</Value>
-      <Value>../usb/device</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
@@ -415,29 +323,6 @@
     <ListValues>
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
-      <Value>../Config</Value>
-      <Value>../</Value>
-      <Value>../examples</Value>
-      <Value>../hal/include</Value>
-      <Value>../hal/utils/include</Value>
-      <Value>../hpl/adc</Value>
-      <Value>../hpl/core</Value>
-      <Value>../hpl/dmac</Value>
-      <Value>../hpl/dsu</Value>
-      <Value>../hpl/gclk</Value>
-      <Value>../hpl/pac</Value>
-      <Value>../hpl/pm</Value>
-      <Value>../hpl/port</Value>
-      <Value>../hpl/rtc</Value>
-      <Value>../hpl/sercom</Value>
-      <Value>../hpl/sysctrl</Value>
-      <Value>../hpl/systick</Value>
-      <Value>../hpl/usb</Value>
-      <Value>../hri</Value>
-      <Value>../usb</Value>
-      <Value>../usb/class/cdc</Value>
-      <Value>../usb/class/cdc/device</Value>
-      <Value>../usb/device</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
@@ -445,29 +330,6 @@
     <ListValues>
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
-      <Value>../Config</Value>
-      <Value>../</Value>
-      <Value>../examples</Value>
-      <Value>../hal/include</Value>
-      <Value>../hal/utils/include</Value>
-      <Value>../hpl/adc</Value>
-      <Value>../hpl/core</Value>
-      <Value>../hpl/dmac</Value>
-      <Value>../hpl/dsu</Value>
-      <Value>../hpl/gclk</Value>
-      <Value>../hpl/pac</Value>
-      <Value>../hpl/pm</Value>
-      <Value>../hpl/port</Value>
-      <Value>../hpl/rtc</Value>
-      <Value>../hpl/sercom</Value>
-      <Value>../hpl/sysctrl</Value>
-      <Value>../hpl/systick</Value>
-      <Value>../hpl/usb</Value>
-      <Value>../hri</Value>
-      <Value>../usb</Value>
-      <Value>../usb/class/cdc</Value>
-      <Value>../usb/class/cdc/device</Value>
-      <Value>../usb/device</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>
@@ -519,6 +381,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Config\hpl_systick_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Config\hpl_tc_config.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Config\hpl_usb_config.h">
@@ -581,6 +446,9 @@
     <Compile Include="hal\include\hal_spi_m_sync.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="hal\include\hal_timer.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hal\include\hal_usb_device.h">
       <SubType>compile</SubType>
     </Compile>
@@ -632,6 +500,9 @@
     <Compile Include="hal\include\hpl_pac.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="hal\include\hpl_pwm.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hal\include\hpl_reset.h">
       <SubType>compile</SubType>
     </Compile>
@@ -663,6 +534,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\include\hpl_spi_s_sync.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal\include\hpl_timer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\include\hpl_time_measure.h">
@@ -714,6 +588,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\src\hal_spi_m_sync.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal\src\hal_timer.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\src\hal_usb_device.c">
@@ -813,6 +690,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hpl\systick\hpl_systick.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hpl\tc\hpl_tc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hpl\tc\hpl_tc_base.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hpl\usb\hpl_usb.c">
@@ -980,6 +863,7 @@
     <Folder Include="hpl\sercom\" />
     <Folder Include="hpl\sysctrl\" />
     <Folder Include="hpl\systick\" />
+    <Folder Include="hpl\tc\" />
     <Folder Include="hpl\usb\" />
     <Folder Include="hri\" />
     <Folder Include="ringbuff" />

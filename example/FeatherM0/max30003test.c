@@ -6,6 +6,7 @@
  */ 
 
 #include "max30003test.h"
+#include "driver_init.h"
 
 const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
     .rbiasn     = RBIASN_NOT_CONNECTED,
@@ -49,6 +50,7 @@ const MAX30003_CNFG_GEN_MASKS CNFG_GEN_DEFAULT_MASK = CNFGGEN_EN_ECG;
 
 
 int nextstep = 0;
+bool FLAG_TIMEOUT   = false; /* flag if a test ran for longer than expected */
 bool FIFO_INTERRUPT = false;//Flag of FIFO interrupt
 bool FLAG_INTERRUPT = false;//Flag of LEAD-On detection
 
@@ -152,7 +154,7 @@ bool MAX30003_INIT_TEST_ROUND(){
 	bool mngr_int_sucess    = false;
 	bool cnfg_gen_sucess    = false;
 	bool cnfg_ecg_sucess    = false;
-	bool result             = false;
+	TEST_RESULT result      = TEST_PENDING;
     MAX30003_EN_INT_VALS    en_int_vals;
     MAX30003_EN_INT_VALS    en_int_vals2;
     MAX30003_MNGR_INT_VALS  mngr_int_vals;
@@ -228,9 +230,9 @@ bool MAX30003_INIT_TEST_ROUND(){
     	
 	if(cnfg_ecg_sucess&&cnfg_gen_sucess&&enint2_success&&enint_success&&mngr_int_sucess){
 		//set a counter, LED is on for a while;
-		result = true;
+		result = TEST_SUCCESS;
 	}else{
-		result = false;
+		result = TEST_CFGFAIL;
 	}
 	
 	return result;		
@@ -580,7 +582,27 @@ void MAX30003_FLAG_TEST(){
 }
 
 void MAX30003_FIFO_TEST(){
-	nextstep = 0;
+    /* STEPS:
+        1. Check relevant register values. [do for every test]
+            - (optional) set and check again
+            - (optional) repeat for a FINITE number of times
+            - return ```TEST_CFGFAIL``` if check fails, otherwise continue
+        2. Delay, then reset ecg_fifo, don't delay after.
+        3. Start Timer and enter a loop that checks for interrupt.
+            - document how long the timer will run for
+            - use the function ```gpio_get_pin_level(INT1)```
+                - ```false``` indicates an interrupt
+                - there is also the ```INT2``` pin
+            - increment the counter if there is an interrupt
+        4. Exit the loop after a set number of counts
+            - should also exit after fixed amount of time 
+                - check for global flag ```FLAG_TIMEOUT``` in loop
+                - set ```result = TEST_TIMEOUT``` and exit test
+        5. Stop the timer and calculate if interrupt rate is okay
+            - allow room for error, document calculation and expectations
+        6. Set ```result = TEST_SUCCESS``` or ```result = TEST_FAILURE```, and exit
+    */
+    
 	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
 	cnfg_gen_vals.en_ecg = ENECG_ENABLED;
 	bool INIT_TEST_PASS;
@@ -595,9 +617,17 @@ void MAX30003_FIFO_TEST(){
 	ecg_synch();
 	delay_ms(100);	
 	}
+
+
+
+
 	//if button is clicked, next step = 1 and start counter, and !timeexpiered in while loop;
+    if(gpio_get_pin_level(INT1) == false ) {
+        delay_ms(10000);
+    }
+
 	while(nextstep==1){
-		if(FLAG_INTERRUPT){
+		if(FIFO_INTERRUPT){
 			//LED is on
 			}else{
 			//LEd is off

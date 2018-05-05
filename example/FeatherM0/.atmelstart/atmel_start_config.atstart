@@ -394,6 +394,34 @@ drivers:
           input: Generic clock generator 0
         configuration:
           rtc_clk_selection: Generic clock generator 0
+  TIMER_0:
+    user_label: TIMER_0
+    definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::TC3::driver_config_definition::Timer::HAL:Driver:Timer
+    functionality: Timer
+    api: HAL:Driver:Timer
+    configuration:
+      tc_arch_dbgrun: false
+      tc_arch_evact: Event action disabled
+      tc_arch_mceo0: false
+      tc_arch_mceo1: false
+      tc_arch_ovfeo: false
+      tc_arch_presync: Reload or reset counter on next GCLK
+      tc_arch_runstdby: false
+      tc_arch_tcei: false
+      tc_arch_tceinv: false
+      timer_advanced_configuration: false
+      timer_event_control: false
+      timer_prescaler: Divide by 8
+      timer_tick: 1000
+    optional_signals: []
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: TC
+          input: Generic clock generator 0
+        configuration:
+          tc_gclk_selection: Generic clock generator 0
   DMAC:
     user_label: DMAC
     definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::DMAC::driver_config_definition::DMAC::HAL:HPL:DMAC
@@ -800,6 +828,13 @@ pads:
     mode: Analog
     user_label: A0
     configuration: null
+  INT2:
+    name: PA05
+    definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::pad::PA05
+    mode: Digital input
+    user_label: INT2
+    configuration:
+      pad_pull_config: Pull-up
   VBATT:
     name: PA07
     definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::pad::PA07
@@ -863,4 +898,11 @@ pads:
     mode: Advanced
     user_label: USB_P
     configuration: null
+  INT1:
+    name: PB02
+    definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::pad::PB02
+    mode: Digital input
+    user_label: INT1
+    configuration:
+      pad_pull_config: Pull-up
 toolchain_options: []

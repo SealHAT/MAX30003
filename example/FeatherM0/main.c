@@ -12,38 +12,24 @@ char PASS[]          = "All tests passed!\n";
 char FAIL[]          = "One or more tests failed :(\n";
 
 //#define HOTHPITAL (0)
-
+void spi_init();
 
 int main(void)
 {
     /* VARIABLE DECLARATIONS */
+    TEST_RESULT result;
+    bool test_complete;
     int  retVal;
     char charBuffer[16];
-    MAX30003_STATUS_VALS status_vals;
-    volatile bool result;
-    uint16_t count;
-    uint16_t size;
-    
+
     /* ATMEL INIT */
-	 atmel_start_init();
+    atmel_start_init();
+    spi_init();
     
     /* YOUR INIT CODE HERE */
-    result = false;
-    count = 0;
-    size = ECG_LOG_SZ;
+    result          = TEST_PENDING;
+    test_complete   = false;
 
-    spi_m_sync_set_mode(&ECG_SPI_DEV_0, SPI_MODE_0);
-    spi_m_sync_enable(&ECG_SPI_DEV_0);
-    gpio_set_pin_level(CS,true);
-
-    ecg_spi_msg.size  = ECG_BUF_SZ;
-    ecg_spi_msg.rxbuf = ECG_BUF_I;
-    ecg_spi_msg.txbuf = ECG_BUF_O;
-
-    for(int i = 0; i < ECG_LOG_SZ; i++) {
-        ECG_LOG[i] = 0;
-    }
-    
     /* Set up USB connection */
     /* Wait for USB connection to be made with computer. Must be down to receive (DTR). */
     do { /* NOTHING */ } while (!usb_dtr());
@@ -65,6 +51,7 @@ int main(void)
     do { retVal = usb_write((uint8_t *) charBuffer, sizeof(charBuffer)); } while((retVal != USB_OK) || !usb_dtr());
     
     /* FUNCTION CALL FOR TEST 1 GOES HERE */
+    result = MAX30003_INIT_TEST();
     
     
     do { retVal = usb_write((uint8_t *) TEST_COMPLETE, sizeof(TEST_COMPLETE)); } while((retVal != USB_OK) || !usb_dtr());
@@ -78,7 +65,7 @@ int main(void)
     do { retVal = usb_write((uint8_t *) charBuffer, sizeof(charBuffer)); } while((retVal != USB_OK) || !usb_dtr());
     
     /* FUNCTION CALL FOR TEST 2 GOES HERE */
-    
+    result = MAX30003_FIFO_TEST();
     
     do { retVal = usb_write((uint8_t *) TEST_COMPLETE, sizeof(TEST_COMPLETE)); } while((retVal != USB_OK) || !usb_dtr());
     
@@ -189,7 +176,8 @@ int main(void)
     
 
 #endif // HOTHPITAL    
-
+    
+    /* test 0.1 - setup */
     result = MAX30003_INIT_TEST_ROUND();
     delay_ms(1000);
 
@@ -201,6 +189,11 @@ int main(void)
     {
         do { retVal = usb_write((uint8_t *) FAIL, sizeof(FAIL)); } while((retVal != USB_OK) || !usb_dtr());
     }
+
+
+    /* test 0.2 - fifo */
+    
+    MAX30003_FIFO_TEST();
 
     /***********
      * GOODBYE *
@@ -215,9 +208,13 @@ int main(void)
 	}
 } 
 
-// void ecg_record(const uint8_t SAMPLE_SIZE)
-// {
-//     MAX30003_FIFO_VALS fifo;
-// 
-// 
-// }
+void spi_init()
+{
+    spi_m_sync_set_mode(&ECG_SPI_DEV_0, SPI_MODE_0);
+    spi_m_sync_enable(&ECG_SPI_DEV_0);
+    gpio_set_pin_level(CS,true);
+
+    ecg_spi_msg.size  = ECG_BUF_SZ;
+    ecg_spi_msg.rxbuf = ECG_BUF_I;
+    ecg_spi_msg.txbuf = ECG_BUF_O;
+}
