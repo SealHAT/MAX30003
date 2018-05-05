@@ -573,7 +573,7 @@ void MAX30003_FIFO_TEST(){
 	}
 	//if button is clicked, next step = 1 and start counter, and !timeexpiered in while loop;
 	while(nextstep==1){
-		if(FLAG_INTERRUPT){
+		if(FIFO_INTERRUPT){
 			//LED is on
 			}else{
 			//LEd is off
