@@ -17,7 +17,8 @@ void spi_init();
 int main(void)
 {
     /* VARIABLE DECLARATIONS */
-    TEST_RESULT result;
+	MAX30003_STATUS_VALS status_vals;
+    test_result_t result;
     bool test_complete;
     int  retVal;
     char charBuffer[16];
@@ -27,7 +28,7 @@ int main(void)
     spi_init();
     
     /* YOUR INIT CODE HERE */
-    result          = TEST_PENDING;
+    result          = TEST_FAILURE;
     test_complete   = false;
 
     /* Set up USB connection */
@@ -189,11 +190,6 @@ int main(void)
     {
         do { retVal = usb_write((uint8_t *) FAIL, sizeof(FAIL)); } while((retVal != USB_OK) || !usb_dtr());
     }
-
-
-    /* test 0.2 - fifo */
-    
-    MAX30003_FIFO_TEST();
 
     /***********
      * GOODBYE *
