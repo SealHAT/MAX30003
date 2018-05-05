@@ -16,8 +16,8 @@ extern "C"
 #include "max30003.h"
 
 typedef enum TEST_RESULT {
-    TEST_SUCCESS = 0,
-    TEST_FAILURE = 1,
+    TEST_FAILURE = 0,
+    TEST_SUCCESS = 1,
     TEST_CFGFAIL = 2,
     TEST_TIMEOUT = 3,
     TEST_PENDING = 4
