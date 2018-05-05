@@ -187,12 +187,14 @@ void ecg_get(void *vals, const MAX30003_REG REG);
 void ecg_get_sample(MAX30003_FIFO_VALS *vals);
 void ecg_get_status(MAX30003_STATUS_VALS *vals);
 void ecg_get_en_int(MAX30003_EN_INT_VALS *vals);
+void ecg_get_en_int2(MAX30003_EN_INT_VALS *vals);
 void ecg_get_mngr_int(MAX30003_MNGR_INT_VALS *vals);
 void ecg_get_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals);
 void ecg_get_cnfg_gen(MAX30003_CNFG_GEN_VALS *vals);
 void ecg_get_cnfg_cal(MAX30003_CNFG_CAL_VALS *vals);
 void ecg_get_cnfg_emux(MAX30003_CNFG_EMUX_VALS *vals);
 void ecg_get_cnfg_ecg(MAX30003_CNFG_ECG_VALS *vals);
+void ecg_get_cnfg_rtor1(MAX30003_CNFG_RTOR1_VALS*vals);
 
 
 //void ecg_set(void *VALS, const uint32_t MASKS, const MAX30003_REG REG); // TODO make generic later
@@ -210,6 +212,7 @@ void ecg_set_cnfg_rtor2(const MAX30003_CNFG_RTOR2_VALS VALS, const MAX30003_CNFG
 /* internal register functions for shifting and masking values out of words */
 void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_en_int(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t DATA);
+void ecg_decode_en_int2(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_mngr_int(MAX30003_MNGR_INT_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_mngr_dyn(MAX30003_MNGR_DYN_VALS *vals, const MAX30003_DATA_t DATA);
 void ecg_decode_info(MAX30003_INFO_VALS *vals, const MAX30003_DATA_t DATA);

@@ -154,6 +154,24 @@ void ecg_get_en_int(MAX30003_EN_INT_VALS *vals)
         ecg_decode_en_int(vals, msg.data);
     }
 }
+void ecg_get_en_int2(MAX30003_EN_INT_VALS *vals)
+{
+    MAX30003_MSG msg;
+    uint8_t bytes;
+    
+    msg.command = ECG_REG_R(REG_EN_INT2);
+    msg.data    = NULL_DATA;
+
+    bytes = ecg_read(&msg);
+
+    if(bytes != ECG_BUF_SZ) {
+	    /* missing data */
+	    // TODO error
+	    } else {
+	    /* populate the value struct from the data */
+	    ecg_decode_en_int2(vals, msg.data);
+    }
+}
 void ecg_get_mngr_int(MAX30003_MNGR_INT_VALS *vals)
 {
     MAX30003_MSG msg;
@@ -265,6 +283,24 @@ void ecg_get_cnfg_ecg(MAX30003_CNFG_ECG_VALS *vals)
 		ecg_decode_cnfg_ecg(vals, msg.data);
 	}
 }
+void ecg_get_cnfg_rtor1(MAX30003_CNFG_RTOR1_VALS*vals){
+	MAX30003_MSG msg;
+	uint8_t		 bytes;
+	
+	/* create a (read) command by shifting in the read indicator */
+	msg.command = ECG_REG_R(REG_CNFG_RTOR1);
+	msg.data		= NULL_DATA;
+
+	/* perform the spi read action */
+	bytes = ecg_read(&msg);
+	if(bytes != ECG_BUF_SZ) {
+		/* missing data */
+		// TODO error
+		} else {
+		ecg_decode_cnfg_rtor1(vals, msg.data);
+	}	
+}
+
 void ecg_set_en_int(const MAX30003_EN_INT_VALS VALS, const MAX30003_EN_INT_MASKS MASKS)
 {
     MAX30003_MSG msg;
@@ -483,6 +519,28 @@ void ecg_decode_status(MAX30003_STATUS_VALS *vals, const MAX30003_DATA_t data)
 	vals->eint      = (bool)(word & STATUS_EINT);
 }
 void ecg_decode_en_int(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t DATA)
+{
+	uint32_t word; /* store the 3x 8-bit data words into a 32-bit number */
+
+	word = 0x00000000;
+
+	/* extract and assign bytes from data word to be endian safe */
+	word |= ((uint32_t)(DATA.byte[2]) << 16);
+	word |= ((uint32_t)(DATA.byte[1]) << 8 );
+	word |= ((uint32_t)(DATA.byte[0]) << 0 );
+	
+	/* extract and assign bytes from data word to be endian safe */
+	vals->intb_type     = (ENINT_INTBTYPE_VAL   )( (word & ENINT_INTB_TYPE) >> 0 );
+	vals->en_pllint     = (ENINT_ENPLLINT_VAL   )( (word & ENINT_EN_PLLINT) >> 8 );
+	vals->en_samp       = (ENINT_ENSAMP_VAL     )( (word & ENINT_EN_SAMP  ) >> 9 );
+	vals->en_rrint      = (ENINT_ENRRINT_VAL    )( (word & ENINT_EN_RRINT ) >> 10);
+	vals->en_lonint     = (ENINT_ENLONINT_VAL   )( (word & ENINT_EN_LONINT) >> 11);
+	vals->en_dcloffint  = (ENINT_ENDCLOFFINT_VAL)( (word & ENINT_EN_DCLOFFINT) >> 20);
+	vals->en_fstint     = (ENINT_ENFSTINT_VAL   )( (word & ENINT_EN_FSTINT) >> 21);
+	vals->en_eovf       = (ENINT_ENEOVF_VAL     )( (word & ENINT_EN_EOVF) >> 22);
+	vals->en_eint       = (ENINT_ENEINT_VAL     )( (word & ENINT_EN_EINT) >> 23);
+}
+void ecg_decode_en_int2(MAX30003_EN_INT_VALS *vals, const MAX30003_DATA_t DATA)
 {
 	uint32_t word; /* store the 3x 8-bit data words into a 32-bit number */
 
@@ -957,6 +1015,15 @@ void ecg_fifo_reset()
     msg.data    = NULL_DATA;
 
     ecg_write(&msg);
+}
+
+void ecg_sw_reset()
+{
+	MAX30003_MSG msg;
+	
+	msg.data = NULL_DATA;
+	
+	ecg_write(&msg);
 }
 
 void ecg_synch()

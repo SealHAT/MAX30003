@@ -179,38 +179,38 @@ typedef enum {
 
 // TODO enum for 0000 = 1 to 1111 = 32 to enforce "off-by-one" behaviour
 typedef enum {
-	EFIT_AS_1 = 0;
-	EFIT_AS_2 = 1;
-	EFIT_AS_3 = 2;
-	EFIT_AS_4 = 3;
-	EFIT_AS_5 = 4;
-	EFIT_AS_6 = 5;
-	EFIT_AS_7 = 6;
-	EFIT_AS_8 = 7;
-	EFIT_AS_9 = 8;
-	EFIT_AS_10 = 9;
-	EFIT_AS_11 = 10;
-	EFIT_AS_12 = 11;
-	EFIT_AS_13 = 12;
-	EFIT_AS_14 = 13;
-	EFIT_AS_15 = 14;
-	EFIT_AS_16 = 15;
-	EFIT_AS_17 = 16;
-	EFIT_AS_18 = 17;
-	EFIT_AS_19 = 18;
-	EFIT_AS_20 = 19;
-	EFIT_AS_21 = 20;
-	EFIT_AS_22 = 21;
-	EFIT_AS_23 = 22;
-	EFIT_AS_24 = 23;
-	EFIT_AS_25 = 24;
-	EFIT_AS_26 = 25;
-	EFIT_AS_27 = 26;
-	EFIT_AS_28 = 27;
-	EFIT_AS_29 = 28;
-	EFIT_AS_30 = 29;
-	EFIT_AS_31 = 30;
-	EFIT_AS_32 = 31;
+	EFIT_AS_1 = 0,
+	EFIT_AS_2 = 1,
+	EFIT_AS_3 = 2,
+	EFIT_AS_4 = 3,
+	EFIT_AS_5 = 4,
+	EFIT_AS_6 = 5,
+	EFIT_AS_7 = 6,
+	EFIT_AS_8 = 7,
+	EFIT_AS_9 = 8,
+	EFIT_AS_10 = 9,
+	EFIT_AS_11 = 10,
+	EFIT_AS_12 = 11,
+	EFIT_AS_13 = 12,
+	EFIT_AS_14 = 13,
+	EFIT_AS_15 = 14,
+	EFIT_AS_16 = 15,
+	EFIT_AS_17 = 16,
+	EFIT_AS_18 = 17,
+	EFIT_AS_19 = 18,
+	EFIT_AS_20 = 19,
+	EFIT_AS_21 = 20,
+	EFIT_AS_22 = 21,
+	EFIT_AS_23 = 22,
+	EFIT_AS_24 = 23,
+	EFIT_AS_25 = 24,
+	EFIT_AS_26 = 25,
+	EFIT_AS_27 = 26,
+	EFIT_AS_28 = 27,
+	EFIT_AS_29 = 28,
+	EFIT_AS_30 = 29,
+	EFIT_AS_31 = 30,
+	EFIT_AS_32 = 31
 	} MNGRINT_EFIT_VAL;
 
 /***

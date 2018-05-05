@@ -212,6 +212,141 @@ bool MAX30003_INIT_TEST_ROUND(){
 	return result;		
 }
 
+bool MAX30003_CHECK_INIT_VALS_ROUND(){
+	int success = 0;
+	bool enint_success = false;
+	bool enint2_success = false;
+	bool mngr_int_sucess = false;
+	bool mngr_dyn_success = false;
+	bool cnfg_gen_sucess = false;
+	bool cnfg_ecg_sucess = false;
+	bool cnfg_rtor1_success = false;
+	bool cnfg_emux_success = false;
+	bool cnfg_cal_success = false;
+	bool result = false;
+	
+	MAX30003_EN_INT_VALS en_int_vals;
+	MAX30003_EN_INT_VALS en_int_vals2;
+	MAX30003_MNGR_INT_VALS mngr_int_vals;
+	MAX30003_MNGR_DYN_VALS mngr_dyn_vals;
+	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
+	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
+	MAX30003_CNFG_EMUX_VALS cnfg_emux_vals;
+	MAX30003_CNFG_CAL_VALS cnfg_cal_vals;
+	MAX30003_CNFG_RTOR1_VALS cnfg_rtor1_vals;
+	while(!result){
+	ecg_get_en_int(&en_int_vals);
+	if(en_int_vals.en_eint == ENINT_ENABLED){
+		success++;
+	}
+	if(en_int_vals.intb_type==INTBTYPE_NMOS_WITH_PU){
+		success++;
+	}
+	if(success==2){
+		enint_success = true;
+		}else{
+		enint_success = false;
+	}
+	ecg_get_en_int2(&en_int_vals2);
+	if(en_int_vals2.en_lonint == ENLONINT_ENABLED){
+		success++;
+	}
+	if(en_int_vals2.intb_type==INTBTYPE_NMOS_WITH_PU){
+		success++;
+	}
+	if(success==4){
+		enint2_success = true;
+		}else{
+		enint2_success = false;
+	}
+	ecg_get_mngr_int(&mngr_int_vals);
+	if(mngr_int_vals.efit==EFIT_AS_24){
+		success++;
+	}
+	if(success==5){
+		mngr_int_sucess = true;
+		}else{
+		mngr_int_sucess = false;
+	}	
+	ecg_get_mngr_dyn(&mngr_dyn_vals);
+	if(mngr_dyn_vals.fast == FAST_NORMAL){
+		success++;//mngr_dyn_success = true; 
+	}
+	if(success==6){
+		mngr_dyn_success = true;
+	}
+	else{
+		mngr_dyn_success = false;
+	}	
+	ecg_get_cnfg_gen(&cnfg_gen_vals);
+	if(cnfg_gen_vals.en_ecg == ENECG_ENABLED){
+		success++;
+	}
+	if(cnfg_gen_vals.en_dcloff == ENDCLOFF_DISABLED){
+		success++;
+	}
+	if(success==7){
+		cnfg_gen_sucess = true;
+		}else{
+		cnfg_gen_sucess = false;
+	}
+	ecg_get_cnfg_cal(&cnfg_cal_vals);
+	if(cnfg_cal_vals.en_vcal == ENVCAL_DISABLED){
+		success++;
+	}
+	if(success==7){
+		cnfg_cal_success = true;
+	}else{
+		cnfg_cal_success = false;
+	}
+	ecg_get_cnfg_emux(&cnfg_emux_vals);
+	if(cnfg_emux_vals.pol == POL_NON_INVERTED){
+		success++;
+	}
+	if(success==8){
+		cnfg_emux_success = true;
+	}else{
+		cnfg_emux_success = false;
+	}
+	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
+	if(cnfg_ecg_vals.dhpf == DHPF_HALF){
+		success++;
+	}
+	if(cnfg_ecg_vals.dlpf == DLPF_40_HZ){
+		success++;
+	}
+	if(cnfg_ecg_vals.gain == GAIN_20_V){
+		success++;
+	}
+	if(cnfg_ecg_vals.rate == RATE_MIN_SPS){
+		success++;
+	}
+	if(success==12){
+		cnfg_ecg_sucess = true;
+	}else{
+		cnfg_ecg_sucess = false;
+	}
+	ecg_get_cnfg_rtor1(&cnfg_rtor1_vals);
+	if(cnfg_rtor1_vals.en_rtor == ENRTOR_DISABLED){
+		success++;
+	}
+	if(success==13){
+		cnfg_rtor1_success = true;
+	}else{
+		cnfg_rtor1_success = false;
+	}
+	if(cnfg_rtor1_success&&cnfg_ecg_sucess&&cnfg_emux_success&&cnfg_cal_success&&cnfg_gen_sucess&&mngr_dyn_success&&mngr_int_sucess&&enint2_success&&enint_success){
+		result = true;
+	}else{
+		result = false;
+	}
+	if(!result){
+        MAX30003_INIT_SETUP();
+	}
+	}
+	return result;
+}
+
 void MAX30003_INIT_SETUP()
 {
 	ecg_sw_reset();
