@@ -414,7 +414,7 @@ void MAX30003_TEST_TRANS_RATE()
 	bool data_trans_rate_changed = false;
 	
 	
-	//check the registers' values are the one we want or not. if they are, we continue the test, otherwise
+	//check the registers' values are the one we want or not. 
 	while(nextstep==0 && attempts<3){
 	test = MAX30003_CHECK_INIT_VALS_ROUND();
 	if(test==TEST_SUCCESS){
@@ -426,17 +426,23 @@ void MAX30003_TEST_TRANS_RATE()
 }
 	
 	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
+	
 	//set a timer, start counting the time and record the data.
-	//while time is not expired:
+	
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	//while(!TimeExpired){
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
 	}//inside the while !TimeExpired loop
+//} bracket of the while loop;
+
 	//Continue the next selection data-transfer rate
-	
     nextstep = 2;
 	attempts=0;
+	//check register's value before we check the data
 	while(nextstep==2&&!data_trans_rate_changed&&attempts<3){
 	cnfg_ecg_vals.rate = RATE_MED_SPS;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
@@ -452,13 +458,18 @@ void MAX30003_TEST_TRANS_RATE()
 }
 
 	//set a timer, start counting the time and record the data
-	//while time is not expired:
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	delay_ms(100);
+	//while(!TimeExpired){
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
 	}//inside the while !TimeExpired loop
+//}bracket of the time loop
 
+	//we continue to test the next data rate
     nextstep = 3;
 	//reset the bool data_trans_rate change
 	data_trans_rate_changed = false;
@@ -476,18 +487,21 @@ void MAX30003_TEST_TRANS_RATE()
 	
 }
 	//set a timer, start counting the time and record the data
-	//while time is not expired:
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	//while(!TimeExpired){
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
 	}//inside the while !TimeExpired loop
+//} bracket of the time loop	
 	
-	//LED is always on(outside while loop) to indicate this rate of test finished
 }
 
 void MAX30003_TEST_GAIN()
 {
+	//Initialize the variable in the function
 	nextstep = 0;
 	TEST_RESULT test;
 	int attempts = 0;
@@ -504,13 +518,18 @@ void MAX30003_TEST_GAIN()
 	}
 	attempts = 0;
 	//set a timer, start counting the time and record the data
-	//while time is not expired:
+	
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	//while(!TimeExpired){
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
 	}//inside the while !TimeExpired loop
-	
+//} bracket of the time loop;
+
+	//we continue to test the second gain;
 	nextstep = 2;
 	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
 	while(nextstep==2&&!data_gain_changed&&attempts<3){
@@ -528,14 +547,19 @@ void MAX30003_TEST_GAIN()
 }
 
 	//set a timer, start counting the time and record the data
-	//while time is not expired:
+	
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	//while(!TimeExpired){
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
 		//FIFO_INTERRUPT = !FIFO_INTERRUPT
 	}//inside the while loop		
+//} bracket of the time loop
 
+	//we continue to test the next gain
 	nextstep = 3;
 	//reset the bool _gain change
 	data_gain_changed = false;
@@ -555,13 +579,18 @@ void MAX30003_TEST_GAIN()
 }
 
 	//set a timer, start counting the time and record the data
-	//while time is not expired:
+	
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	//while(!TimeExpired){
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-	}//inside the while loop
+	}
+//} bracket of the time loop
 
+	//we continue our test to next gain
 	nextstep = 4;		
 	//reset the bool _gain change
 	data_gain_changed = false;
@@ -579,24 +608,30 @@ void MAX30003_TEST_GAIN()
 		attempts++;
 	}
 }
-	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
-	//while time is not expired:
+	//set a timer, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
+	
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	//while(!TimeExpired){
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-	}//inside the while loop
-	//LED is always on(outside while loop) to indicate this rate of test finished
+	}
+//} bracket of the while loop	
 		
 }
 
 void MAX30003_TEST_Fre(){
+	
+	//Initialize the variable used in the function
 	nextstep = 0;
 	TEST_RESULT test;
 	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
 	int attempts = 0;
 	bool data_fre_changed = false;
-	//check the registers' values are the one we want or not. if they are, we continue the test, otherwise
+	
+	//check the registers' values are the one we want or not. if they are, we continue the test, otherwise we try in three times to rewrite the value
 	while(nextstep==0 && attempts<3){
 		test = MAX30003_CHECK_INIT_VALS_ROUND();
 		if(test==TEST_SUCCESS){
@@ -606,15 +641,20 @@ void MAX30003_TEST_Fre(){
 			attempts++;
 		}
 	}
+	
 	//set a timer, start counting the time and record the data
-	//while time is not expired:
+	
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	//while(!TimeExpired){
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-	}//inside the while loop
-	//LED is always on(outside while loop) to indicate this rate of test finished
+	}
+//} bracket of time loop
 	
+	// we continue to try the next frequency
 	nextstep = 2;
 	attempts = 0;
 	while(nextstep==2&&!data_fre_changed&&attempts<3){
@@ -631,13 +671,18 @@ void MAX30003_TEST_Fre(){
 		}
 	}
 		//set a timer, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
-		//while time is not expired:
+		
+		//when we run the test, we reset FIFO;
+		ecg_fifo_reset();
+		//while(!TimeExpired){
 		if(FIFO_INTERRUPT){
 			//Toggle LED
 			//Record data in the storage
 			//Reset FIFO
 		}//inside the while loop
-		
+//} bracket of the time loop
+
+	//we continue the next frequency test;	
 	 nextstep = 3;
 	//reset bool data_fre_change
 	!data_fre_changed = false;
@@ -656,13 +701,15 @@ void MAX30003_TEST_Fre(){
 		}
 		
 		//set a timer, start counting the time and record the data
-		//while time is not expired:
+		//when we run the test, we reset FIFO;
+		ecg_fifo_reset();
+		//while(!TimeExpired){
 		if(FIFO_INTERRUPT){
 			//Toggle LED
 			//Record data in the storage
 			//Reset FIFO
-		}//inside the while loop
-		//LED is always on(outside while loop) to indicate this rate of test finished
+		}
+//} bracket of the time loop
 		
     nextstep = 4;
 	//reset bool data_fre_change
@@ -678,16 +725,20 @@ void MAX30003_TEST_Fre(){
 		}else{
 			attempts++;
 		}
-		//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
-		//while time is not expired:
+		
+		//set a timer
+		
+		//when we run the test, we reset FIFO;
+		ecg_fifo_reset();
+		//while(!TimeExpired){
 		if(FIFO_INTERRUPT){
 			//Toggle LED
 			//Record data in the storage
 			//Reset FIFO
 			//FIFO_INTERRUPT = !FIFO_INTERRUPT
 		}//inside the while loop
+//} bracket of the tine loop		
 		
-		//LED is always on(outside while loop) to indicate this rate of test finished
 		
 }
 
@@ -707,7 +758,7 @@ void MAX30003_TEST_HELLO_WORLD(){
 	delay_ms(100);
 	}
 	//if button is clicked, start the counter and start record the data
-	//while time is not expierd:
+	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//toogle the led;
 		//transfer data into storage
@@ -718,24 +769,37 @@ void MAX30003_TEST_HELLO_WORLD(){
 }
 
 void MAX30003_FLAG_TEST(){
+	
+	//Initialize the variable in the function
 	nextstep = 0;
-	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
-	cnfg_gen_vals.en_ecg = ENECG_ENABLED;
-	MAX30003_INIT_SETUP();
-	ecg_get_cnfg_gen(&cnfg_gen_vals);
-	if(cnfg_gen_vals.en_ulp_lon==ENULPLON_ENABLED){
-		//LED is on
+	TEST_RESULT test;
+	nextstep = 0;
+	int count = 0;
+	
+	//run the function of checking register's values;
+	test = MAX30003_CHECK_INIT_VALS_ROUND();
+	if(test!=TEST_CFGFAIL){
+		nextstep = 1;
+	}
+	
+	//reset FIFO;
+	delay_ms(100);
+	ecg_fifo_reset();
+	
+	//set a timer to make sure if int2B doesn't work but we can get out of the loop
+	while(nextstep==1&&!FLAG_INTERRUPT/*&&!TimeExpired*/){
+	if(gpio_get_pin_level(INT1) == false){
+	 FLAG_INTERRUPT = true;	
+	}
+}
+	//if the while loop is broken by timeexpired, the test fails
+	/*if(TimeExpired){
+		test = TEST_FAILURE;
 	}else{
-		MAX30003_INIT_SETUP();
-	}
-	//if button is clicked, next step = 1;
-	while(nextstep==1){
-	if(FLAG_INTERRUPT){
-	 //LED is on	
-	}else{
-		//LEd is off
-	}
-	}
+		test = TEST_SUCCESS;
+	}*/
+	
+	
 }
 
 void MAX30003_FIFO_TEST(){
@@ -760,35 +824,40 @@ void MAX30003_FIFO_TEST(){
         6. Set ```result = TEST_SUCCESS``` or ```result = TEST_FAILURE```, and exit
     */
     
-	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
-	cnfg_gen_vals.en_ecg = ENECG_ENABLED;
-	bool INIT_TEST_PASS;
-	INIT_TEST_PASS = MAX30003_INIT_TEST_ROUND();
-	if(INIT_TEST_PASS){
-		//LED is on
-	}else{
-	ecg_sw_reset();
-	delay_ms(100);
-	ecg_set_cnfg_gen(cnfg_gen_vals,CNFGGEN_EN_ECG );
-	delay_ms(100);
-	ecg_synch();
-	delay_ms(100);	
+	//Initialize the variable in the function
+	TEST_RESULT test;
+	nextstep = 0;
+	int count = 0;
+	
+	//run the function of checking register's values
+	test = MAX30003_CHECK_INIT_VALS_ROUND();
+	if(test!=TEST_CFGFAIL){
+		nextstep = 1;
 	}
+	
+	//reset the FIFO;
+	delay_ms(100);
+	ecg_fifo_reset();
 
-
-
-
-	//if button is clicked, next step = 1 and start counter, and !timeexpiered in while loop;
+	//start a timer and check for interrupt
+	//while(!TimeExpired&&count<Some#&&nextstep==1){
+		
     if(gpio_get_pin_level(INT1) == false ) {
-        delay_ms(10000);
-    }
+        count++;
+    }//inside the time loop
 
-	while(nextstep==1){
-		if(FIFO_INTERRUPT){
-			//LED is on
-			}else{
-			//LEd is off
-		}
-	}
-	//LED always on indicate test is finished	
+	//Outside the time loop;
+	/*function to see if the loop is broke by timer expired or not
+	if(!TimeExpired){
+		test = TEST_TIMEOUT;
+	}*/
+	
+	//check if the interrupt rate is okay, the standard of interrupt rate is the count/128sps, the variance of 10%
+	/*if(1.1*Timer's time <=count/128<=0.9*Timer's time){
+		test = TEST_SUCCESS;
+	}else{
+		test = TEST_FAILURE;
+	}*/
+	
+	
 }
