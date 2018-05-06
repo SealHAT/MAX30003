@@ -8,12 +8,14 @@
 
 /* Message Strings */
 char WELCOME[]       = "Welcome to the SealHAT EKG test suite!\nPlease start the capture to textfile within CoolTerm now!\nBe sure to name your file \"sealtest.txt\" and change your baudrate to max.\n";
-char START_TEST[]    = "Please press \"r\" to begin!\n";
-char NEXT_TEST[]     = "Please press \"n\" if you are ready to proceed to the next test.\n";
-char TEST_COMPLETE[] = "Test complete.\n";
+char START_TEST[]    = "Please press \"b\" to begin!\n";
+char TEST_PASS[]     = "Test complete. Result: PASS\n";
+char TEST_FAIL[]     = "Test complete. Result: FAIL\n";
 char GOODBYE[]       = "All tests are complete. The device may now be disconnected. Goodbye!\n";
 char PASS[]          = "All tests passed!\n";
 char FAIL[]          = "One or more tests failed :(\n";
+
+char NEXT_OR_REDO[]  = "Press \'r\' to redo the test or \'n\' to go to the next test.\n";
 
 //#define HOTHPITAL (0)
 void spi_init();
@@ -27,6 +29,7 @@ int main(void)
     bool test_complete;
     int  retVal;
     char charBuffer[16];
+    char getCharValue;
 
     /* ATMEL INIT */
     atmel_start_init();
@@ -56,27 +59,44 @@ int main(void)
         retVal = usb_write((uint8_t *) WELCOME, sizeof(WELCOME));
     } while((retVal != USB_OK) || !usb_dtr());
 
-#ifdef HOTHPITAL
-	
     /**********
      * TEST 1 *
      **********/
-    do { retVal = usb_write((uint8_t *) START_TEST, sizeof(START_TEST)); } while((retVal != USB_OK) || !usb_dtr());
-    do { /* NOTHING */ } while(usb_get() != 'r');
-    snprintf(charBuffer, 14,"Begin test %1d\n", 1);
-    do { retVal = usb_write((uint8_t *) charBuffer, sizeof(charBuffer)); } while((retVal != USB_OK) || !usb_dtr());
+    while (test_complete == false)
+    {
+        do { retVal = usb_write((uint8_t *) START_TEST, sizeof(START_TEST)); } while((retVal != USB_OK) || !usb_dtr());
+        do { /* NOTHING */ } while(usb_get() != 'b');
+        snprintf(charBuffer, 14,"Begin test %1d\n", 1);
+        do { retVal = usb_write((uint8_t *) charBuffer, sizeof(charBuffer)); } while((retVal != USB_OK) || !usb_dtr());
     
-    /* FUNCTION CALL FOR TEST 1 GOES HERE */
-    result = MAX30003_INIT_TEST_ROUND();
+        /* FUNCTION CALL FOR TEST 1 GOES HERE */
+        result = MAX30003_INIT_TEST_ROUND();
+
+        /* Print success or failure message to the console. */
+        if(result == TEST_SUCCESS)
+        {
+            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS)); } while((retVal != USB_OK) || !usb_dtr());
+        }
+        else
+        {
+            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL)); } while((retVal != USB_OK) || !usb_dtr());
+        }
     
+        /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
+        do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO)); } while((retVal != USB_OK) || !usb_dtr());
+        do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
+        
+        if(getCharValue == 'n')
+        {
+            test_complete = true;
+        }        
     
-    do { retVal = usb_write((uint8_t *) TEST_COMPLETE, sizeof(TEST_COMPLETE)); } while((retVal != USB_OK) || !usb_dtr());
+    }    
     
     /**********
      * TEST 2 *
      **********/
-    do { retVal = usb_write((uint8_t *) NEXT_TEST, sizeof(NEXT_TEST)); } while((retVal != USB_OK) || !usb_dtr());
-    do { /* NOTHING */ } while(usb_get() != 'n');
+#ifdef HOTHPITAL
     snprintf(charBuffer, 14,"Begin test %1d\n", 2);
     do { retVal = usb_write((uint8_t *) charBuffer, sizeof(charBuffer)); } while((retVal != USB_OK) || !usb_dtr());
     
