@@ -447,6 +447,11 @@ int main(void)
 	ecg_fifo_reset();
 	for(;;) 
 	{
+		if(usb_get() == 'p')
+		{
+			delay_ms(3000);
+		}
+		
 		if(gpio_get_pin_level(INT1) == false)
 		{			
 			while (step < ECG_LOG_SZ && fifo_eof == false && fifo_err == false) 
