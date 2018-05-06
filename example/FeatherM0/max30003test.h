@@ -32,6 +32,8 @@ extern bool		flag_timeout;
 extern bool		int1_level_n;
 extern bool		int2_level_n;
 
+extern const int ERROR_STR_LEN;
+
 test_result_t MAX30003_INIT_TEST();
 test_result_t MAX30003_INIT_TEST_ROUND();
 test_result_t MAX30003_INIT_SETUP();
@@ -41,6 +43,8 @@ test_result_t MAX30003_TEST_Fre();
 test_result_t MAX30003_TEST_HELLO_WORLD();
 test_result_t MAX30003_FLAG_TEST();
 test_result_t MAX30003_FIFO_TEST();
+
+char* error_no_to_string();
 
 #ifdef __cplusplus
 }
