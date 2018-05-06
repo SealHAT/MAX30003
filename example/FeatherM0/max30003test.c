@@ -53,6 +53,14 @@ bool flag_timeout	= false; /* flag if a test ran for longer than expected */
 bool int1_level_n   = false; /*	interrupt 1 pin state, active low */
 bool int2_level_n   = false; /*	interrupt 2 pin state, active low */
 
+/* strings for error values */
+char NO_ERROR_STR[] = "TEST_NOERROR\n";
+char TIMEOUT_STR[]  = "TEST_TIMEOUT\n";
+char CFG_FAIL_STR[] = "TEST_CFGFAIL\n";
+char RUN_FAIL_STR[] = "TEST_RUNFAIL\n";
+
+const int ERROR_STR_LEN = 14;
+
 test_result_t MAX30003_INIT_TEST_ROUND(){
 	int success             = 0;
 	bool enint_success      = false;
@@ -162,4 +170,26 @@ test_result_t MAX30003_INIT_SETUP()
 	delay_ms(100);
 	ecg_synch();
 	delay_ms(100);
+}
+
+char* error_no_to_string()
+{
+    switch(test_errno)
+    {
+        case(TEST_NOERROR):
+            return NO_ERROR_STR;
+            break;
+        case(TEST_TIMEOUT):
+            return TIMEOUT_STR;
+            break;
+        case(TEST_CFGFAIL):
+            return CFG_FAIL_STR;
+            break;
+        case(TEST_RUNFAIL):
+            return RUN_FAIL_STR;
+            break;
+        default:
+            return NO_ERROR_STR;
+            break;
+    }
 }
