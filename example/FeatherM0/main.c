@@ -1,6 +1,8 @@
 #include "atmel_start.h"
+#include "seal_UTIL.h"
 #include "max30003.h"
 #include "max30003test.h"
+#include "si5351-samd21-minimal.h"
 
 /* Message Strings */
 char WELCOME[]       = "Welcome to the SealHAT EKG test suite!\nPlease start the capture to textfile within CoolTerm now!\nBe sure to name your file \"sealtest.txt\" and change your baudrate to max.\n";
@@ -13,6 +15,7 @@ char FAIL[]          = "One or more tests failed :(\n";
 
 //#define HOTHPITAL (0)
 void spi_init();
+void fclock_init();
 
 int main(void)
 {
@@ -25,8 +28,18 @@ int main(void)
 
     /* ATMEL INIT */
     atmel_start_init();
+	
+	gpio_set_pin_level(CS,true);
+	
+	i2c_unblock_bus(SDA, SCL);
+	
     spi_init();
-    
+	
+	gpio_set_pin_level(CS,false);
+	
+	fclock_init();
+	
+	gpio_set_pin_level(CS,true);
     /* YOUR INIT CODE HERE */
     result          = TEST_FAILURE;
     test_complete   = false;
@@ -179,8 +192,8 @@ int main(void)
 #endif // HOTHPITAL    
     
     /* test 0.1 - setup */
-    result = MAX30003_INIT_TEST_ROUND();
-    delay_ms(1000);
+//     result = MAX30003_INIT_TEST_ROUND();
+//     delay_ms(1000);
 
     if(result == true)
     {
@@ -195,12 +208,17 @@ int main(void)
      * GOODBYE *
      ***********/
     do { retVal = usb_write((uint8_t *) GOODBYE, sizeof(GOODBYE)); } while((retVal != USB_OK) || !usb_dtr());
+	
+	uint8_t serout = 0;
 
 	for(;;) {
-        ecg_get_status(&status_vals);
+       // ecg_get_status(&status_vals);
         gpio_toggle_pin_level(LED_BUILTIN);
         delay_ms(250);
         //ecg_get(&info_vals, REG_INFO);
+// 		snprintf(charBuffer, 5,"%3d\n", serout);
+// 		do { retVal = usb_write((uint8_t *) charBuffer, 4); } while((retVal != USB_OK) || !usb_dtr());
+// 		serout++;
 	}
 } 
 
@@ -213,4 +231,29 @@ void spi_init()
     ecg_spi_msg.size  = ECG_BUF_SZ;
     ecg_spi_msg.rxbuf = ECG_BUF_I;
     ecg_spi_msg.txbuf = ECG_BUF_O;
+}
+
+void fclock_init()
+{	
+	struct Si5351Frac pll_frac, ms_frac;
+	/* I think the adafruit breakout using a 10pF crystal, known 25MHz (default) */
+	si5351_init(&wire, SI5351_CRYSTAL_LOAD_10PF, 0);
+	
+	pll_frac.a = 28;
+	pll_frac.b = 7012;
+	pll_frac.c = 390625;
+	
+	ms_frac.a = 1324;
+	ms_frac.b = 0;
+	ms_frac.c = 16;
+	
+	/* set the clock to 25 32.768kHz */
+	//si5351_set_freq(32768UL, SI5351_CLK0); /* 1MHz min */
+	si5351_set_pll(pll_frac, SI5351_PLLA);
+	si5351_set_ms(SI5351_CLK0, ms_frac, 0, SI5351_OUTPUT_CLK_DIV_16, 0);
+	
+	/* (optional) update the output drive power */
+	//si5351_drive_strength(SI5351_CLK0, SI5351_DRIVE_4MA);
+	
+	
 }
