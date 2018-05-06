@@ -3,7 +3,7 @@
  *
  * Created: 5/2/2018 3:24:08 PM
  *  Author: dli40
- */ 
+ */
 
 #include "max30003test.h"
 #include "driver_init.h"
@@ -141,7 +141,7 @@ test_result_t MAX30003_INIT_TEST_ROUND(){
 	}else{
 		cnfg_ecg_sucess = false;
 	}
-    	
+
 	if(cnfg_ecg_sucess&&cnfg_gen_sucess&&enint2_success&&enint_success&&mngr_int_sucess){
 		//set a counter, LED is on for a while;
 		result = TEST_SUCCESS;
@@ -150,8 +150,8 @@ test_result_t MAX30003_INIT_TEST_ROUND(){
 		result = TEST_FAILURE;
 		test_errno = TEST_CFGFAIL;
 	}
-	
-	return result;		
+
+	return result;
 }
 
 test_result_t MAX30003_INIT_SETUP()
@@ -192,4 +192,53 @@ char* error_no_to_string()
             return NO_ERROR_STR;
             break;
     }
+}
+
+test_result_t MAX30003_CONFIG_TEST(const uint8_t SPS, const uint8_t GAIN, const uint8_t LOWPASS)
+{
+    MAX30003_CNFG_ECG_VALS  vals;
+    MAX30003_CNFG_ECG_MASKS masks;
+
+    vals.dhpf = DHPF_HALF;
+
+    // test for invalid lowpass settings (higher lowpass freq requires higher sample rate)
+    if((LOWPASS == 2 && SPS > 1) || (LOWPASS == 3 && SPS > 0 )) {
+        return TEST_FAILURE;
+    }
+
+    switch(SPS) {
+        case 0 : vals.rate = RATE_MAX_SPS;
+                 break;
+        case 1 : vals.rate = RATE_MED_SPS;
+                 break;
+        case 2 : vals.rate = RATE_MIN_SPS;
+                 break;
+        default: return TEST_FAILURE;
+    }
+
+    switch(GAIN) {
+        case 0 : vals.gain = GAIN_20_V;
+                 break;
+        case 1 : vals.gain = GAIN_40_V;
+                 break;
+        case 2 : vals.gain = GAIN_80_V;
+                 break;
+        case 3 : vals.gain = GAIN_160_V;
+                 break;
+        default: return TEST_FAILURE;
+    }
+
+    switch(LOWPASS) {
+        case 0 : vals.dlpf = DLPF_BYPASS;
+                 break;
+        case 1 : vals.dlpf = DLPF_40_HZ;
+                 break;
+        case 2 : vals.dlpf = DLPF_100_HZ;
+                 break;
+        case 3 : vals.dlpf = DLPF_150_HZ;
+                 break;
+        default: return TEST_FAILURE;
+    }
+
+    ecg_set_cnfg_ecg(vals , CNFGECG_DLPF | CNFGECG_DHPF | CNFGECG_GAIN | CNFGECG_RATE);
 }

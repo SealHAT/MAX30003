@@ -3,7 +3,7 @@
  *
  * Created: 5/2/2018 3:23:31 PM
  *  Author: dli40
- */ 
+ */
 
 #ifndef MAX30003TEST_H
 #define MAX30003TEST_H
@@ -43,6 +43,7 @@ test_result_t MAX30003_TEST_Fre();
 test_result_t MAX30003_TEST_HELLO_WORLD();
 test_result_t MAX30003_FLAG_TEST();
 test_result_t MAX30003_FIFO_TEST();
+test_result_t MAX30003_CONFIG_TEST(const uint8_t SPS, const uint8_t GAIN, const uint8_t LOWPASS);
 
 char* error_no_to_string();
 
