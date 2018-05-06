@@ -4,6 +4,8 @@
 #include "max30003test.h"
 #include "si5351-samd21-minimal.h"
 
+#define HOTHPITAL
+
 /* Message Strings */
 char WELCOME[]       = "Welcome to the SealHAT EKG test suite!\nPlease start the capture to textfile within CoolTerm now!\nBe sure to name your file \"sealtest.txt\" and change your baudrate to max.\n";
 char START_TEST[]    = "Please press \"r\" to begin!\n";
@@ -65,7 +67,7 @@ int main(void)
     do { retVal = usb_write((uint8_t *) charBuffer, sizeof(charBuffer)); } while((retVal != USB_OK) || !usb_dtr());
     
     /* FUNCTION CALL FOR TEST 1 GOES HERE */
-    result = MAX30003_INIT_TEST();
+    result = MAX30003_INIT_TEST_ROUND();
     
     
     do { retVal = usb_write((uint8_t *) TEST_COMPLETE, sizeof(TEST_COMPLETE)); } while((retVal != USB_OK) || !usb_dtr());
@@ -79,7 +81,7 @@ int main(void)
     do { retVal = usb_write((uint8_t *) charBuffer, sizeof(charBuffer)); } while((retVal != USB_OK) || !usb_dtr());
     
     /* FUNCTION CALL FOR TEST 2 GOES HERE */
-    result = MAX30003_FIFO_TEST();
+    //result = MAX30003_FIFO_TEST();
     
     do { retVal = usb_write((uint8_t *) TEST_COMPLETE, sizeof(TEST_COMPLETE)); } while((retVal != USB_OK) || !usb_dtr());
     
@@ -215,14 +217,15 @@ int main(void)
 	MAX30003_FIFO_VALS vals;
 	bool eof = false;
 	uint16_t step = 0;
+    uint16_t timeout = 0;
 	uint32_t word = 0;
 	int32_t  sampv = 0;
 	uint32_t sampt = 0;
 	ecg_synch();
-	delay_ms(1000);
+	delay_ms(100);
 	
 	for(;;) {
-		if (step < ECG_LOG_SZ) {
+		if (step < ECG_LOG_SZ && timeout < ECG_LOG_SZ*2) {
 			ecg_get_sample(&vals);
 				
 			switch (vals.etag) {
@@ -246,10 +249,16 @@ int main(void)
 					
 				case ETAG_FIFO_OVERFLOW :
 					ecg_fifo_reset();
+                    gpio_toggle_pin_level(LED_BUILTIN);
+
 				case ETAG_FIFO_EMPTY    :
+                    timeout++;
 					break;
 				default :   
+                    gpio_toggle_pin_level(LED_BUILTIN);
 					delay_ms(1000); /* TODO error handling */
+                    gpio_toggle_pin_level(LED_BUILTIN);
+
 			}
 		} else {
 			gpio_toggle_pin_level(LED_BUILTIN);
@@ -288,14 +297,17 @@ void fclock_init()
 	pll_frac.b = 7012;
 	pll_frac.c = 390625;
 	
-	ms_frac.a = 21184;
+	ms_frac.a = 1324;
 	ms_frac.b = 0;
-	ms_frac.c = 16;
+	ms_frac.c = 1;
+    
 	
 	/* set the clock to 25 32.768kHz */
 	//si5351_set_freq(32768UL, SI5351_CLK0); /* 1MHz min */
 	si5351_set_pll(pll_frac, SI5351_PLLA);
 	si5351_set_ms(SI5351_CLK0, ms_frac, 0, SI5351_OUTPUT_CLK_DIV_16, 0);
+    si5351_set_correction(3446);
+    //si5351_set_clock_invert(SI5351_CLK0, 1);
 	
 	/* (optional) update the output drive power */
 	//si5351_drive_strength(SI5351_CLK0, SI5351_DRIVE_4MA);
