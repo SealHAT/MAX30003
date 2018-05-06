@@ -15,7 +15,9 @@ char GOODBYE[]       = "\n\nAll tests are complete. The device may now be discon
 char PASS[]          = "All tests passed!\n";
 char FAIL[]          = "One or more tests failed :(\n";
 char DATA_COLLECT[]  = "Data collection is finished. Test complete.\n";
-char MENU[]			 = "Select setting to change: (r)ate, (g)ain, (f)ilter, or (c)ontinue.\n"
+char RATE[]			 = "New rate: \n";
+char GAIN[]			 = "New gain: \n";
+char LOWPASS[]		 = "New lowpass: \n";
 
 char NEXT_OR_REDO[]  = "Press \'r\' to redo the test or \'n\' to go to the next test.\n";
 
@@ -29,7 +31,7 @@ int main(void)
     test_result_t result;
     bool test_complete;
     int  retVal;
-    char charBuffer[16];
+    char charBuffer[30];
     char getCharValue;
 
     /* ATMEL INIT */
@@ -434,7 +436,7 @@ int main(void)
         
         if(getCharValue == 'n')
         {
-            test_complete = true;
+	        test_complete = true;
         }
         
     } /* End test 12 loop. */
@@ -455,6 +457,8 @@ int main(void)
 	bool fifo_emp = false;
 	bool fifo_ovf = false;
 	bool pause    = false;
+	uint8_t rate_val, gain_val, lowpass_val;
+	uint8_t test_num = 1;
 	int32_t step = 0;
     uint16_t timeout = 0;
 	uint32_t word = 0;
@@ -466,26 +470,36 @@ int main(void)
 	ecg_fifo_reset();
 	for(;;) 
 	{
-		if(usb_get() == 'p')
+		if(usb_get() == 'n')
 		{
-			pause = true;
-			do { retVal = usb_write((uint8_t *) MENU, sizeof(MENU) - 1); } while((retVal != USB_OK) || !usb_dtr());
-			{ getCharValue = usb_get(); 
-				if(getCharValue == 'r') {
+			do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
+			do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
+			
+			if(getCharValue == 'n')
+			{
+				/* Print end-of-test mark to file. */
+				snprintf(charBuffer, 9,"%1d,%1d,%1d,%1d\n", rate_val, gain_val, lowpass_val, test_num);
+				do { retVal = usb_write((uint8_t *) charBuffer, 8); } while((retVal != USB_OK) || !usb_dtr());
 					
-				} else if (getCharValue == 'g') {
-					
-				} else if (getCharValue == 'f') {
-					
-				} else if (getCharValue == 'c') {
-					pause = false;
-					ecg_synch();
-					/*ecg_fifo_reset();*/
-				} else {
-					delay_ms(1000);
-					do { retVal = usb_write((uint8_t *) MENU, sizeof(MENU) - 1); } while((retVal != USB_OK) || !usb_dtr());
-			} while(pause);
+				test_complete = true;
+				test_num++;
+				
+				do { retVal = usb_write((uint8_t *) RATE, sizeof(RATE) - 1); } while((retVal != USB_OK) || !usb_dtr());
+				do { getCharValue = usb_get(); } while(getCharValue != '0' && getCharValue != '1' && getCharValue != '2');
+				rate_val = (uint8_t)(getCharValue) - 48;
+				do { retVal = usb_write((uint8_t *) GAIN, sizeof(GAIN) - 1); } while((retVal != USB_OK) || !usb_dtr());
+				do { getCharValue = usb_get(); } while(getCharValue != '0' && getCharValue != '1' && getCharValue != '2' && getCharValue != '3');
+				gain_val = (uint8_t)(getCharValue) - 48;
+				do { retVal = usb_write((uint8_t *) LOWPASS, sizeof(LOWPASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
+				do { getCharValue = usb_get(); } while(getCharValue != '0' && getCharValue != '1' && getCharValue != '2' && getCharValue != '3');
+				lowpass_val = (uint8_t)(getCharValue) - 48;
+				
+				MAX30003_CONFIG_TEST(rate_val, gain_val, lowpass_val);
+				ecg_synch();
+				ecg_fifo_reset();
+			}
 		}
+
 		
 		if(gpio_get_pin_level(INT1) == false)
 		{			
@@ -543,8 +557,8 @@ int main(void)
 					sampv = sampv >> 14;
 					ECG_LOG[i] = 0;
 						
-					snprintf(charBuffer, 14, "%7li,%4lu\n", sampv, sampt);
-					do { retVal = usb_write((uint8_t *)charBuffer, 13); } while((retVal != USB_OK) || !usb_dtr());
+					snprintf(charBuffer, 30, "%7li,%4lu,%d,%d,%d\n", sampv, sampt, rate_val, gain_val, lowpass_val);
+					do { retVal = usb_write((uint8_t *)charBuffer, 29); } while((retVal != USB_OK) || !usb_dtr());
 					/* done printing */
 				}
 			} 
