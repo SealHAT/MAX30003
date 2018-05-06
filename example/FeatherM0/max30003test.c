@@ -240,5 +240,5 @@ test_result_t MAX30003_CONFIG_TEST(const uint8_t SPS, const uint8_t GAIN, const 
         default: return TEST_FAILURE;
     }
 
-    ecg_set_cnfg_ecg(vals , CNFGECG_DLPF | CNFGECG_DHPF | CNFGECG_GAIN | CNFGECG_RATE);
+    ecg_set_cnfg_ecg(vals, (CNFGECG_DLPF|CNFGECG_DHPF|CNFGECG_GAIN|CNFGECG_RATE));
 }
