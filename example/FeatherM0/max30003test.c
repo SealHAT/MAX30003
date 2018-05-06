@@ -432,7 +432,7 @@ void MAX30003_TEST_TRANS_RATE()
 	//when we run the test, we reset FIFO;
 	ecg_fifo_reset();
 	//while(!TimeExpired){
-	if(FIFO_INTERRUPT){
+	if(gpio_get_pin_level(INT1) == false){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
@@ -462,7 +462,7 @@ void MAX30003_TEST_TRANS_RATE()
 	ecg_fifo_reset();
 	delay_ms(100);
 	//while(!TimeExpired){
-	if(FIFO_INTERRUPT){
+	if(gpio_get_pin_level(INT1) == false){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
@@ -490,7 +490,7 @@ void MAX30003_TEST_TRANS_RATE()
 	//when we run the test, we reset FIFO;
 	ecg_fifo_reset();
 	//while(!TimeExpired){
-	if(FIFO_INTERRUPT){
+	if(gpio_get_pin_level(INT1) == false){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
@@ -522,7 +522,7 @@ void MAX30003_TEST_GAIN()
 	//when we run the test, we reset FIFO;
 	ecg_fifo_reset();
 	//while(!TimeExpired){
-	if(FIFO_INTERRUPT){
+	if(gpio_get_pin_level(INT1) == false){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
@@ -551,7 +551,7 @@ void MAX30003_TEST_GAIN()
 	//when we run the test, we reset FIFO;
 	ecg_fifo_reset();
 	//while(!TimeExpired){
-	if(FIFO_INTERRUPT){
+	if(gpio_get_pin_level(INT1) == false){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
@@ -583,7 +583,7 @@ void MAX30003_TEST_GAIN()
 	//when we run the test, we reset FIFO;
 	ecg_fifo_reset();
 	//while(!TimeExpired){
-	if(FIFO_INTERRUPT){
+	if(gpio_get_pin_level(INT1) == false){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
@@ -613,7 +613,7 @@ void MAX30003_TEST_GAIN()
 	//when we run the test, we reset FIFO;
 	ecg_fifo_reset();
 	//while(!TimeExpired){
-	if(FIFO_INTERRUPT){
+	if(gpio_get_pin_level(INT1) == false){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
@@ -647,7 +647,7 @@ void MAX30003_TEST_Fre(){
 	//when we run the test, we reset FIFO;
 	ecg_fifo_reset();
 	//while(!TimeExpired){
-	if(FIFO_INTERRUPT){
+	if(gpio_get_pin_level(INT1) == false){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
@@ -675,7 +675,7 @@ void MAX30003_TEST_Fre(){
 		//when we run the test, we reset FIFO;
 		ecg_fifo_reset();
 		//while(!TimeExpired){
-		if(FIFO_INTERRUPT){
+		if(gpio_get_pin_level(INT1) == false){
 			//Toggle LED
 			//Record data in the storage
 			//Reset FIFO
@@ -704,7 +704,7 @@ void MAX30003_TEST_Fre(){
 		//when we run the test, we reset FIFO;
 		ecg_fifo_reset();
 		//while(!TimeExpired){
-		if(FIFO_INTERRUPT){
+		if(gpio_get_pin_level(INT1) == false){
 			//Toggle LED
 			//Record data in the storage
 			//Reset FIFO
@@ -731,11 +731,10 @@ void MAX30003_TEST_Fre(){
 		//when we run the test, we reset FIFO;
 		ecg_fifo_reset();
 		//while(!TimeExpired){
-		if(FIFO_INTERRUPT){
+		if(gpio_get_pin_level(INT1) == false){
 			//Toggle LED
 			//Record data in the storage
 			//Reset FIFO
-			//FIFO_INTERRUPT = !FIFO_INTERRUPT
 		}//inside the while loop
 //} bracket of the tine loop		
 		
@@ -743,29 +742,33 @@ void MAX30003_TEST_Fre(){
 }
 
 void MAX30003_TEST_HELLO_WORLD(){
-	bool pass_Init_test;
-	pass_Init_test = MAX30003_INIT_TEST_ROUND();
-	MAX30003_CNFG_GEN_VALS cnfg_gen_vals;
-	cnfg_gen_vals.en_ecg = ENECG_ENABLED;
-	if(pass_Init_test == true){
-	// LED is on	
-	}else{//force to open ecg 
-	ecg_sw_reset();
-	delay_ms(100);
-	ecg_set_cnfg_gen(cnfg_gen_vals,CNFGGEN_EN_ECG );
-	delay_ms(100);
-	ecg_synch();
-	delay_ms(100);
+	//Initialize the variable used in the function
+	nextstep = 0;
+	TEST_RESULT test;
+	int attempts = 0;
+	
+	//check the registers' values are the one we want or not. if they are, we continue the test, otherwise we try in three times to rewrite the value
+	while(nextstep==0 && attempts<3){
+		test = MAX30003_CHECK_INIT_VALS_ROUND();
+		if(test==TEST_SUCCESS){
+			nextstep=1;
+			}else{
+			MAX30003_INIT_SETUP();
+			attempts++;
+		}
 	}
-	//if button is clicked, start the counter and start record the data
-	//while time is not expired:
-	if(FIFO_INTERRUPT){
-		//toogle the led;
-		//transfer data into storage
-		//reset the FIFO
+	
+	//set a timer, start counting the time and record the data
+	
+	//when we run the test, we reset FIFO;
+	ecg_fifo_reset();
+	//while(!TimeExpired){
+	if(gpio_get_pin_level(INT1) == false){
+		//Toggle LED
+		//Record data in the storage
+		//Reset FIFO
 	}
-	//outside the while loop
-	//LED is always on to indicate the test is finished.
+//} bracket of time loop
 }
 
 void MAX30003_FLAG_TEST(){
@@ -788,7 +791,7 @@ void MAX30003_FLAG_TEST(){
 	
 	//set a timer to make sure if int2B doesn't work but we can get out of the loop
 	while(nextstep==1&&!FLAG_INTERRUPT/*&&!TimeExpired*/){
-	if(gpio_get_pin_level(INT1) == false){
+	if(gpio_get_pin_level(INT2) == false){
 	 FLAG_INTERRUPT = true;	
 	}
 }
