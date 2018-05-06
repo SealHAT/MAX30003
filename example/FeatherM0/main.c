@@ -209,16 +209,61 @@ int main(void)
      ***********/
     do { retVal = usb_write((uint8_t *) GOODBYE, sizeof(GOODBYE)); } while((retVal != USB_OK) || !usb_dtr());
 	
-	uint8_t serout = 0;
-
+	for(int i = 0; i < ECG_LOG_SZ; i++) {
+		ECG_LOG[i] = 0;
+	}
+	MAX30003_FIFO_VALS vals;
+	bool eof = false;
+	uint16_t step = 0;
+	uint32_t word = 0;
+	int32_t  sampv = 0;
+	uint32_t sampt = 0;
+	ecg_synch();
+	delay_ms(1000);
+	
 	for(;;) {
-       // ecg_get_status(&status_vals);
-        gpio_toggle_pin_level(LED_BUILTIN);
-        delay_ms(250);
-        //ecg_get(&info_vals, REG_INFO);
-// 		snprintf(charBuffer, 5,"%3d\n", serout);
-// 		do { retVal = usb_write((uint8_t *) charBuffer, 4); } while((retVal != USB_OK) || !usb_dtr());
-// 		serout++;
+		if (step < ECG_LOG_SZ) {
+			ecg_get_sample(&vals);
+				
+			switch (vals.etag) {
+				case ETAG_VALID_EOF :
+				case ETAG_FAST_EOF  :
+					eof = true; /* exit, but save the sample as a valid sample */
+					vals.etag = (ECGFIFO_ETAG_VAL)( (uint8_t)vals.etag & 0x01);
+				case ETAG_VALID     :
+				case ETAG_FAST      :
+					/* format and store the sample */
+					word |= (uint32_t)vals.etag << 0;
+					word |= (uint32_t)step      << 3;
+					word |= (uint32_t)vals.data << 14;
+
+					ECG_LOG[step] = word;
+					
+					/* increment, clear, and get next sample */
+					step++;
+					word = 0x00000000;
+					break;
+					
+				case ETAG_FIFO_OVERFLOW :
+					ecg_fifo_reset();
+				case ETAG_FIFO_EMPTY    :
+					break;
+				default :   
+					delay_ms(1000); /* TODO error handling */
+			}
+		} else {
+			gpio_toggle_pin_level(LED_BUILTIN);
+			delay_ms(250);
+			/* [VVVV VVVV VVVV VVVV VVTT TTTT TTTT TEEE] */
+			sampt = ((uint32_t)(ECG_LOG[step % ECG_LOG_SZ]) & 0x00003FF8) >> 3;
+			sampv = (int32_t)(ECG_LOG[step % ECG_LOG_SZ]);
+			sampv = sampv >> 14;
+			
+			snprintf(charBuffer, 14, "%7li,%4lu\n", sampv, sampt);
+			do { retVal = usb_write((uint8_t *)charBuffer, 13); } while((retVal != USB_OK) || !usb_dtr());
+			step++;
+		}
+			
 	}
 } 
 
@@ -243,7 +288,7 @@ void fclock_init()
 	pll_frac.b = 7012;
 	pll_frac.c = 390625;
 	
-	ms_frac.a = 1324;
+	ms_frac.a = 21184;
 	ms_frac.b = 0;
 	ms_frac.c = 16;
 	
