@@ -386,7 +386,7 @@ TEST_RESULT MAX30003_CHECK_INIT_VALS_ROUND(){
 
 	return result;
 }
-
+// The function initialize the MAX30003
 void MAX30003_INIT_SETUP()
 {
 	ecg_sw_reset();
@@ -404,31 +404,40 @@ void MAX30003_INIT_SETUP()
 	ecg_synch();
 	delay_ms(100);
 }
-
+// The function to test the data rate
 void MAX30003_TEST_TRANS_RATE()
 {
+	//Initialize the variable needed in the function
 	nextstep = 0;
-	MAX30003_INIT_SETUP();
-	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
-/*	cnfg_ecg_vals.gain = GAIN_20_V;*/
-/*	ecg_set_cnfg_ecg(cnfg)*/
-	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
-	if(cnfg_ecg_vals.rate==RATE_MIN_SPS){
-		//LED is on
+	TEST_RESULT test;
+	int attempts = 0;
+	bool data_trans_rate_changed = false;
+	
+	
+	//check the registers' values are the one we want or not. if they are, we continue the test, otherwise
+	while(nextstep==0 && attempts<3){
+	test = MAX30003_CHECK_INIT_VALS_ROUND();
+	if(test==TEST_SUCCESS){
+		nextstep=1;
 	}else{
-	  MAX30003_INIT_SETUP();//rerun the initak function if the rate is not set correctly;
+		MAX30003_INIT_SETUP();
+		attempts++;
 	}
-	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
+}
+	
+	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
+	//set a timer, start counting the time and record the data.
 	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-		//FIFO_INTERRUPT = !FIFO_INTERRUPT
-	}//inside the while loop
-	//LED is always on(outside while loop) to indicate this rate of test finished
-	//if button is clicked, nextstep = 1;
-	while(nextstep==1){
+	}//inside the while !TimeExpired loop
+	//Continue the next selection data-transfer rate
+	
+    nextstep = 2;
+	attempts=0;
+	while(nextstep==2&&!data_trans_rate_changed&&attempts<3){
 	cnfg_ecg_vals.rate = RATE_MED_SPS;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 	delay_ms(100);
@@ -436,73 +445,75 @@ void MAX30003_TEST_TRANS_RATE()
 	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.rate == RATE_MED_SPS){
-		//LED is on
-	}else{
-	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-	delay_ms(100);
-	ecg_synch();
-	delay_ms(100);
+		data_trans_rate_changed = true;
+		}else{
+		attempts++;
 	}
-	//if button is clicked, start counting the time and record the data
+}
+
+	//set a timer, start counting the time and record the data
 	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-		//FIFO_INTERRUPT = !FIFO_INTERRUPT
-	}//inside the while loop
-	//LED is always on(outside while loop) to indicate this rate of test finished
-	//if button is clicked, break the loop, next step = 2;
-	}
-	while(nextstep==2){
+	}//inside the while !TimeExpired loop
+
+    nextstep = 3;
+	//reset the bool data_trans_rate change
+	data_trans_rate_changed = false;
+	attempts = 0;
+	while(nextstep==3&&!data_trans_rate_changed&&attempts<3){
 	cnfg_ecg_vals.rate = RATE_MAX_SPS;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.rate == RATE_MAX_SPS){
-		//LED is on
-		}else{
-		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-		delay_ms(100);
-		ecg_synch();
-		delay_ms(100);
+		data_trans_rate_changed = true;
+	}else{
+		attempts++;
 	}
-	//if button is clicked, start counting the time and record the data
+	
+}
+	//set a timer, start counting the time and record the data
 	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-		//FIFO_INTERRUPT = !FIFO_INTERRUPT
-	}//inside the while loop
+	}//inside the while !TimeExpired loop
+	
 	//LED is always on(outside while loop) to indicate this rate of test finished
-	}
 }
 
 void MAX30003_TEST_GAIN()
 {
 	nextstep = 0;
-	MAX30003_INIT_SETUP();
-	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
-	/*	cnfg_ecg_vals.gain = GAIN_20_V;*/
-	/*	ecg_set_cnfg_ecg(cnfg)*/
-	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
-	if(cnfg_ecg_vals.gain==GAIN_20_V){
-		//LED is on
-	}else{
-		MAX30003_INIT_SETUP();//rerun the initak function if the rate is not set correctly;
+	TEST_RESULT test;
+	int attempts = 0;
+	bool data_gain_changed = false;
+	//check the registers' values are the one we want or not. if they are, we continue the test, otherwise
+	while(nextstep==0 && attempts<3){
+		test = MAX30003_CHECK_INIT_VALS_ROUND();
+		if(test==TEST_SUCCESS){
+			nextstep=1;
+		}else{
+			MAX30003_INIT_SETUP();
+			attempts++;
+		}
 	}
-	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
+	attempts = 0;
+	//set a timer, start counting the time and record the data
 	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-		//FIFO_INTERRUPT = !FIFO_INTERRUPT
-	}//inside the while loop
-	//LED is always on(outside while loop) to indicate this rate of test finished
-	//if button is clicked, nextstep = 1;
-	while(nextstep==1){
+	}//inside the while !TimeExpired loop
+	
+	nextstep = 2;
+	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
+	while(nextstep==2&&!data_gain_changed&&attempts<3){
 	cnfg_ecg_vals.gain = GAIN_40_V;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 	delay_ms(100);
@@ -510,14 +521,13 @@ void MAX30003_TEST_GAIN()
 	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.gain==GAIN_40_V){
-		//LED is on
+		data_gain_changed = true;
 	}else{
-	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-	delay_ms(100);	
-	ecg_synch();
-	delay_ms(100);	
+		attempts++;
 	}
-	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
+}
+
+	//set a timer, start counting the time and record the data
 	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//Toggle LED
@@ -525,10 +535,12 @@ void MAX30003_TEST_GAIN()
 		//Reset FIFO
 		//FIFO_INTERRUPT = !FIFO_INTERRUPT
 	}//inside the while loop		
-	//LED is always on(outside while loop) to indicate this rate of test finished
-	//if button is clicked, break the loop and nextstep = 2;
-	}
-	while(nextstep==2){
+
+	nextstep = 3;
+	//reset the bool _gain change
+	data_gain_changed = false;
+	attempts = 0;
+	while(nextstep==3&&!data_gain_changed&&attempts<3){
 	cnfg_ecg_vals.gain = GAIN_80_V;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 	delay_ms(100);
@@ -536,25 +548,25 @@ void MAX30003_TEST_GAIN()
 	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.gain==GAIN_80_V){
-		//LED is on
+		data_gain_changed = true;
 		}else{
-		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-		delay_ms(100);
-	ecg_synch();
-	delay_ms(100);
+		attempts++;
 	}
-	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
+}
+
+	//set a timer, start counting the time and record the data
 	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-		//FIFO_INTERRUPT = !FIFO_INTERRUPT
 	}//inside the while loop
-	//LED is always on(outside while loop) to indicate this rate of test finished
-	//if button is clicked, break the loop and nextstep = 3;		
-	}
-	while(nextstep==3){
+
+	nextstep = 4;		
+	//reset the bool _gain change
+	data_gain_changed = false;
+	attempts = 0;
+	while(nextstep==4&&!data_gain_changed&&attempts<3){
 	cnfg_ecg_vals.gain = GAIN_160_V;
 	ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 	delay_ms(100);
@@ -562,73 +574,75 @@ void MAX30003_TEST_GAIN()
 	delay_ms(100);
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.gain==GAIN_160_V){
-		//LED is on
+		data_gain_changed = true;
 		}else{
-		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-		delay_ms(100);
+		attempts++;
 	}
+}
 	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
 	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-		//FIFO_INTERRUPT = !FIFO_INTERRUPT
 	}//inside the while loop
 	//LED is always on(outside while loop) to indicate this rate of test finished
-	//if button is clicked, break the loop and nextstep = 0;		
-	}
-	
 		
 }
 
 void MAX30003_TEST_Fre(){
 	nextstep = 0;
-	MAX30003_INIT_SETUP();
-    MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
-	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
-	if(cnfg_ecg_vals.dlpf==DLPF_40_HZ){
-		//LED is on
-		}else{
-		MAX30003_INIT_SETUP();//rerun the initak function if the rate is not set correctly;
+	TEST_RESULT test;
+	MAX30003_CNFG_ECG_VALS cnfg_ecg_vals;
+	int attempts = 0;
+	bool data_fre_changed = false;
+	//check the registers' values are the one we want or not. if they are, we continue the test, otherwise
+	while(nextstep==0 && attempts<3){
+		test = MAX30003_CHECK_INIT_VALS_ROUND();
+		if(test==TEST_SUCCESS){
+			nextstep=1;
+			}else{
+			MAX30003_INIT_SETUP();
+			attempts++;
+		}
 	}
-	//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
+	//set a timer, start counting the time and record the data
 	//while time is not expired:
 	if(FIFO_INTERRUPT){
 		//Toggle LED
 		//Record data in the storage
 		//Reset FIFO
-		//FIFO_INTERRUPT = !FIFO_INTERRUPT
 	}//inside the while loop
 	//LED is always on(outside while loop) to indicate this rate of test finished
-	//if button is clicked, nextstep = 1;
-	while(nextstep==1){
+	
+	nextstep = 2;
+	attempts = 0;
+	while(nextstep==2&&!data_fre_changed&&attempts<3){
 		cnfg_ecg_vals.dlpf = DLPF_100_HZ;
 		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 		delay_ms(100);
-	ecg_synch();
-	delay_ms(100);
+		ecg_synch();
+		delay_ms(100);
 		ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 		if(cnfg_ecg_vals.dlpf==DLPF_100_HZ){
-			//LED is on
+			data_fre_changed = true;
 			}else{
-			ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-			delay_ms(100);
-			ecg_synch();
-			delay_ms(100);
+			attempts++;
 		}
-		//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
+	}
+		//set a timer, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
 		//while time is not expired:
 		if(FIFO_INTERRUPT){
 			//Toggle LED
 			//Record data in the storage
 			//Reset FIFO
-			//FIFO_INTERRUPT = !FIFO_INTERRUPT
 		}//inside the while loop
-		//LED is always on(outside while loop) to indicate this rate of test finished
-		//if button is clicked, break the loop and nextstep = 2;
-	}
-	while(nextstep==2){
+		
+	 nextstep = 3;
+	//reset bool data_fre_change
+	!data_fre_changed = false;
+	attempts = 0;
+	while(nextstep==3&&!data_fre_changed&&attempts<3){
 		cnfg_ecg_vals.dlpf = DLPF_150_HZ;
 		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 		delay_ms(100);
@@ -636,36 +650,33 @@ void MAX30003_TEST_Fre(){
 		delay_ms(100);
 		ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 		if(cnfg_ecg_vals.dlpf==DLPF_150_HZ){
-			//LED is on
-			}else{
-			ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-			delay_ms(100);
-			ecg_synch();
-			delay_ms(100);
+			data_fre_changed = true;
+		}else{
+			attempts++;
 		}
-		//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
+		
+		//set a timer, start counting the time and record the data
 		//while time is not expired:
 		if(FIFO_INTERRUPT){
 			//Toggle LED
 			//Record data in the storage
 			//Reset FIFO
-			//FIFO_INTERRUPT = !FIFO_INTERRUPT
 		}//inside the while loop
 		//LED is always on(outside while loop) to indicate this rate of test finished
-		//if button is clicked, break the loop and nextstep = 3;
-	}
-	while(nextstep==3){
+		
+    nextstep = 4;
+	//reset bool data_fre_change
+	!data_fre_changed = false;
+	attempts = 0;
+	while(nextstep==4&&!data_fre_changed&&attempts<3){
 		cnfg_ecg_vals.dlpf = DLPF_BYPASS;
 		ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);
 		delay_ms(100);
 		ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 		if(cnfg_ecg_vals.dlpf==DLPF_BYPASS){
-			//LED is on
-			}else{
-			ecg_set_cnfg_ecg(cnfg_ecg_vals,CNFGECG_RATE);//rerun the initak function if the rate is not set correctly;
-			delay_ms(100);
-			ecg_synch();
-			delay_ms(100);
+			data_fre_changed = true;
+		}else{
+			attempts++;
 		}
 		//if button is clicked, start counting the time and record the data(we can disable the ecg in intial setup and enable it when button is clicked)
 		//while time is not expired:
@@ -675,12 +686,9 @@ void MAX30003_TEST_Fre(){
 			//Reset FIFO
 			//FIFO_INTERRUPT = !FIFO_INTERRUPT
 		}//inside the while loop
+		
 		//LED is always on(outside while loop) to indicate this rate of test finished
-		//if button is clicked, break the loop and nextstep = 0;
-	}
-	
-	
-			
+		
 }
 
 void MAX30003_TEST_HELLO_WORLD(){
