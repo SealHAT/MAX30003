@@ -15,6 +15,7 @@ char GOODBYE[]       = "\n\nAll tests are complete. The device may now be discon
 char PASS[]          = "All tests passed!\n";
 char FAIL[]          = "One or more tests failed :(\n";
 char DATA_COLLECT[]  = "Data collection is finished. Test complete.\n";
+char MENU[]			 = "Select setting to change: (r)ate, (g)ain, (f)ilter, or (c)ontinue.\n"
 
 char NEXT_OR_REDO[]  = "Press \'r\' to redo the test or \'n\' to go to the next test.\n";
 
@@ -453,6 +454,7 @@ int main(void)
 	bool fifo_err = false;
 	bool fifo_emp = false;
 	bool fifo_ovf = false;
+	bool pause    = false;
 	int32_t step = 0;
     uint16_t timeout = 0;
 	uint32_t word = 0;
@@ -466,7 +468,23 @@ int main(void)
 	{
 		if(usb_get() == 'p')
 		{
-			delay_ms(3000);
+			pause = true;
+			do { retVal = usb_write((uint8_t *) MENU, sizeof(MENU) - 1); } while((retVal != USB_OK) || !usb_dtr());
+			{ getCharValue = usb_get(); 
+				if(getCharValue == 'r') {
+					
+				} else if (getCharValue == 'g') {
+					
+				} else if (getCharValue == 'f') {
+					
+				} else if (getCharValue == 'c') {
+					pause = false;
+					ecg_synch();
+					/*ecg_fifo_reset();*/
+				} else {
+					delay_ms(1000);
+					do { retVal = usb_write((uint8_t *) MENU, sizeof(MENU) - 1); } while((retVal != USB_OK) || !usb_dtr());
+			} while(pause);
 		}
 		
 		if(gpio_get_pin_level(INT1) == false)
