@@ -878,14 +878,14 @@ pads:
     mode: I2C
     user_label: SDA
     configuration:
-      pad_pull_config: Pull-up
+      pad_pull_config: 'Off'
   SCL:
     name: PA23
     definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::pad::PA23
     mode: I2C
     user_label: SCL
     configuration:
-      pad_pull_config: Pull-up
+      pad_pull_config: 'Off'
   USB_N:
     name: PA24
     definition: Atmel:SAMD21_Drivers:0.0.1::SAMD21G18A-MF::pad::PA24

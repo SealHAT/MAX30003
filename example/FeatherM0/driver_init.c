@@ -70,7 +70,7 @@ void wire_PORT_init(void)
 	                       // <GPIO_PULL_OFF"> Off
 	                       // <GPIO_PULL_UP"> Pull-up
 	                       // <GPIO_PULL_DOWN"> Pull-down
-	                       GPIO_PULL_UP);
+	                       GPIO_PULL_OFF);
 
 	gpio_set_pin_function(SDA, PINMUX_PA22C_SERCOM3_PAD0);
 
@@ -80,7 +80,7 @@ void wire_PORT_init(void)
 	                       // <GPIO_PULL_OFF"> Off
 	                       // <GPIO_PULL_UP"> Pull-up
 	                       // <GPIO_PULL_DOWN"> Pull-down
-	                       GPIO_PULL_UP);
+	                       GPIO_PULL_OFF);
 
 	gpio_set_pin_function(SCL, PINMUX_PA23C_SERCOM3_PAD1);
 }

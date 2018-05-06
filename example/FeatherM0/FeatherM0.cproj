@@ -200,7 +200,7 @@
       </AcmeProjectConfig>
     </AcmeProjectConfig>
     <avrtool>com.atmel.avrdbg.tool.samice</avrtool>
-    <avrtoolserialnumber>801001322</avrtoolserialnumber>
+    <avrtoolserialnumber>801001700</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x10010305</avrdeviceexpectedsignature>
     <avrtoolinterface>SWD</avrtoolinterface>
     <com_atmel_avrdbg_tool_samice>
@@ -212,7 +212,7 @@
         <JlinkConfigFile>C:\SPB_Data\git\MAX30003\example\FeatherM0\jlink.config</JlinkConfigFile>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
-      <ToolNumber>801001322</ToolNumber>
+      <ToolNumber>801001700</ToolNumber>
       <ToolName>J-Link</ToolName>
     </com_atmel_avrdbg_tool_samice>
     <avrtoolinterfaceclock>4000000</avrtoolinterfaceclock>
@@ -233,120 +233,123 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <ArmGcc>
-        <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
-        <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
-        <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
-        <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
-        <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
-        <armgcc.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>NDEBUG</Value>
-          </ListValues>
-        </armgcc.compiler.symbols.DefSymbols>
-        <armgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-            <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
-            <Value>../Config</Value>
-            <Value>../</Value>
-            <Value>../examples</Value>
-            <Value>../hal/include</Value>
-            <Value>../hal/utils/include</Value>
-            <Value>../hpl/adc</Value>
-            <Value>../hpl/core</Value>
-            <Value>../hpl/dmac</Value>
-            <Value>../hpl/dsu</Value>
-            <Value>../hpl/gclk</Value>
-            <Value>../hpl/pac</Value>
-            <Value>../hpl/pm</Value>
-            <Value>../hpl/port</Value>
-            <Value>../hpl/rtc</Value>
-            <Value>../hpl/sercom</Value>
-            <Value>../hpl/sysctrl</Value>
-            <Value>../hpl/systick</Value>
-            <Value>../hpl/usb</Value>
-            <Value>../hri</Value>
-            <Value>../usb</Value>
-            <Value>../usb/class/cdc</Value>
-            <Value>../usb/class/cdc/device</Value>
-            <Value>../usb/device</Value>
-          </ListValues>
-        </armgcc.compiler.directories.IncludePaths>
-        <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
-        <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
-        <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
-        <armgcc.linker.general.UseNewlibNano>True</armgcc.linker.general.UseNewlibNano>
-        <armgcc.linker.libraries.Libraries>
-          <ListValues>
-            <Value>libm</Value>
-          </ListValues>
-        </armgcc.linker.libraries.Libraries>
-        <armgcc.linker.libraries.LibrarySearchPaths>
-          <ListValues>
-            <Value>%24(ProjectDir)\Device_Startup</Value>
-          </ListValues>
-        </armgcc.linker.libraries.LibrarySearchPaths>
-        <armgcc.linker.optimization.GarbageCollectUnusedSections>True</armgcc.linker.optimization.GarbageCollectUnusedSections>
-        <armgcc.linker.miscellaneous.LinkerFlags>-Tsamd21g18a_flash.ld</armgcc.linker.miscellaneous.LinkerFlags>
-        <armgcc.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-            <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
-            <Value>../Config</Value>
-            <Value>../</Value>
-            <Value>../examples</Value>
-            <Value>../hal/include</Value>
-            <Value>../hal/utils/include</Value>
-            <Value>../hpl/adc</Value>
-            <Value>../hpl/core</Value>
-            <Value>../hpl/dmac</Value>
-            <Value>../hpl/dsu</Value>
-            <Value>../hpl/gclk</Value>
-            <Value>../hpl/pac</Value>
-            <Value>../hpl/pm</Value>
-            <Value>../hpl/port</Value>
-            <Value>../hpl/rtc</Value>
-            <Value>../hpl/sercom</Value>
-            <Value>../hpl/sysctrl</Value>
-            <Value>../hpl/systick</Value>
-            <Value>../hpl/usb</Value>
-            <Value>../hri</Value>
-            <Value>../usb</Value>
-            <Value>../usb/class/cdc</Value>
-            <Value>../usb/class/cdc/device</Value>
-            <Value>../usb/device</Value>
-          </ListValues>
-        </armgcc.assembler.general.IncludePaths>
-        <armgcc.preprocessingassembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-            <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
-            <Value>../Config</Value>
-            <Value>../</Value>
-            <Value>../examples</Value>
-            <Value>../hal/include</Value>
-            <Value>../hal/utils/include</Value>
-            <Value>../hpl/adc</Value>
-            <Value>../hpl/core</Value>
-            <Value>../hpl/dmac</Value>
-            <Value>../hpl/dsu</Value>
-            <Value>../hpl/gclk</Value>
-            <Value>../hpl/pac</Value>
-            <Value>../hpl/pm</Value>
-            <Value>../hpl/port</Value>
-            <Value>../hpl/rtc</Value>
-            <Value>../hpl/sercom</Value>
-            <Value>../hpl/sysctrl</Value>
-            <Value>../hpl/systick</Value>
-            <Value>../hpl/usb</Value>
-            <Value>../hri</Value>
-            <Value>../usb</Value>
-            <Value>../usb/class/cdc</Value>
-            <Value>../usb/class/cdc/device</Value>
-            <Value>../usb/device</Value>
-          </ListValues>
-        </armgcc.preprocessingassembler.general.IncludePaths>
-      </ArmGcc>
+  <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+  <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+  <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+  <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+  <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+  <armgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>NDEBUG</Value>
+    </ListValues>
+  </armgcc.compiler.symbols.DefSymbols>
+  <armgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
+      <Value>../Config</Value>
+      <Value>../</Value>
+      <Value>../examples</Value>
+      <Value>../hal/include</Value>
+      <Value>../hal/utils/include</Value>
+      <Value>../hpl/adc</Value>
+      <Value>../hpl/core</Value>
+      <Value>../hpl/dmac</Value>
+      <Value>../hpl/dsu</Value>
+      <Value>../hpl/gclk</Value>
+      <Value>../hpl/pac</Value>
+      <Value>../hpl/pm</Value>
+      <Value>../hpl/port</Value>
+      <Value>../hpl/rtc</Value>
+      <Value>../hpl/sercom</Value>
+      <Value>../hpl/sysctrl</Value>
+      <Value>../hpl/systick</Value>
+      <Value>../hpl/tc</Value>
+      <Value>../hpl/usb</Value>
+      <Value>../hri</Value>
+      <Value>../usb</Value>
+      <Value>../usb/class/cdc</Value>
+      <Value>../usb/class/cdc/device</Value>
+      <Value>../usb/device</Value>
+    </ListValues>
+  </armgcc.compiler.directories.IncludePaths>
+  <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
+  <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
+  <armgcc.linker.general.UseNewlibNano>True</armgcc.linker.general.UseNewlibNano>
+  <armgcc.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </armgcc.linker.libraries.Libraries>
+  <armgcc.linker.libraries.LibrarySearchPaths>
+    <ListValues>
+      <Value>%24(ProjectDir)\Device_Startup</Value>
+    </ListValues>
+  </armgcc.linker.libraries.LibrarySearchPaths>
+  <armgcc.linker.optimization.GarbageCollectUnusedSections>True</armgcc.linker.optimization.GarbageCollectUnusedSections>
+  <armgcc.linker.miscellaneous.LinkerFlags>-Tsamd21g18a_flash.ld</armgcc.linker.miscellaneous.LinkerFlags>
+  <armgcc.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
+      <Value>../Config</Value>
+      <Value>../</Value>
+      <Value>../examples</Value>
+      <Value>../hal/include</Value>
+      <Value>../hal/utils/include</Value>
+      <Value>../hpl/adc</Value>
+      <Value>../hpl/core</Value>
+      <Value>../hpl/dmac</Value>
+      <Value>../hpl/dsu</Value>
+      <Value>../hpl/gclk</Value>
+      <Value>../hpl/pac</Value>
+      <Value>../hpl/pm</Value>
+      <Value>../hpl/port</Value>
+      <Value>../hpl/rtc</Value>
+      <Value>../hpl/sercom</Value>
+      <Value>../hpl/sysctrl</Value>
+      <Value>../hpl/systick</Value>
+      <Value>../hpl/tc</Value>
+      <Value>../hpl/usb</Value>
+      <Value>../hri</Value>
+      <Value>../usb</Value>
+      <Value>../usb/class/cdc</Value>
+      <Value>../usb/class/cdc/device</Value>
+      <Value>../usb/device</Value>
+    </ListValues>
+  </armgcc.assembler.general.IncludePaths>
+  <armgcc.preprocessingassembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
+      <Value>../Config</Value>
+      <Value>../</Value>
+      <Value>../examples</Value>
+      <Value>../hal/include</Value>
+      <Value>../hal/utils/include</Value>
+      <Value>../hpl/adc</Value>
+      <Value>../hpl/core</Value>
+      <Value>../hpl/dmac</Value>
+      <Value>../hpl/dsu</Value>
+      <Value>../hpl/gclk</Value>
+      <Value>../hpl/pac</Value>
+      <Value>../hpl/pm</Value>
+      <Value>../hpl/port</Value>
+      <Value>../hpl/rtc</Value>
+      <Value>../hpl/sercom</Value>
+      <Value>../hpl/sysctrl</Value>
+      <Value>../hpl/systick</Value>
+      <Value>../hpl/tc</Value>
+      <Value>../hpl/usb</Value>
+      <Value>../hri</Value>
+      <Value>../usb</Value>
+      <Value>../usb/class/cdc</Value>
+      <Value>../usb/class/cdc/device</Value>
+      <Value>../usb/device</Value>
+    </ListValues>
+  </armgcc.preprocessingassembler.general.IncludePaths>
+</ArmGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -368,6 +371,9 @@
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
       <Value>../../..</Value>
+      <Value>../hpl/tc</Value>
+      <Value>../../../si5351</Value>
+      <Value>../../../Utilities</Value>
       <Value>../Config</Value>
       <Value>../</Value>
       <Value>../examples</Value>
@@ -391,7 +397,6 @@
       <Value>../usb/class/cdc</Value>
       <Value>../usb/class/cdc/device</Value>
       <Value>../usb/device</Value>
-      <Value>../hpl/tc</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
@@ -433,6 +438,7 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
+      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -463,6 +469,7 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
+      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -491,6 +498,22 @@
     <Compile Include="..\..\max30003types.h">
       <SubType>compile</SubType>
       <Link>max30003types.h</Link>
+    </Compile>
+    <Compile Include="..\..\si5351\si5351-samd21-minimal.c">
+      <SubType>compile</SubType>
+      <Link>si5351-samd21-minimal.c</Link>
+    </Compile>
+    <Compile Include="..\..\si5351\si5351-samd21-minimal.h">
+      <SubType>compile</SubType>
+      <Link>si5351-samd21-minimal.h</Link>
+    </Compile>
+    <Compile Include="..\..\Utilities\seal_UTIL.c">
+      <SubType>compile</SubType>
+      <Link>seal_UTIL.c</Link>
+    </Compile>
+    <Compile Include="..\..\Utilities\seal_UTIL.h">
+      <SubType>compile</SubType>
+      <Link>seal_UTIL.h</Link>
     </Compile>
     <Compile Include="atmel_start.c">
       <SubType>compile</SubType>

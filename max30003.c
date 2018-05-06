@@ -826,81 +826,80 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 }
 
 
-//  uint16_t ecg_get_sample_burst(int32_t *fifo, uint16_t offset, const uint16_t SIZE)
-//  {
-//     bool eof;
-//     uint16_t step;              /* unit-less time increment */
-//     uint32_t word;              /* holds a log */
-//     MAX30003_MSG msg; 
-//     MAX30003_FIFO_VALS vals;
-//     
-//     eof = false;
-//     step = 0x0000;
-//     word = 0x00000000;
-//      
-//     /* start the burst transfer, but hold csb low */
-//     ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
-// 
-// /*    ecg_spi_msg.size = ECG_CMND_SZ;*/
-//     gpio_set_pin_level(CS, false);
-//     spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
-//     ECG_BUF_O[ECG_CMND_POS] = 0x00;
-// 
-//     /* start collecting samples from FIFO */
-// /*    ecg_spi_msg.size = ECG_DATA_SZ;*/
-// 
-//     do {
-//         spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
-// 
-//         /* process sample */
-//         msg.data.byte[0] = ECG_BUF_I[2];
-//         msg.data.byte[1] = ECG_BUF_I[1];
-//         msg.data.byte[2] = ECG_BUF_I[0];
-//         ecg_decode_ecg_fifo(&vals, msg.data);
-// 
-//         switch (vals.etag) {
-//             case ETAG_VALID_EOF :
-//             case ETAG_FAST_EOF  :
-//                 eof = true; /* exit, but save the sample as a valid sample */
-//                 vals.etag = (ECGFIFO_ETAG_VAL)( (uint8_t)vals.etag & 0x01);
-//             case ETAG_VALID     :
-//             case ETAG_FAST      :
-//                 /* format and store the sample */
-//                 word |= (uint32_t)vals.etag << 0;
-//                 word |= (uint32_t)step      << 3;
-//                 word |= (uint32_t)vals.data << 14;
-//                 if (offset + step >= SIZE) { 
-//                     delay_ms(10000); 
-//                 }
-//                 fifo[offset + step] = word;
-//                 
-//                 /* increment, clear, and get next sample */
-//                 step++;
-//                 word = 0x00000000;
-//                 break;
-// 
-//             case ETAG_FIFO_OVERFLOW :
-//                 gpio_set_pin_level(CS, true);
-// /*                ecg_spi_msg.size = ECG_BUF_SZ;*/
-//                 ecg_fifo_reset();
-//             case ETAG_FIFO_EMPTY    :
-//                 eof = true;
-//                 break;
-//             default :   delay_ms(1000); /* TODO error handling */
-//         }
-//     } while (!eof && ((step + offset) < SIZE));
-//     
-//     /* done sampling spi */
-//     gpio_set_pin_level(CS, true); 
-// /*    ecg_spi_msg.size = ECG_BUF_SZ;   */
-//  
-//     return step;
-//  }
+ uint16_t ecg_get_sample_burst(uint32_t *fifo, uint16_t offset, const uint16_t SIZE)
+ {
+    bool eof;
+    uint16_t step;              /* unit-less time increment */
+    uint32_t word;              /* holds a log */
+    MAX30003_MSG msg; 
+    MAX30003_FIFO_VALS vals;
+    
+    eof = false;
+    step = 0x0000;
+    word = 0x00000000;
+     
+    /* start the burst transfer, but hold csb low */
+    ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
+
+/*    ecg_spi_msg.size = ECG_CMND_SZ;*/
+    gpio_set_pin_level(CS, false);
+    spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
+    ECG_BUF_O[ECG_CMND_POS] = 0x00;
+
+    /* start collecting samples from FIFO */
+/*    ecg_spi_msg.size = ECG_DATA_SZ;*/
+
+    do {
+        spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
+
+        /* process sample */
+        msg.data.byte[0] = ECG_BUF_I[2];
+        msg.data.byte[1] = ECG_BUF_I[1];
+        msg.data.byte[2] = ECG_BUF_I[0];
+        ecg_decode_ecg_fifo(&vals, msg.data);
+
+        switch (vals.etag) {
+            case ETAG_VALID_EOF :
+            case ETAG_FAST_EOF  :
+                eof = true; /* exit, but save the sample as a valid sample */
+                vals.etag = (ECGFIFO_ETAG_VAL)( (uint8_t)vals.etag & 0x01);
+            case ETAG_VALID     :
+            case ETAG_FAST      :
+                /* format and store the sample */
+                word |= (uint32_t)vals.etag << 0;
+                word |= (uint32_t)step      << 3;
+                word |= (uint32_t)vals.data << 14;
+                if (offset + step >= SIZE) { 
+                    delay_ms(10000); 
+                }
+                fifo[offset + step] = word;
+                
+                /* increment, clear, and get next sample */
+                step++;
+                word = 0x00000000;
+                break;
+
+            case ETAG_FIFO_OVERFLOW :
+                gpio_set_pin_level(CS, true);
+/*                ecg_spi_msg.size = ECG_BUF_SZ;*/
+                ecg_fifo_reset();
+            case ETAG_FIFO_EMPTY    :
+                eof = true;
+                break;
+            default :   delay_ms(1000); /* TODO error handling */
+        }
+    } while (!eof && ((step + offset) < SIZE));
+    
+    /* done sampling spi */
+    gpio_set_pin_level(CS, true); 
+/*    ecg_spi_msg.size = ECG_BUF_SZ;   */
+ 
+    return step;
+ }
 
 void ecg_fifo_reset()
 {
     MAX30003_MSG msg;
-    //uint8_t      bytes;
 
     msg.command = ECG_REG_W(REG_FIFO_RST);
     msg.data    = NULL_DATA;
