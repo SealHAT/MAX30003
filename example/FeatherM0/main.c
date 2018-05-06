@@ -10,6 +10,7 @@ char TEST_FAIL[]     = "Test complete. Result: FAIL ";
 char GOODBYE[]       = "\n\nAll tests are complete. The device may now be disconnected. Goodbye!\n";
 char PASS[]          = "All tests passed!\n";
 char FAIL[]          = "One or more tests failed :(\n";
+char DATA_COLLECT[]  = "Data collection is finished. Test complete.\n";
 
 char NEXT_OR_REDO[]  = "Press \'r\' to redo the test or \'n\' to go to the next test.\n";
 
@@ -132,16 +133,8 @@ int main(void)
         /* FUNCTION CALL FOR TEST 3 GOES HERE */
 
 
-        /* Print success or failure message to the console. */
-        if(result == TEST_SUCCESS)
-        {
-            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
-        else
-        {
-            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
         
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
@@ -168,16 +161,8 @@ int main(void)
         /* FUNCTION CALL FOR TEST 4 GOES HERE */
 
 
-        /* Print success or failure message to the console. */
-        if(result == TEST_SUCCESS)
-        {
-            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
-        else
-        {
-            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
         
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
@@ -204,16 +189,8 @@ int main(void)
         /* FUNCTION CALL FOR TEST 5 GOES HERE */
 
 
-        /* Print success or failure message to the console. */
-        if(result == TEST_SUCCESS)
-        {
-            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
-        else
-        {
-            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
             
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
@@ -240,16 +217,8 @@ int main(void)
         /* FUNCTION CALL FOR TEST 6 GOES HERE */
 
 
-        /* Print success or failure message to the console. */
-        if(result == TEST_SUCCESS)
-        {
-            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
-        else
-        {
-            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
         
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
@@ -276,16 +245,12 @@ int main(void)
         /* FUNCTION CALL FOR TEST 7 GOES HERE */
 
 
-        /* Print success or failure message to the console. */
-        if(result == TEST_SUCCESS)
-        {
-            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
-        else
-        {
-            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
+            
+        /* Print end-of-test mark to file. */
+        snprintf(charBuffer, 9,"%1d,%1d,%1d,%1d\n", 0, 0, 0, 7);
+        do { retVal = usb_write((uint8_t *) charBuffer, 8); } while((retVal != USB_OK) || !usb_dtr());
         
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
@@ -312,16 +277,12 @@ int main(void)
         /* FUNCTION CALL FOR TEST 8 GOES HERE */
 
 
-        /* Print success or failure message to the console. */
-        if(result == TEST_SUCCESS)
-        {
-            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
-        else
-        {
-            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
+            
+        /* Print end-of-test mark to file. */
+        snprintf(charBuffer, 9,"%1d,%1d,%1d,%1d\n", 0, 0, 0, 8);
+        do { retVal = usb_write((uint8_t *) charBuffer, 8); } while((retVal != USB_OK) || !usb_dtr());
         
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
@@ -348,16 +309,12 @@ int main(void)
         /* FUNCTION CALL FOR TEST 9 GOES HERE */
 
 
-        /* Print success or failure message to the console. */
-        if(result == TEST_SUCCESS)
-        {
-            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
-        else
-        {
-            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
+            
+        /* Print end-of-test mark to file. */
+        snprintf(charBuffer, 9,"%1d,%1d,%1d,%1d\n", 0, 0, 0, 9);
+        do { retVal = usb_write((uint8_t *) charBuffer, 8); } while((retVal != USB_OK) || !usb_dtr());
         
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
@@ -384,16 +341,12 @@ int main(void)
         /* FUNCTION CALL FOR TEST 10 GOES HERE */
 
 
-        /* Print success or failure message to the console. */
-        if(result == TEST_SUCCESS)
-        {
-            do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
-        else
-        {
-            do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
-        }
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
+            
+        /* Print end-of-test mark to file. */
+        snprintf(charBuffer, 10,"%1d,%1d,%1d,%2d\n", 0, 0, 0, 10);
+        do { retVal = usb_write((uint8_t *) charBuffer, 9); } while((retVal != USB_OK) || !usb_dtr());
         
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
@@ -405,6 +358,70 @@ int main(void)
         }
         
     } /* End test 10 loop. */
+    
+    /***********
+     * TEST 11 *
+     ***********/
+    test_complete = false;
+    
+    while (test_complete == false)
+    {
+
+        snprintf(charBuffer, 16,"\nBegin test %1d\n", 11);
+        do { retVal = usb_write((uint8_t *) charBuffer, 15); } while((retVal != USB_OK) || !usb_dtr());
+        
+        /* FUNCTION CALL FOR TEST 11 GOES HERE */
+
+
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
+            
+        /* Print end-of-test mark to file. */
+        snprintf(charBuffer, 10,"%1d,%1d,%1d,%2d\n", 0, 0, 0, 11);
+        do { retVal = usb_write((uint8_t *) charBuffer, 9); } while((retVal != USB_OK) || !usb_dtr());
+        
+        /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
+        do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
+        do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
+        
+        if(getCharValue == 'n')
+        {
+            test_complete = true;
+        }
+        
+    } /* End test 11 loop. */
+    
+    /***********
+     * TEST 12 *
+     ***********/
+    test_complete = false;
+    
+    while (test_complete == false)
+    {
+
+        snprintf(charBuffer, 16,"\nBegin test %1d\n", 12);
+        do { retVal = usb_write((uint8_t *) charBuffer, 15); } while((retVal != USB_OK) || !usb_dtr());
+        
+        /* FUNCTION CALL FOR TEST 12 GOES HERE */
+
+
+        /* Print test complete message to the console. */
+        do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
+            
+        /* Print end-of-test mark to file. */
+        snprintf(charBuffer, 10,"%1d,%1d,%1d,%2d\n", 0, 0, 0, 12);
+        do { retVal = usb_write((uint8_t *) charBuffer, 9); } while((retVal != USB_OK) || !usb_dtr());
+        
+        /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
+        do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
+        do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
+        
+        if(getCharValue == 'n')
+        {
+            test_complete = true;
+        }
+        
+    } /* End test 12 loop. */
 
 #endif // HOTHPITAL    
 
