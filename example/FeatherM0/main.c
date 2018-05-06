@@ -361,7 +361,7 @@ int main(void)
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
         
         /* FUNCTION CALL FOR TEST 9 GOES HERE */
-
+		ecg_synch();
 
         /* Print success or failure message to the console. */
         if(result == TEST_SUCCESS)
@@ -438,11 +438,12 @@ int main(void)
 	uint32_t word = 0;
 	int32_t  sampv = 0;
 	uint32_t sampt = 0;
-	ecg_synch();
+	
 	delay_ms(100);
 	
 	for(;;) {
-		if (step < ECG_LOG_SZ && timeout < ECG_LOG_SZ*2) {
+		delay_ms(7);
+		if (step < ECG_LOG_SZ && timeout < ECG_LOG_SZ*32) {
 			ecg_get_sample(&vals);
 				
 			switch (vals.etag) {
@@ -479,7 +480,7 @@ int main(void)
 			}
 		} else {
 			gpio_toggle_pin_level(LED_BUILTIN);
-			delay_ms(250);
+			delay_ms(7);
 			/* [VVVV VVVV VVVV VVVV VVTT TTTT TTTT TEEE] */
 			sampt = ((uint32_t)(ECG_LOG[step % ECG_LOG_SZ]) & 0x00003FF8) >> 3;
 			sampv = (int32_t)(ECG_LOG[step % ECG_LOG_SZ]);
@@ -514,7 +515,7 @@ void fclock_init()
 	pll_frac.b = 7012;
 	pll_frac.c = 390625;
 	
-	ms_frac.a = 1324;
+	ms_frac.a = 1336;
 	ms_frac.b = 0;
 	ms_frac.c = 1;
     
@@ -523,7 +524,7 @@ void fclock_init()
 	//si5351_set_freq(32768UL, SI5351_CLK0); /* 1MHz min */
 	si5351_set_pll(pll_frac, SI5351_PLLA);
 	si5351_set_ms(SI5351_CLK0, ms_frac, 0, SI5351_OUTPUT_CLK_DIV_16, 0);
-    si5351_set_correction(3446);
+    si5351_set_correction(0);
     //si5351_set_clock_invert(SI5351_CLK0, 1);
 	
 	/* (optional) update the output drive power */
