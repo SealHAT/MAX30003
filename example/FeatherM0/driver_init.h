@@ -29,8 +29,6 @@ extern "C" {
 
 #include <hal_delay.h>
 #include <rtc_lite.h>
-#include <hal_timer.h>
-#include <hpl_tc_base.h>
 
 #include "hal_usb_device.h"
 
@@ -39,8 +37,6 @@ extern struct crc_sync_descriptor hash_chk;
 
 extern struct i2c_m_sync_desc       wire;
 extern struct spi_m_sync_descriptor ECG_SPI_DEV_0;
-
-extern struct timer_descriptor TIMER_0;
 
 void analog_in_PORT_init(void);
 void analog_in_CLOCK_init(void);

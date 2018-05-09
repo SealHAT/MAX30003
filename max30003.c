@@ -793,7 +793,6 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
  {
     bool eof;
     uint16_t step;              /* unit-less time increment */
-    uint32_t word;              /* holds a log */
     MAX30003_MSG msg; 
     MAX30003_FIFO_VALS vals;
     

@@ -149,11 +149,11 @@
           <AcmeProjectActionInfo Action="File" Source="usb/usb_protocol.c" IsConfig="false" Hash="tWUcFFv/c8ipnv3J//bMIg" />
           <AcmeProjectActionInfo Action="File" Source="usb/usb_protocol.h" IsConfig="false" Hash="EIEORPtDPE5AsfEkRF09CQ" />
           <AcmeProjectActionInfo Action="File" Source="main.c" IsConfig="false" Hash="k0AH7j+BrmdFhBPzCCMptA" />
-          <AcmeProjectActionInfo Action="File" Source="driver_init.c" IsConfig="false" Hash="YHGiZf3GH45vwplgL7RDfw" />
-          <AcmeProjectActionInfo Action="File" Source="driver_init.h" IsConfig="false" Hash="hEb5ntVIaCBSRtwX4R6JSQ" />
-          <AcmeProjectActionInfo Action="File" Source="atmel_start_pins.h" IsConfig="false" Hash="iWrK3FqNoyPInypUHAMe9Q" />
+          <AcmeProjectActionInfo Action="File" Source="driver_init.c" IsConfig="false" Hash="3hky2Q4wltYEH0nBjz0IWA" />
+          <AcmeProjectActionInfo Action="File" Source="driver_init.h" IsConfig="false" Hash="foAH0VzCKvSopnyqsdn5cQ" />
+          <AcmeProjectActionInfo Action="File" Source="atmel_start_pins.h" IsConfig="false" Hash="bO+gGm+a2D3sbeZHVahY2A" />
           <AcmeProjectActionInfo Action="File" Source="examples/driver_examples.h" IsConfig="false" Hash="VxVCAKbxlAJ12cgy8UBDjA" />
-          <AcmeProjectActionInfo Action="File" Source="examples/driver_examples.c" IsConfig="false" Hash="cP8VBR0SLP0jKuBrMZ9y+Q" />
+          <AcmeProjectActionInfo Action="File" Source="examples/driver_examples.c" IsConfig="false" Hash="WWNAaAbdktG3ESJ5kHR/0A" />
           <AcmeProjectActionInfo Action="File" Source="hal/include/hal_adc_sync.h" IsConfig="false" Hash="1Z3ikKjJFcOx7/XVLtcwnA" />
           <AcmeProjectActionInfo Action="File" Source="hal/include/hpl_adc_async.h" IsConfig="false" Hash="tOpdyFPrUdotYYlEc/Rcbw" />
           <AcmeProjectActionInfo Action="File" Source="hal/include/hpl_adc_sync.h" IsConfig="false" Hash="U0G1cRAzJMbaUUv6J9zZ1Q" />
@@ -168,7 +168,7 @@
           <AcmeProjectActionInfo Action="File" Source="hpl/core/hpl_core_m0plus_base.c" IsConfig="false" Hash="6FAsoECFZQZE17tjnSmvvQ" />
           <AcmeProjectActionInfo Action="File" Source="hpl/core/hpl_core_port.h" IsConfig="false" Hash="aP5qhvJxgu12CH/0emKWEw" />
           <AcmeProjectActionInfo Action="File" Source="hpl/core/hpl_init.c" IsConfig="false" Hash="RFMlSSNcqg5vR5Qj3tqWMQ" />
-          <AcmeProjectActionInfo Action="File" Source="hpl/dmac/hpl_dmac.c" IsConfig="false" Hash="CkBSwfM5KebCtXTV4bgmTg" />
+          <AcmeProjectActionInfo Action="File" Source="hpl/dmac/hpl_dmac.c" IsConfig="false" Hash="CP6aX7/y4EeD9g2lfDnv3Q" />
           <AcmeProjectActionInfo Action="File" Source="hpl/dsu/hpl_dsu.c" IsConfig="false" Hash="PCOmRy8tWTURkGSFg7mYYA" />
           <AcmeProjectActionInfo Action="File" Source="hpl/gclk/hpl_gclk.c" IsConfig="false" Hash="S/cLF1E7jUuAwUnwm5XvRA" />
           <AcmeProjectActionInfo Action="File" Source="hpl/gclk/hpl_gclk_base.h" IsConfig="false" Hash="GHxT7Q3BazIudHg8l1zQKw" />
@@ -264,7 +264,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -310,7 +309,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -340,7 +338,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -371,7 +368,6 @@
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
       <Value>../../..</Value>
-      <Value>../hpl/tc</Value>
       <Value>../../../si5351</Value>
       <Value>../../../Utilities</Value>
       <Value>../Config</Value>
@@ -438,7 +434,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -469,7 +464,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -545,9 +539,6 @@
     <Compile Include="Config\hpl_systick_config.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Config\hpl_tc_config.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="Config\hpl_usb_config.h">
       <SubType>compile</SubType>
     </Compile>
@@ -608,9 +599,6 @@
     <Compile Include="hal\include\hal_spi_m_sync.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hal\include\hal_timer.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="hal\include\hal_usb_device.h">
       <SubType>compile</SubType>
     </Compile>
@@ -662,9 +650,6 @@
     <Compile Include="hal\include\hpl_pac.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hal\include\hpl_pwm.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="hal\include\hpl_reset.h">
       <SubType>compile</SubType>
     </Compile>
@@ -696,9 +681,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\include\hpl_spi_s_sync.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="hal\include\hpl_timer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\include\hpl_time_measure.h">
@@ -750,9 +732,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\src\hal_spi_m_sync.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="hal\src\hal_timer.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\src\hal_usb_device.c">
@@ -854,12 +833,6 @@
     <Compile Include="hpl\systick\hpl_systick.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hpl\tc\hpl_tc.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="hpl\tc\hpl_tc_base.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="hpl\usb\hpl_usb.c">
       <SubType>compile</SubType>
     </Compile>
@@ -944,12 +917,12 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="max30003test.c">
+    <None Include="max30003test.c">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="max30003test.h">
+    </None>
+    <None Include="max30003test.h">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
     <Compile Include="ringbuff\ringbuffer.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1001,6 +974,12 @@
     <Compile Include="usb_start.h">
       <SubType>compile</SubType>
     </Compile>
+    <None Include="usb\class\cdc\device\atmel_devices_cdc.cat">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="usb\class\cdc\device\atmel_devices_cdc.inf">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />
@@ -1025,7 +1004,6 @@
     <Folder Include="hpl\sercom\" />
     <Folder Include="hpl\sysctrl\" />
     <Folder Include="hpl\systick\" />
-    <Folder Include="hpl\tc\" />
     <Folder Include="hpl\usb\" />
     <Folder Include="hri\" />
     <Folder Include="ringbuff" />
@@ -1040,12 +1018,6 @@
       <SubType>compile</SubType>
     </None>
     <None Include="Device_Startup\samd21g18a_sram.ld">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="usb\class\cdc\device\atmel_devices_cdc.cat">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="usb\class\cdc\device\atmel_devices_cdc.inf">
       <SubType>compile</SubType>
     </None>
   </ItemGroup>

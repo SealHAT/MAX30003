@@ -16,7 +16,6 @@
 
 struct crc_sync_descriptor   hash_chk;
 struct spi_m_sync_descriptor ECG_SPI_DEV_0;
-struct timer_descriptor      TIMER_0;
 
 struct adc_sync_descriptor analog_in;
 
@@ -167,19 +166,6 @@ void time_date_CLOCK_init(void)
 {
 	_pm_enable_bus_clock(PM_BUS_APBA, RTC);
 	_gclk_enable_channel(RTC_GCLK_ID, CONF_GCLK_RTC_SRC);
-}
-
-/**
- * \brief Timer initialization function
- *
- * Enables Timer peripheral, clocks and initializes Timer driver
- */
-static void TIMER_0_init(void)
-{
-	_pm_enable_bus_clock(PM_BUS_APBC, TC3);
-	_gclk_enable_channel(TC3_GCLK_ID, CONF_GCLK_TC3_SRC);
-
-	timer_init(&TIMER_0, TC3, _tc_get_timer());
 }
 
 void USB_DEVICE_INSTANCE_PORT_init(void)
@@ -358,8 +344,6 @@ void system_init(void)
 
 	time_date_CLOCK_init();
 	time_date_init();
-
-	TIMER_0_init();
 
 	USB_DEVICE_INSTANCE_init();
 }
