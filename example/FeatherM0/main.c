@@ -39,13 +39,13 @@ int main(void)
 	gpio_set_pin_level(CS,true);
 
 	i2c_unblock_bus(SDA, SCL);
-	
+
     spi_init();
-	
+
 	gpio_set_pin_level(CS,false);
-	
+
 	fclock_init();
-	
+
 	gpio_set_pin_level(CS,true);
     /* YOUR INIT CODE HERE */
 	ecg_sw_reset();
@@ -56,7 +56,7 @@ int main(void)
     /* Set up USB connection */
     /* Wait for USB connection to be made with computer. Must be down to receive (DTR). */
     do { /* NOTHING */ } while (!usb_dtr());
-        
+
     /* Write welcome message to the serial console. If the operation fails, it will continue
      * trying to send until it is successful. */
     do {
@@ -68,13 +68,13 @@ int main(void)
      **********/
     do { retVal = usb_write((uint8_t *) START_TEST, sizeof(START_TEST) - 1); } while((retVal != USB_OK) || !usb_dtr());
     do { /* NOTHING */ } while(usb_get() != 'b');
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 1);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-    
+
         /* FUNCTION CALL FOR TEST 1 GOES HERE */
         result = MAX30003_INIT_TEST_ROUND();
 
@@ -88,31 +88,31 @@ int main(void)
             do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
             do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
         }
-    
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
-        }        
-    
+        }
+
     } /* End test 1 loop. */
-    
+
     /**********
      * TEST 2 *
      **********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 2);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 2 GOES HERE */
-        
+
 
         /* Print success or failure message to the console. */
         if(result == TEST_SUCCESS)
@@ -124,330 +124,330 @@ int main(void)
             do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
             do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
         }
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 2 loop. */
-        
+
 #ifdef HOTHPITAL
     /**********
      * TEST 3 *
      **********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 3);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 3 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 3 loop. */
-    
+
     /**********
      * TEST 4 *
      **********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 4);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 4 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 4 loop. */
-    
+
     /**********
      * TEST 5 *
      **********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 5);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-            
+
         /* FUNCTION CALL FOR TEST 5 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-            
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-            
+
     } /* End test 5 loop. */
-    
+
     /**********
      * TEST 6 *
      **********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 6);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 6 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 6 loop. */
-    
+
     /**********
      * TEST 7 *
      **********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 7);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 7 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            
+
         /* Print end-of-test mark to file. */
         snprintf(charBuffer, 9,"%1d,%1d,%1d,%1d\n", 0, 0, 0, 7);
         do { retVal = usb_write((uint8_t *) charBuffer, 8); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 7 loop. */
-    
+
     /**********
      * TEST 8 *
      **********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 8);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 8 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            
+
         /* Print end-of-test mark to file. */
         snprintf(charBuffer, 9,"%1d,%1d,%1d,%1d\n", 0, 0, 0, 8);
         do { retVal = usb_write((uint8_t *) charBuffer, 8); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 8 loop. */
-    
+
     /**********
      * TEST 9 *
      **********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 15,"\nBegin test %1d\n", 9);
         do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 9 GOES HERE */
 		ecg_synch();
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            
+
         /* Print end-of-test mark to file. */
         snprintf(charBuffer, 9,"%1d,%1d,%1d,%1d\n", 0, 0, 0, 9);
         do { retVal = usb_write((uint8_t *) charBuffer, 8); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 9 loop. */
-    
+
     /***********
      * TEST 10 *
      ***********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 16,"\nBegin test %1d\n", 10);
         do { retVal = usb_write((uint8_t *) charBuffer, 15); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 10 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            
+
         /* Print end-of-test mark to file. */
         snprintf(charBuffer, 10,"%1d,%1d,%1d,%2d\n", 0, 0, 0, 10);
         do { retVal = usb_write((uint8_t *) charBuffer, 9); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 10 loop. */
-    
+
     /***********
      * TEST 11 *
      ***********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 16,"\nBegin test %1d\n", 11);
         do { retVal = usb_write((uint8_t *) charBuffer, 15); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 11 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            
+
         /* Print end-of-test mark to file. */
         snprintf(charBuffer, 10,"%1d,%1d,%1d,%2d\n", 0, 0, 0, 11);
         do { retVal = usb_write((uint8_t *) charBuffer, 9); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
             test_complete = true;
         }
-        
+
     } /* End test 11 loop. */
-    
+
     /***********
      * TEST 12 *
      ***********/
     test_complete = false;
-    
+
     while (test_complete == false)
     {
 
         snprintf(charBuffer, 16,"\nBegin test %1d\n", 12);
         do { retVal = usb_write((uint8_t *) charBuffer, 15); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* FUNCTION CALL FOR TEST 12 GOES HERE */
 
 
         /* Print test complete message to the console. */
         do { retVal = usb_write((uint8_t *) DATA_COLLECT, sizeof(DATA_COLLECT) - 1); } while((retVal != USB_OK) || !usb_dtr());
-            
+
         /* Print end-of-test mark to file. */
         snprintf(charBuffer, 10,"%1d,%1d,%1d,%2d\n", 0, 0, 0, 12);
         do { retVal = usb_write((uint8_t *) charBuffer, 9); } while((retVal != USB_OK) || !usb_dtr());
-        
+
         /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
         do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
         do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
-        
+
         if(getCharValue == 'n')
         {
 	        test_complete = true;
         }
-        
+
     } /* End test 12 loop. */
 
-#endif // HOTHPITAL    
+#endif // HOTHPITAL
 
     /***********
      * GOODBYE *
      ***********/
     do { retVal = usb_write((uint8_t *) GOODBYE, sizeof(GOODBYE) - 1); } while((retVal != USB_OK) || !usb_dtr());
-	
+
 	for(int i = 0; i < ECG_LOG_SZ; i++) {
 		ECG_LOG[i] = 0;
 	}
@@ -464,11 +464,11 @@ int main(void)
 	uint32_t word = 0;
 	int32_t  sampv = 0;
 	uint32_t sampt = 0;
-	
+
 	delay_ms(100);
-	
+
 	ecg_fifo_reset();
-	for(;;) 
+	for(;;)
 	{
 		if(usb_get() == 'n')
 		{
@@ -500,14 +500,13 @@ int main(void)
 			}
 		}
 
-		
 		if(gpio_get_pin_level(INT1) == false)
-		{			
-			while (step < ECG_LOG_SZ && fifo_eof == false && fifo_err == false) 
+		{
+			while (step < ECG_LOG_SZ && fifo_eof == false && fifo_err == false)
 			{
 				ecg_get_sample(&vals);
-			
-				switch (vals.etag) 
+
+				switch (vals.etag)
 				{
 					case ETAG_VALID_EOF :
 					case ETAG_FAST_EOF  :
@@ -519,17 +518,17 @@ int main(void)
 						word |= (uint32_t)vals.etag << 0;
 						word |= (uint32_t)step      << 3;
 						word |= (uint32_t)vals.data << 14;
-				
+
 						ECG_LOG[step] = word;
 						sampt = ((uint32_t)(ECG_LOG[step]) & 0x00003FF8) >> 3;
 						sampv = (int32_t)(ECG_LOG[step]);
 						sampv = sampv >> 14;
-				
+
 						/* increment, clear, and get next sample */
 						step++;
 						word = 0x00000000;
 						break;
-				
+
 					case ETAG_FIFO_OVERFLOW :
 						ecg_synch();
 						gpio_toggle_pin_level(LED_BUILTIN);
@@ -546,11 +545,11 @@ int main(void)
 						break;
 				} /* done with single sample */
 			} /* done (log full, fifo empty, or error) */
-				
+
 			/* if all samples in fifo were read, print */
-			if (fifo_eof == true || step == ECG_LOG_SZ) 
+			if (fifo_eof == true || step == ECG_LOG_SZ)
 			{
-				for( int i = 0; i < step; i++) 
+				for( int i = 0; i < step; i++)
 				{
 					sampt = ((uint32_t)(ECG_LOG[i]) & 0x00003FF8) >> 3;
 					sampv = (int32_t)(ECG_LOG[i]);
@@ -561,8 +560,8 @@ int main(void)
 					do { retVal = usb_write((uint8_t *)charBuffer, 29); } while((retVal != USB_OK) || !usb_dtr());
 					/* done printing */
 				}
-			} 
-			else if (fifo_err == true) 
+			}
+			else if (fifo_err == true)
 			{ /* error */
 				snprintf(charBuffer, 12, "err=%4lu\n",step);
 				do { retVal = usb_write((uint8_t *)charBuffer, 11); } while((retVal != USB_OK) || !usb_dtr());
@@ -586,7 +585,7 @@ int main(void)
 		} /* fifo should be empty, wait until full again */
 	} /* forever loop */
 }
-	
+
 void spi_init()
 {
     spi_m_sync_set_mode(&ECG_SPI_DEV_0, SPI_MODE_0);
@@ -599,31 +598,31 @@ void spi_init()
 }
 
 void fclock_init()
-{	
+{
 	struct Si5351Frac pll_frac, ms_frac;
 	/* I think the adafruit breakout using a 10pF crystal, known 25MHz (default) */
 	si5351_init(&wire, SI5351_CRYSTAL_LOAD_10PF, 0);
-	
+
 	pll_frac.a = 28;
 	pll_frac.b = 7012;
 	pll_frac.c = 390625;
-	
+
 	ms_frac.a = 1336;
 	ms_frac.b = 0;
 	ms_frac.c = 1;
-    
-	
+
+
 	/* set the clock to 25 32.768kHz */
 	//si5351_set_freq(32768UL, SI5351_CLK0); /* 1MHz min */
 	si5351_set_pll(pll_frac, SI5351_PLLA);
 	si5351_set_ms(SI5351_CLK0, ms_frac, 0, SI5351_OUTPUT_CLK_DIV_16, 0);
     si5351_set_correction(0);
     //si5351_set_clock_invert(SI5351_CLK0, 1);
-	
+
 	/* (optional) update the output drive power */
 	//si5351_drive_strength(SI5351_CLK0, SI5351_DRIVE_4MA);
-	
-	
+
+
 }
 //
 //delay_ms(7);
