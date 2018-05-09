@@ -12,8 +12,9 @@
 extern "C"
 {
 #endif // __cplusplus
-#include <stdbool.h>
 #include "max30003.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 typedef enum test_result_t {
     TEST_FAILURE = 0,
@@ -33,6 +34,10 @@ extern bool		int1_level_n;
 extern bool		int2_level_n;
 
 extern const int ERROR_STR_LEN;
+void ecg_test_welcome();
+void ecg_test_run(const char MSG[], uint8_t test_num, test_result_t(*test_function)(void));
+void ecg_test_interactive_switch(uint8_t test_num, uint8_t *rval, uint8_t *gval, uint8_t *lval);
+void ecg_test_goodbye();
 
 test_result_t MAX30003_INIT_TEST();
 test_result_t MAX30003_INIT_TEST_ROUND();

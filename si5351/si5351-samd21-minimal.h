@@ -22,20 +22,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* 
+ * Modified by SealHAT 2018 to use AtmelStart SPI functions rather than ASF 
+ */
+
 #ifndef SI5351_MEGA_MINIMAL_H_
 #define SI5351_MEGA_MINIMAL_H_
 
 #define ATMEL_START_H_INCLUDED
 
 /* Define definitions */
-//#define SI5351_BUS_BASE_ADDR				  0xC0
-#define SI5351_BUS_BASE_ADDR				  0x60
+//#define SI5351_BUS_BASE_ADDR				0xC0
+#define SI5351_BUS_BASE_ADDR				0x60
 #define I2C_SERCOM            				SERCOM2
-#define I2C_TIMEOUT 									10
-#define I2C_DATA_LENGTH								30
+#define I2C_TIMEOUT 						10
+#define I2C_DATA_LENGTH						30
 
-#define SI5351_XTAL_FREQ					    25000000
-#define SI5351_PLL_FIXED					    900000000ULL
+#define SI5351_XTAL_FREQ					25000000
+#define SI5351_PLL_FIXED					900000000ULL
 
 #define SI5351_PLL_VCO_MIN					600000000
 #define SI5351_PLL_VCO_MAX					900000000
@@ -161,19 +165,19 @@
 #define SI5351_CLK5_PHASE_OFFSET			170
 
 #define SI5351_PLL_RESET					177
-#define  SI5351_PLL_RESET_B				(1<<7)
-#define  SI5351_PLL_RESET_A				(1<<5)
+#define  SI5351_PLL_RESET_B					(1<<7)
+#define  SI5351_PLL_RESET_A					(1<<5)
 
-#define SI5351_CRYSTAL_LOAD				183
-#define  SI5351_CRYSTAL_LOAD_MASK		(3<<6)
-#define  SI5351_CRYSTAL_LOAD_6PF		(1<<6)
-#define  SI5351_CRYSTAL_LOAD_8PF		(2<<6)
-#define  SI5351_CRYSTAL_LOAD_10PF		(3<<6)
+#define SI5351_CRYSTAL_LOAD					183
+#define  SI5351_CRYSTAL_LOAD_MASK			(3<<6)
+#define  SI5351_CRYSTAL_LOAD_6PF			(1<<6)
+#define  SI5351_CRYSTAL_LOAD_8PF			(2<<6)
+#define  SI5351_CRYSTAL_LOAD_10PF			(3<<6)
 
-#define SI5351_FANOUT_ENABLE			187
-#define  SI5351_CLKIN_ENABLE			(1<<7)
-#define  SI5351_XTAL_ENABLE				(1<<6)
-#define  SI5351_MULTISYNTH_ENABLE		(1<<4)
+#define SI5351_FANOUT_ENABLE				187
+#define  SI5351_CLKIN_ENABLE				(1<<7)
+#define  SI5351_XTAL_ENABLE					(1<<6)
+#define  SI5351_MULTISYNTH_ENABLE			(1<<4)
 
 /* Enum definitions */
 

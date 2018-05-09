@@ -8,6 +8,22 @@
 #include "max30003test.h"
 #include "driver_init.h"
 
+/* Message Strings */
+char WELCOME[]       = "Welcome to the SealHAT EKG test suite!\nPlease start the capture to textfile within CoolTerm now!\nBe sure to name your file \"sealtest.txt\" and change your baudrate to max.\n";
+char START_TEST[]    = "Please press \"b\" to begin!\n";
+char TEST_PASS[]     = "Test complete. Result: PASS\n";
+char TEST_FAIL[]     = "Test complete. Result: FAIL ";
+char GOODBYE[]       = "\n\nAll tests are complete. The device may now be disconnected. Goodbye!\n";
+char PASS[]          = "All tests passed!\n";
+char FAIL[]          = "One or more tests failed :(\n";
+char DATA_COLLECT[]  = "Data collection is finished. Test complete.\n";
+char RATE[]			 = "New rate: \n";
+char GAIN[]			 = "New gain: \n";
+char LOWPASS[]		 = "New lowpass: \n";
+
+char NEXT_OR_REDO[]  = "Press \'r\' to redo the test or \'n\' to go to the next test.\n";
+
+
 /* default values for registers */
 const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
     .rbiasn     = RBIASN_NOT_CONNECTED,
@@ -192,6 +208,102 @@ char* error_no_to_string()
             return NO_ERROR_STR;
             break;
     }
+}
+
+void ecg_test_welcome()
+{
+	int  retVal;
+	/* Set up USB connection */
+    /* Wait for USB connection to be made with computer. Must be down to receive (DTR). */
+    do { /* NOTHING */ } while (!usb_dtr());
+
+    /* Write welcome message to the serial console. If the operation fails, it will continue
+     * trying to send until it is successful. */
+    do {
+        retVal = usb_write((uint8_t *) WELCOME, sizeof(WELCOME) - 1);
+    } while((retVal != USB_OK) || !usb_dtr());
+}
+
+void ecg_test_goodbye()
+{
+	int retVal;
+	do { retVal = usb_write((uint8_t *) GOODBYE, sizeof(GOODBYE) - 1); } while((retVal != USB_OK) || !usb_dtr());
+}
+
+void ecg_runtest(const char MSG[], uint8_t test_num, test_result_t(*test_function)(void))
+{
+	uint32_t		retVal;
+	char			charBuffer[30];
+	char			getCharValue;
+	test_result_t	result;
+	bool			test_complete = false;
+
+    do { retVal = usb_write((uint8_t *) START_TEST, sizeof(START_TEST) - 1); } while((retVal != USB_OK) || !usb_dtr());
+    do { /* NOTHING */ } while(usb_get() != 'b');
+
+    while (test_complete == false)
+    {
+
+	    snprintf(charBuffer, 15,"\nBegin test %1d\n", 1);
+	    do { retVal = usb_write((uint8_t *) charBuffer, 14); } while((retVal != USB_OK) || !usb_dtr());
+
+	    /* FUNCTION CALL FOR TEST 1 GOES HERE */
+	    result = test_function();
+
+	    /* Print success or failure message to the console. */
+	    if(result == TEST_SUCCESS)
+	    {
+		    do { retVal = usb_write((uint8_t *) TEST_PASS, sizeof(TEST_PASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
+	    }
+	    else
+	    {
+		    do { retVal = usb_write((uint8_t *) TEST_FAIL, sizeof(TEST_FAIL) - 1); } while((retVal != USB_OK) || !usb_dtr());
+		    do { retVal = usb_write((uint8_t *) error_no_to_string(), ERROR_STR_LEN - 1); } while((retVal != USB_OK) || !usb_dtr());
+	    }
+
+	    /* Determine if the user wants to redo the test ('r') or go to the next test ('n') */
+	    do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
+	    do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
+
+	    if(getCharValue == 'n')
+	    {
+		    test_complete = true;
+	    }
+
+	    } /* End test 1 loop. */
+}
+
+void ecg_test_interactive_switch(uint8_t test_num, uint8_t *rate_val, uint8_t *gain_val, uint8_t *lowpass_val)
+{
+	uint32_t		retVal;
+	char			charBuffer[30];
+	char			getCharValue;
+	
+	do { retVal = usb_write((uint8_t *) NEXT_OR_REDO, sizeof(NEXT_OR_REDO) - 1); } while((retVal != USB_OK) || !usb_dtr());
+	do { getCharValue = usb_get(); } while(getCharValue != 'n' && getCharValue != 'r');
+			
+	if(getCharValue == 'n')
+	{
+		/* Print end-of-test mark to file. */
+		snprintf(charBuffer, 9,"%1d,%1d,%1d,%1d\n", *rate_val, *gain_val, *lowpass_val, test_num);
+		do { retVal = usb_write((uint8_t *) charBuffer, 8); } while((retVal != USB_OK) || !usb_dtr());
+				
+		test_num++;
+				
+		do { retVal = usb_write((uint8_t *) RATE, sizeof(RATE) - 1); } while((retVal != USB_OK) || !usb_dtr());
+		do { getCharValue = usb_get(); } while(getCharValue != '0' && getCharValue != '1' && getCharValue != '2');
+		rate_val = (uint8_t)(getCharValue) - 48;
+		do { retVal = usb_write((uint8_t *) GAIN, sizeof(GAIN) - 1); } while((retVal != USB_OK) || !usb_dtr());
+		do { getCharValue = usb_get(); } while(getCharValue != '0' && getCharValue != '1' && getCharValue != '2' && getCharValue != '3');
+		gain_val = (uint8_t)(getCharValue) - 48;
+		do { retVal = usb_write((uint8_t *) LOWPASS, sizeof(LOWPASS) - 1); } while((retVal != USB_OK) || !usb_dtr());
+		do { getCharValue = usb_get(); } while(getCharValue != '0' && getCharValue != '1' && getCharValue != '2' && getCharValue != '3');
+		lowpass_val = (uint8_t)(getCharValue) - 48;
+				
+		MAX30003_CONFIG_TEST(*rate_val, *gain_val, *lowpass_val);
+		ecg_synch();
+		ecg_fifo_reset();
+	}	
 }
 
 test_result_t MAX30003_CONFIG_TEST(const uint8_t SPS, const uint8_t GAIN, const uint8_t LOWPASS)

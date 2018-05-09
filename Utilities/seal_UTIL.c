@@ -3,11 +3,11 @@
 void i2c_unblock_bus(const uint8_t SDA_PIN, const uint8_t SCL_PIN)
 {
     uint32_t i, count;
-
+	
     // Set pin SDA direction to input, pull off
-//     gpio_set_pin_direction(SDA_PIN, GPIO_DIRECTION_IN);
-//     gpio_set_pin_pull_mode(SDA_PIN, GPIO_PULL_OFF);
-//     gpio_set_pin_function(SDA_PIN, GPIO_PIN_FUNCTION_OFF);
+    gpio_set_pin_direction(SDA_PIN, GPIO_DIRECTION_IN);
+    gpio_set_pin_pull_mode(SDA_PIN, GPIO_PULL_OFF);
+    gpio_set_pin_function(SDA_PIN, GPIO_PIN_FUNCTION_OFF);
 
     for(i = 0, count = 0; i < 50; i++) {
         count += gpio_get_pin_level(SDA_PIN);
