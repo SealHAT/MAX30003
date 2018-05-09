@@ -264,7 +264,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -310,7 +309,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -340,7 +338,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -371,9 +368,6 @@
       <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAMD21_DFP\1.2.280\samd21a\include</Value>
       <Value>../../..</Value>
-      <Value>../hpl/tc</Value>
-      <Value>../../../si5351</Value>
-      <Value>../../../Utilities</Value>
       <Value>../Config</Value>
       <Value>../</Value>
       <Value>../examples</Value>
@@ -399,6 +393,10 @@
       <Value>../usb/device</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
+<<<<<<< HEAD
+=======
+  <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
+>>>>>>> ecg c code setup
   <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
   <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
   <armgcc.compiler.warnings.AllWarnings>True</armgcc.compiler.warnings.AllWarnings>
@@ -438,7 +436,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -469,7 +466,6 @@
       <Value>../hpl/sercom</Value>
       <Value>../hpl/sysctrl</Value>
       <Value>../hpl/systick</Value>
-      <Value>../hpl/tc</Value>
       <Value>../hpl/usb</Value>
       <Value>../hri</Value>
       <Value>../usb</Value>
@@ -483,10 +479,6 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\ecg.h">
-      <SubType>compile</SubType>
-      <Link>ecg.h</Link>
-    </Compile>
     <Compile Include="..\..\max30003.c">
       <SubType>compile</SubType>
       <Link>max30003.c</Link>
@@ -498,22 +490,6 @@
     <Compile Include="..\..\max30003types.h">
       <SubType>compile</SubType>
       <Link>max30003types.h</Link>
-    </Compile>
-    <Compile Include="..\..\si5351\si5351-samd21-minimal.c">
-      <SubType>compile</SubType>
-      <Link>si5351-samd21-minimal.c</Link>
-    </Compile>
-    <Compile Include="..\..\si5351\si5351-samd21-minimal.h">
-      <SubType>compile</SubType>
-      <Link>si5351-samd21-minimal.h</Link>
-    </Compile>
-    <Compile Include="..\..\Utilities\seal_UTIL.c">
-      <SubType>compile</SubType>
-      <Link>seal_UTIL.c</Link>
-    </Compile>
-    <Compile Include="..\..\Utilities\seal_UTIL.h">
-      <SubType>compile</SubType>
-      <Link>seal_UTIL.h</Link>
     </Compile>
     <Compile Include="atmel_start.c">
       <SubType>compile</SubType>
@@ -543,9 +519,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Config\hpl_systick_config.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="Config\hpl_tc_config.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Config\hpl_usb_config.h">
@@ -608,9 +581,6 @@
     <Compile Include="hal\include\hal_spi_m_sync.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hal\include\hal_timer.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="hal\include\hal_usb_device.h">
       <SubType>compile</SubType>
     </Compile>
@@ -662,9 +632,6 @@
     <Compile Include="hal\include\hpl_pac.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hal\include\hpl_pwm.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="hal\include\hpl_reset.h">
       <SubType>compile</SubType>
     </Compile>
@@ -696,9 +663,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\include\hpl_spi_s_sync.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="hal\include\hpl_timer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\include\hpl_time_measure.h">
@@ -750,9 +714,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\src\hal_spi_m_sync.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="hal\src\hal_timer.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\src\hal_usb_device.c">
@@ -854,12 +815,6 @@
     <Compile Include="hpl\systick\hpl_systick.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hpl\tc\hpl_tc.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="hpl\tc\hpl_tc_base.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="hpl\usb\hpl_usb.c">
       <SubType>compile</SubType>
     </Compile>
@@ -944,12 +899,6 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="max30003test.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="max30003test.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="ringbuff\ringbuffer.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1025,7 +974,6 @@
     <Folder Include="hpl\sercom\" />
     <Folder Include="hpl\sysctrl\" />
     <Folder Include="hpl\systick\" />
-    <Folder Include="hpl\tc\" />
     <Folder Include="hpl\usb\" />
     <Folder Include="hri\" />
     <Folder Include="ringbuff" />

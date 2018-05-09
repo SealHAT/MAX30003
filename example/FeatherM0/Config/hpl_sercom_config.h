@@ -173,7 +173,7 @@
 // <i> The SPI data transfer rate
 // <id> spi_master_baud_rate
 #ifndef CONF_SERCOM_4_SPI_BAUD
-#define CONF_SERCOM_4_SPI_BAUD 1000000
+#define CONF_SERCOM_4_SPI_BAUD 100000
 #endif
 
 // </h>
@@ -181,7 +181,7 @@
 // <e> Advanced Configuration
 // <id> spi_master_advanced
 #ifndef CONF_SERCOM_4_SPI_ADVANCED
-#define CONF_SERCOM_4_SPI_ADVANCED 0
+#define CONF_SERCOM_4_SPI_ADVANCED 1
 #endif
 
 // <o> Dummy byte <0x00-0x1ff>
@@ -240,7 +240,7 @@
 // <1=>Halt
 // <id> spi_master_arch_dbgstop
 #ifndef CONF_SERCOM_4_SPI_DBGSTOP
-#define CONF_SERCOM_4_SPI_DBGSTOP 0
+#define CONF_SERCOM_4_SPI_DBGSTOP 1
 #endif
 
 // </e>

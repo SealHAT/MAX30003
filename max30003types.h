@@ -24,19 +24,19 @@
 #ifndef MAX30003TYPES_H
 #define MAX30003TYPES_H
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #define MAX30003_W_INDICATOR    (0)
 #define MAX30003_R_INDICATOR    (1)
 #define MAX30003_DATA_BYTES     (3)
 #define MAX30003_CMND_BYTES     (1)
-// TODO check endianness
-// TODO macro for WRITE/READ on ADDRESSES ie:(REG << 1 | R)
+
 /**
  * REG addresses for the MAX30003 biopotential AFE
  **/
@@ -178,7 +178,40 @@ typedef enum {
 } MNGRINT_CLRFAST_VAL;
 
 // TODO enum for 0000 = 1 to 1111 = 32 to enforce "off-by-one" behaviour
-typedef uint8_t MNGRINT_EFIT_VAL;
+typedef enum {
+	EFIT_AS_1 = 0,
+	EFIT_AS_2 = 1,
+	EFIT_AS_3 = 2,
+	EFIT_AS_4 = 3,
+	EFIT_AS_5 = 4,
+	EFIT_AS_6 = 5,
+	EFIT_AS_7 = 6,
+	EFIT_AS_8 = 7,
+	EFIT_AS_9 = 8,
+	EFIT_AS_10 = 9,
+	EFIT_AS_11 = 10,
+	EFIT_AS_12 = 11,
+	EFIT_AS_13 = 12,
+	EFIT_AS_14 = 13,
+	EFIT_AS_15 = 14,
+	EFIT_AS_16 = 15,
+	EFIT_AS_17 = 16,
+	EFIT_AS_18 = 17,
+	EFIT_AS_19 = 18,
+	EFIT_AS_20 = 19,
+	EFIT_AS_21 = 20,
+	EFIT_AS_22 = 21,
+	EFIT_AS_23 = 22,
+	EFIT_AS_24 = 23,
+	EFIT_AS_25 = 24,
+	EFIT_AS_26 = 25,
+	EFIT_AS_27 = 26,
+	EFIT_AS_28 = 27,
+	EFIT_AS_29 = 28,
+	EFIT_AS_30 = 29,
+	EFIT_AS_31 = 30,
+	EFIT_AS_32 = 31
+	} MNGRINT_EFIT_VAL;
 
 /***
  * MNG_DYN register's masks and values
@@ -584,6 +617,119 @@ typedef enum {
 } MAX30003_RTOR_MASKS;
 
 typedef uint32_t RTOR_DATA_VAL;
+
+/***
+ * STRUCTURES For holding the values of each register
+ ***/
+// TODO consider creating union of vals structs for more generic interface
+typedef struct MAX30003_STATUS_VALS {	/* all active high */
+	bool ldoff_nl;
+	bool ldoff_nh;
+	bool ldoff_pl;
+	bool ldoff_ph;
+	bool pllint;
+	bool samp;
+	bool rrint;
+	bool lonint;
+	bool dcloffint;
+	bool fstint;
+	bool eovf;
+	bool eint;
+} MAX30003_STATUS_VALS;
+
+typedef struct MAX30003_EN_INT_VALS {
+	ENINT_INTBTYPE_VAL     intb_type;
+	ENINT_ENPLLINT_VAL     en_pllint;
+	ENINT_ENSAMP_VAL       en_samp;
+	ENINT_ENRRINT_VAL      en_rrint;
+	ENINT_ENLONINT_VAL     en_lonint;
+	ENINT_ENDCLOFFINT_VAL  en_dcloffint;
+	ENINT_ENFSTINT_VAL     en_fstint;
+	ENINT_ENEOVF_VAL       en_eovf;
+	ENINT_ENEINT_VAL       en_eint;
+} MAX30003_EN_INT_VALS;
+
+typedef struct MAX30003_MNGR_INT_VALS {
+	MNGRINT_SAMPIT_VAL		samp_it;
+	MNGRINT_CLRSAMP_VAL		clr_samp;
+	MNGRINT_CLRRRINT_VAL	clr_rrint;
+	MNGRINT_CLRFAST_VAL		clr_fast;
+	MNGRINT_EFIT_VAL		efit;
+} MAX30003_MNGR_INT_VALS;
+
+typedef struct MAX30003_MNGR_DYN_VALS {
+	MNGRDYN_FASTTH_VAL		fast_th;
+	MNGRDYN_FAST_VAL		fast;
+} MAX30003_MNGR_DYN_VALS;
+
+typedef struct MAX30003_INFO_VALS {
+	uint8_t				_verification;
+	INFO_REV_ID_VAL		rev_id;
+	uint8_t				_partid;
+	uint16_t			_serialnumber;
+} MAX30003_INFO_VALS;
+
+typedef struct MAX30003_CNFG_GEN_VALS {
+	CNFGGEN_RBIASN_VAL        rbiasn;
+	CNFGGEN_RBIASP_VAL        rbiasp;
+	CNFGGEN_RBIASV_VAL        rbiasv;
+	CNFGGEN_EN_RBIAS_VAL      en_rbias;
+	CNFGGEN_DCLOFF_VTH_VAL    vth;
+	CNFGGEN_DCLOFF_IMAG_VAL   imag;
+	CNFGGEN_DCLOFF_IPOL_VAL   ipol;
+	CNFGGEN_EN_DCLOFF_VAL     en_dcloff;
+	CNFGGEN_EN_ECG_VAL        en_ecg;
+	CNFGGEN_FMSTR_VAL         fmstr;
+	CNFGGEN_EN_ULP_LON_VAL    en_ulp_lon;
+} MAX30003_CNFG_GEN_VALS;
+
+typedef struct MAX30003_CNFG_CAL_VALS {
+	CNFGCAL_THIGH_VAL	thigh;
+	CNFGCAL_FIFTY_VAL	fifty;
+	CNFGCAL_FCAL_VAL	fcal;
+	CNFGCAL_VMAG_VAL	vmag;
+	CNFGCAL_VMODE_VAL	vmode;
+	CNFGCAL_EN_VCAL_VAL	en_vcal;
+} MAX30003_CNFG_CAL_VALS;
+
+typedef struct MAX30003_CNFG_EMUX_VALS {
+	CNFGEMUX_CALN_SEL_VAL	caln_sel;
+	CNFGEMUX_CALP_SEL_VAL	calp_sel;
+	CNFGEMUX_OPENN_VAL		openn;
+	CNFGEMUX_OPENP_VAL		openp;
+	CNFGEMUX_POL_VAL		pol;
+} MAX30003_CNFG_EMUX_VALS;
+
+typedef struct MAX30003_CNFG_ECG_VALS {
+	CNFGECG_DLPF_VAL	dlpf;
+	CNFGECG_DHPF_VAL	dhpf;
+	CNFGECG_GAIN_VAL	gain;
+	CNFGECG_RATE_VAL	rate;
+} MAX30003_CNFG_ECG_VALS;
+
+typedef struct MAX30003_CNFG_RTOR1_VALS {
+	CNFGRTOR1_PTSF_VAL		ptsf;
+	CNFGRTOR1_PAVG_VAL		pavg;
+	CNFGRTOR1_EN_RTOR_VAL	en_rtor;
+	CNFGRTOR1_GAIN_VAL		gain;
+	CNFGRTOR1_WNDW_VAL		wndw;
+} MAX30003_CNFG_RTOR1_VALS;
+
+typedef struct MAX30003_CNFG_RTOR2_VALS {
+	CNFGRTOR2_RHSF_VAL	rhsf;
+	CNFGRTOR2_RAVG_VAL	ravg;
+	CNFGRTOR2_HOFF_VAL	hoff;
+} MAX30003_CNFG_RTOR2_VALS;
+
+typedef struct MAX30003_FIFO_VALS {
+	ECGFIFO_PTAG_VAL	ptag;
+	ECGFIFO_ETAG_VAL	etag;
+	ECGFIFO_DATA_VAL	data;
+} MAX30003_FIFO_VALS;
+
+typedef struct MAX30003_RTOR_VALS {
+	RTOR_DATA_VAL	data;
+} MAX30003_RTOR_VALS;
 
 #ifdef __cplusplus
 }

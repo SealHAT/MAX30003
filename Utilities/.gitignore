@@ -74,6 +74,7 @@
 
 #User Specific Files
 *.atsuo
+jlink.config
 
 ############
 ## Windows
@@ -84,5 +85,3 @@ Thumbs.db
 
 # Folder config file
 Desktop.ini
-
-example/FeatherM0/\.atmel-start-backup/

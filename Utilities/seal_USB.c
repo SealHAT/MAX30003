@@ -5,7 +5,7 @@
  * Please copy examples or other code you want to keep to a separate file or main.c
  * to avoid loosing it when reconfiguring.
  */
-#include "usb_start.h"
+#include "seal_USB.h"
 
 #define USB_BUFFER_SIZE CONF_USB_CDCD_ACM_DATA_BULKIN_MAXPKSZ		/* Define buffer size as endpoint size */
 static uint8_t single_desc_bytes[] = { CDCD_ACM_DESCES_LS_FS };		/* Device descriptors and Configuration descriptors list. */
@@ -27,6 +27,7 @@ typedef struct {
 typedef struct {
 	uint8_t buff[USB_BUFFER_SIZE];		// Buffer for USB control transactions
 	volatile USB_State_t devState;		// tracks the USB device state
+    volatile bool cb_reg;               // indicates if callbacks are registered, since this must happen after EP allocation
 	volatile bool dtr;					// Flag to indicate status of DTR - Data Terminal Ready
 	volatile bool rts;					// Flag to indicate status of RTS - Request to Send
 } ctrlData_t;
@@ -42,17 +43,17 @@ static bool usb_out_complete(const uint8_t ep, const enum usb_xfer_code rc, cons
 {
 	volatile hal_atomic_t __atomic;
 	atomic_enter_critical(&__atomic);
-	
-	// only modify state if the transfer was on the BULK OUT endpoint	
-	if(CONF_USB_CDCD_ACM_DATA_BULKOUT_EPADDR == ep) {	
+
+	// only modify state if the transfer was on the BULK OUT endpoint
+	if(CONF_USB_CDCD_ACM_DATA_BULKOUT_EPADDR == ep) {
         outbuf.head			 = 0;
         outbuf.tail			 = count;
         outbuf.lastCode		 = rc;
         outbuf.outInProgress = false;
 	}
-	
+
 	atomic_leave_critical(&__atomic);
-	
+
 	return false;		// The example code returns false on success... ?
 }
 
@@ -61,7 +62,7 @@ static bool usb_out_complete(const uint8_t ep, const enum usb_xfer_code rc, cons
  */
 static bool usb_in_complete(const uint8_t ep, const enum usb_xfer_code rc, const uint32_t count)
 {
-	
+
 	volatile hal_atomic_t __atomic;
 	atomic_enter_critical(&__atomic);
 
@@ -80,18 +81,17 @@ static bool usb_in_complete(const uint8_t ep, const enum usb_xfer_code rc, const
  * \brief Callback invoked when Line State Change
  *
  * This function is called when there is a change to the RTS and DTS control
- * lines on the serial connection. 
+ * lines on the serial connection.
  *
  */
 static bool usb_line_state_changed(usb_cdc_control_signal_t newState)
 {
-	static bool callbacks_registered = false;	// prevents callbacks from being registered twice
-	
-	ctrlBuf.dtr = newState.rs232.DTR;
-	ctrlBuf.rts = newState.rs232.RTS;
-			
-	if (cdcdf_acm_is_enabled() && !callbacks_registered) {
-		callbacks_registered = true;
+	ctrlBuf.dtr      = newState.rs232.DTR;
+	ctrlBuf.rts      = newState.rs232.RTS;
+    ctrlBuf.devState = (USB_State_t)usbdc_get_state();
+
+	if (cdcdf_acm_is_enabled() && !ctrlBuf.cb_reg) {
+		ctrlBuf.cb_reg = true;
 		/* Callbacks must be registered after endpoint allocation */
 		cdcdf_acm_register_callback(CDCDF_ACM_CB_READ, (FUNC_PTR)usb_out_complete);
 		cdcdf_acm_register_callback(CDCDF_ACM_CB_WRITE, (FUNC_PTR)usb_in_complete);
@@ -104,16 +104,17 @@ static bool usb_line_state_changed(usb_cdc_control_signal_t newState)
 int32_t usb_start(void)
 {
 	int32_t err = ERR_NONE;
-	
+
 	// Initialize the static values to their defaults
 	inbuf.waiting        = 0;
 	outbuf.head          = 0;
 	outbuf.tail		     = 0;
 	outbuf.outInProgress = false;
+    ctrlBuf.cb_reg       = false;
 	ctrlBuf.dtr          = false;
 	ctrlBuf.rts          = false;
-	ctrlBuf.devState     = USB_Detached;
-	
+	ctrlBuf.devState     = (USB_State_t)usbdc_get_state();
+
 	/* usb stack init */
 	err = usbdc_init(ctrlBuf.buff);
 
@@ -125,25 +126,25 @@ int32_t usb_start(void)
 	usbdc_attach();
 
 	err = cdcdf_acm_register_callback(CDCDF_ACM_CB_STATE_C, (FUNC_PTR)usb_line_state_changed);
-	
+
 	return err;
 }
 
 int32_t usb_stop(void)
-{	
+{
 	cdcdf_acm_stop_xfer();
-	usbdc_detach();
-	usbdc_stop();
-	
 	cdcdf_acm_deinit();
+    usbdc_detach();
+	usbdc_stop();
 	usbdc_deinit();
-	
-	return ERR_NONE;	
+
+    ctrlBuf.devState     = (USB_State_t)usbdc_get_state();
+	return ERR_NONE;
 }
 
 // TODO - incorporate VBUS detection
 USB_State_t usb_state(void)
-{	
+{
 	ctrlBuf.devState = (USB_State_t)usbdc_get_state();
 	return ctrlBuf.devState;
 }
@@ -158,6 +159,7 @@ bool usb_rts(void)
 	return ctrlBuf.rts;
 }
 
+// TODO - might have to manually flush the OUT buffer
 void usb_haltTraffic(void) {
     cdcdf_acm_stop_xfer();
     inbuf.waiting        = 0;
@@ -167,27 +169,31 @@ void usb_haltTraffic(void) {
 }
 
 /************************ TRANSMITTING DATA *************************************/
-int32_t usb_write(void* outData, uint32_t BUFFER_SIZE) 
+int32_t usb_write(void* outData, uint32_t BUFFER_SIZE)
 {
-	int32_t err = ERR_BUSY;
-	
+	int32_t err;
+
 	// This check IS needed. cdcdf_acm_write() will drop data if bus is busy and does
 	// not appear to return an error message.
-	if(0 == inbuf.waiting) {
+	if(0 == inbuf.waiting && ctrlBuf.dtr) {
 		volatile hal_atomic_t __atomic;
 		atomic_enter_critical(&__atomic);
 		inbuf.waiting  = BUFFER_SIZE;
 		atomic_leave_critical(&__atomic);
-		
+
 		err = cdcdf_acm_write((uint8_t*)outData, BUFFER_SIZE);
 	}
-	
+    else {
+        if(inbuf.waiting) {
+            err = ERR_BUSY;
+        }
+        else if(!ctrlBuf.dtr) {
+            err = ERR_NOT_READY;
+        }
+    }
+
 	return  err;
 }
-
-bool usb_isInBusy(void) {
-    return (0 != inbuf.waiting);
-    }
 
 
 /************************ RECEIVING DATA ****************************************/
@@ -201,7 +207,7 @@ int32_t usb_available()
         // this function will return negative if it fails for some reason
         retval = cdcdf_acm_read(outbuf.buff, USB_BUFFER_SIZE);
     }
-    
+
     // If read happened without error (or didn't happen at all) return the buffer size
     if(retval >= 0) {
         retval = (outbuf.tail - outbuf.head);
@@ -212,7 +218,7 @@ int32_t usb_available()
 int32_t usb_get(void)
 {
 	int32_t retval = ERR_NONE;       // return value, defaulted to 0
-	    
+
 	retval = usb_available();
 	if( retval > 0 ) {
         volatile hal_atomic_t __atomic;
@@ -232,7 +238,7 @@ int32_t usb_read(void* receiveBuffer, uint32_t BUFFER_SIZE)
 	int32_t letter;         // value received from USB OUT buffer
     uint32_t i = 0;         // LCV and # of bytes received
     uint8_t* buff = (uint8_t*)receiveBuffer;    // receive buffer cast as bytes
-	
+
 	// Fill the provided buffer until there is is no more data or it is full
 	while(i < BUFFER_SIZE) {
         letter = usb_get();
@@ -244,7 +250,7 @@ int32_t usb_read(void* receiveBuffer, uint32_t BUFFER_SIZE)
 			break;
 		}
     }
-		
+
 	/* If there was an error, return error val. Else, return the number of bytes received. */
 	return i;
 }

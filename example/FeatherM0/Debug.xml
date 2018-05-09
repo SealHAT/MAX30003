@@ -38,6 +38,9 @@
       <Value>../usb/class/cdc</Value>
       <Value>../usb/class/cdc/device</Value>
       <Value>../usb/device</Value>
+      <Value>../hpl/tc</Value>
+      <Value>../../../si5351</Value>
+      <Value>../../../Utilities</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>

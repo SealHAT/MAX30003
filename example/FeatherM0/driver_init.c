@@ -16,6 +16,7 @@
 
 struct crc_sync_descriptor   hash_chk;
 struct spi_m_sync_descriptor ECG_SPI_DEV_0;
+struct timer_descriptor      TIMER_0;
 
 struct adc_sync_descriptor analog_in;
 
@@ -69,7 +70,7 @@ void wire_PORT_init(void)
 	                       // <GPIO_PULL_OFF"> Off
 	                       // <GPIO_PULL_UP"> Pull-up
 	                       // <GPIO_PULL_DOWN"> Pull-down
-	                       GPIO_PULL_UP);
+	                       GPIO_PULL_OFF);
 
 	gpio_set_pin_function(SDA, PINMUX_PA22C_SERCOM3_PAD0);
 
@@ -79,7 +80,7 @@ void wire_PORT_init(void)
 	                       // <GPIO_PULL_OFF"> Off
 	                       // <GPIO_PULL_UP"> Pull-up
 	                       // <GPIO_PULL_DOWN"> Pull-down
-	                       GPIO_PULL_UP);
+	                       GPIO_PULL_OFF);
 
 	gpio_set_pin_function(SCL, PINMUX_PA23C_SERCOM3_PAD1);
 }
@@ -166,6 +167,19 @@ void time_date_CLOCK_init(void)
 {
 	_pm_enable_bus_clock(PM_BUS_APBA, RTC);
 	_gclk_enable_channel(RTC_GCLK_ID, CONF_GCLK_RTC_SRC);
+}
+
+/**
+ * \brief Timer initialization function
+ *
+ * Enables Timer peripheral, clocks and initializes Timer driver
+ */
+static void TIMER_0_init(void)
+{
+	_pm_enable_bus_clock(PM_BUS_APBC, TC3);
+	_gclk_enable_channel(TC3_GCLK_ID, CONF_GCLK_TC3_SRC);
+
+	timer_init(&TIMER_0, TC3, _tc_get_timer());
 }
 
 void USB_DEVICE_INSTANCE_PORT_init(void)
@@ -275,6 +289,21 @@ void system_init(void)
 {
 	init_mcu();
 
+	// GPIO on PA05
+
+	// Set pin direction to input
+	gpio_set_pin_direction(INT2, GPIO_DIRECTION_IN);
+
+	gpio_set_pin_pull_mode(INT2,
+	                       // <y> Pull configuration
+	                       // <id> pad_pull_config
+	                       // <GPIO_PULL_OFF"> Off
+	                       // <GPIO_PULL_UP"> Pull-up
+	                       // <GPIO_PULL_DOWN"> Pull-down
+	                       GPIO_PULL_UP);
+
+	gpio_set_pin_function(INT2, GPIO_PIN_FUNCTION_OFF);
+
 	// GPIO on PA11
 
 	// Set pin direction to output
@@ -303,6 +332,21 @@ void system_init(void)
 
 	gpio_set_pin_function(LED_BUILTIN, GPIO_PIN_FUNCTION_OFF);
 
+	// GPIO on PB02
+
+	// Set pin direction to input
+	gpio_set_pin_direction(INT1, GPIO_DIRECTION_IN);
+
+	gpio_set_pin_pull_mode(INT1,
+	                       // <y> Pull configuration
+	                       // <id> pad_pull_config
+	                       // <GPIO_PULL_OFF"> Off
+	                       // <GPIO_PULL_UP"> Pull-up
+	                       // <GPIO_PULL_DOWN"> Pull-down
+	                       GPIO_PULL_UP);
+
+	gpio_set_pin_function(INT1, GPIO_PIN_FUNCTION_OFF);
+
 	analog_in_init();
 	hash_chk_init();
 
@@ -314,6 +358,8 @@ void system_init(void)
 
 	time_date_CLOCK_init();
 	time_date_init();
+
+	TIMER_0_init();
 
 	USB_DEVICE_INSTANCE_init();
 }
