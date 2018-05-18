@@ -29,9 +29,32 @@ extern "C"
 {
 #endif
 
+//libraries we used in ecg.h
 #include "max30003.h"
 #include "max30003test.h"
+#include <stdbool.h>
+#include <stdio.h>
 
+typedef enum config_status {
+	SAME_CONFIG = 0,
+	CONFIG_SUCCESS = 1,
+	CONFIG_FAILURE = 2
+} config_status;
+
+config_status ecg_change_gain(CNFGECG_GAIN_VAL vals);
+config_status ecg_change_lowfre(CNFGECG_DLPF_VAL vals);
+config_status ecg_change_datarate(CNFGECG_RATE_VAL vals);
+config_status ecg_init();
+config_status ecg_switch(CNFGGEN_EN_ECG_VAL vals);
+config_status ecg_dcloff_switch(CNFGGEN_EN_DCLOFF_VAL vals);
+config_status ecg_dcloff_ipol(CNFGGEN_DCLOFF_IPOL_VAL vals);
+config_status ecg_dcloff_imag(CNFGGEN_DCLOFF_IMAG_VAL vals);
+config_status ecg_dcloff_vth(CNFGGEN_DCLOFF_VTH_VAL vals);
+config_status ecg_en_rbias(CNFGGEN_EN_RBIAS_VAL vals);
+config_status ecg_rbiasv(CNFGGEN_RBIASV_VAL vals);
+config_status ecg_rbiasp(CNFGGEN_RBIASP_VAL vals);
+config_status ecg_rbiasn(CNFGGEN_RBIASN_VAL vals);
+config_status ecg_en_dcloff_int2(ENINT_ENDCLOFFINT_VAL vals,ENINT_INTBTYPE_VAL type);
 #ifdef __cplusplus
 }
 #endif
