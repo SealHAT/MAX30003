@@ -5,7 +5,7 @@
 #include "si5351-samd21-minimal.h"
 
 #define ECG_LOG_SZ	(1024)
-uint8_t ECG_LOG[ECG_LOG_SZ];
+int32_t ECG_LOG[ECG_LOG_SZ];
 
 void spi_init();
 void fclock_init();
