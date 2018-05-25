@@ -39,8 +39,9 @@ extern "C"
 #define ECG_REG_R(REG)  ( (uint8_t)(REG << 1) | MAX30003_R_INDICATOR )
 #define ECG_REG_W(REG)  ( (uint8_t)(REG << 1) | MAX30003_W_INDICATOR )
 
-#define ECG_BUF_SZ      (12)	/* SPI buffer size	*/
-#define ECG_BUF_CLR     (0x00)	/* clear byte		*/
+#define ECG_BUF_SZ      (12)	/* SPI buffer size	                        */
+#define ECG_BUF_CLR     (0x00)	/* clear byte		                        */
+#define ECG_TIMEOUT     (4)     /* number of attempts for reading buffer    */
 
 // TODO activate these and change ecg_spi_msg size as needed for static memory optimization */
 // #define ECG_CMND_SZ		(1)
@@ -65,10 +66,10 @@ typedef uint8_t MAX30003_ADDR_t;
  *	struct for storing a bit-mapped ECG sample in a 32-bit number
  *	packing and bit order is ignored as the total struct size is 32-bits
  */
-typedef struct ECG_SAMPLE {
-	uint8_t		tag:3;		/* ETAG data from the ECG_FIFO	*/
-	int32_t		data:18;	/* voltage of the sample		*/
-	uint16_t	step:11;	/* time step of the sample		*/
+typedef struct __attribute__((__packed__)) ECG_SAMPLE {
+	uint32_t	valid:3;	/* ETAG data from the ECG_FIFO	*/
+	uint32_t	step:11;	/* time step of the sample		*/
+    uint32_t	data:18;	/* voltage of the sample		*/
 } ECG_SAMPLE;
 
 /* MAX30003_MSG type
@@ -121,9 +122,9 @@ void ecg_get_cnfg_ecg	(MAX30003_CNFG_ECG_VALS		*vals);
  *	OUTPUTS:
  *		*log	= updated with sampled values
  *	RETURNS:
- *		the number of samples recorded into the log array
+ *		the number of samples recorded into the log array, -1 if overflow
  ***********************************************************************************************************/
-uint16_t ecg_get_sample_burst(ECG_SAMPLE *log, const uint16_t SIZE); /* returns number of samples recorded */
+int16_t ecg_get_sample_burst(ECG_SAMPLE *log, const uint16_t SIZE); /* returns number of samples recorded */
 
 
 

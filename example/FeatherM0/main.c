@@ -1,12 +1,17 @@
 #include "atmel_start.h"
 #include "seal_UTIL.h"
 #include "max30003.h"
+#include "max30003test.h"
+#include "ecg.h"
 #include "si5351-samd21-minimal.h"
 
 /* Buffer for storing ECG samples */
-#define ECG_LOG_SZ	(1024)
-uint8_t ECG_LOG[ECG_LOG_SZ];
-
+//#define ECG_LOG_SZ	(1221)
+//ECG_SAMPLE ECG_LOG[ECG_LOG_SZ];
+signed int data[2000];
+//MAX30003_FIFO_VALS VALS[ECG_LOG_SZ];//test ecg get sample only
+int i;
+int n = 0;
 /* initializes SPI for the ECG device		*/
 void spi_init();	// TODO place in a device header
 /* initializes the clock generator module	*/
@@ -15,7 +20,7 @@ void fclock_init();	// TODO remove when no longer needed
 int main(void)
 {
     /* VARIABLE DECLARATIONS */
-
+	config_status t;
     /* ATMEL INIT */
 	i2c_unblock_bus(SDA, SCL);	/* unblocks I2C line, remove if not needed */
     atmel_start_init();
@@ -24,14 +29,34 @@ int main(void)
 	spi_init();		
 	fclock_init();
 	ecg_sw_reset();
-	delay_ms(1000);
-
 	/* clear the ECG sample log */
-	memset(ECG_LOG, 0, ECG_LOG_SZ);
-	
+//	memset(ECG_LOG, 0, ECG_LOG_SZ);
+	memset(data, 0, 1000);
+	/*Intilizae the ecg and set for configuration we want*/
+	t = ecg_init();
+
+	/*set up for the interrupt pin of ecg to the uc*/
+
+   MAX30003_STATUS_VALS shit;
+   uint16_t step=0;
+   uint16_t nextstep = 0;
+   ecg_get_status(&shit);
+   ecg_fifo_reset();
+  // ecg_stop_synch();
 	for(;;)
-	{
-	}
+	{       
+    step = ecg_sampling_process(0,data,1000);
+	nextstep = ecg_sampling_process(step,data,1000);
+	ecg_switch(ENECG_DISABLED);
+	delay_ms(10);
+	    
+	
+	  //  ecg_sampling_process(START_SAMPLING,ECG_LOG,ECG_LOG_SZ);
+	    
+		 
+	
+
+}
 }
 
 void spi_init()

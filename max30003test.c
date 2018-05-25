@@ -49,7 +49,7 @@ const MAX30003_EN_INT_VALS EN_INT_VALS_DEFAULT = {
     .intb_type = INTBTYPE_NMOS_WITH_PU
 };
 const MAX30003_EN_INT_VALS EN_INT2_VALS_DEFAULT = {
-    .en_lonint = ENLONINT_ENABLED,
+    .en_lonint = ENLONINT_DISABLED,
     .intb_type = INTBTYPE_NMOS_WITH_PU
 };
 const MAX30003_MNGR_INT_VALS MNGR_INT_VALS_DEFAULT = {
@@ -76,6 +76,8 @@ char CFG_FAIL_STR[] = "TEST_CFGFAIL\n";
 char RUN_FAIL_STR[] = "TEST_RUNFAIL\n";
 
 const int ERROR_STR_LEN = 14;
+
+
 
 test_result_t MAX30003_INIT_TEST_ROUND(){
 	int success             = 0;
@@ -107,7 +109,7 @@ test_result_t MAX30003_INIT_TEST_ROUND(){
 	}
 
 	ecg_get_en_int2(&en_int_vals2);
-	if(en_int_vals2.en_lonint == ENLONINT_ENABLED){
+	if(en_int_vals2.en_lonint == ENLONINT_DISABLED){
 		success++;
 	}
 	if(en_int_vals2.intb_type==INTBTYPE_NMOS_WITH_PU){
