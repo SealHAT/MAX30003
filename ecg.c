@@ -711,7 +711,7 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 	uint16_t n = initial_point;
 	int32_t tem; // temporary variable to store the FIFO data, can be removed 
 	int8_t situation = 0;//check if ecg is not functional;
-	uint16_t step;// time step
+	uint16_t step = 0;// time step
 	ecg_get_cnfg_gen(&check_switch);
 	/*if ecg switch is not enabled, then enable it*/
 	if(check_switch.en_ecg == ENECG_DISABLED){

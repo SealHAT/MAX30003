@@ -6,12 +6,9 @@
 #include "si5351-samd21-minimal.h"
 
 /* Buffer for storing ECG samples */
-//#define ECG_LOG_SZ	(1221)
-//ECG_SAMPLE ECG_LOG[ECG_LOG_SZ];
-signed int data[2000];
-//MAX30003_FIFO_VALS VALS[ECG_LOG_SZ];//test ecg get sample only
-int i;
-int n = 0;
+#define ECG_LOG_SZ	(5000)
+signed int data[ECG_LOG_SZ];
+
 /* initializes SPI for the ECG device		*/
 void spi_init();	// TODO place in a device header
 /* initializes the clock generator module	*/
@@ -30,32 +27,28 @@ int main(void)
 	fclock_init();
 	ecg_sw_reset();
 	/* clear the ECG sample log */
-//	memset(ECG_LOG, 0, ECG_LOG_SZ);
-	memset(data, 0, 1000);
-	/*Intilizae the ecg and set for configuration we want*/
+	memset(data, 0, sizeof(data));
+	/*Initialize the ecg and set for configuration we want*/
 	t = ecg_init();
 
-	/*set up for the interrupt pin of ecg to the uc*/
 
-   MAX30003_STATUS_VALS shit;
    uint16_t step=0;
    uint16_t nextstep = 0;
-   ecg_get_status(&shit);
-   ecg_fifo_reset();
-  // ecg_stop_synch();
 	for(;;)
 	{
 	/*start sampling the data for 1000 sample*/       
     step = ecg_sampling_process(0,data,1000);
 	/*keep sampling*/
-	nextstep = ecg_sampling_process(step,data,1000);
-	/*after 2000 sample stored, disable the ecg for some time*/
+	nextstep = ecg_sampling_process(step,data,1000);//make sure the size parameter did not go beyond 1000
+	nextstep = ecg_sampling_process(nextstep+step,data,1000);
+	nextstep = ecg_sampling_process(nextstep*2+step,data,1000);
+	nextstep = ecg_sampling_process(nextstep*3+step,data,800);//make sure the available place for us to store equal to size of storage array - 200;
+	/*we can disable ecg for some time if necessary and reopen it*/
 	ecg_switch(ENECG_DISABLED);
-	memset(data, 0, 1000);
+	memset(data, 0, sizeof(data));//clear the storage array, when in state machine, we should put the data into storage and then clear it;
 	delay_ms(10);
 	    
 	
-	  //  ecg_sampling_process(START_SAMPLING,ECG_LOG,ECG_LOG_SZ);
 	    
 		 
 	
