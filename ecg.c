@@ -704,23 +704,26 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals){
 }
 
 uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint16_t SIZE){
-	MAX30003_FIFO_VALS FIFO[SIZE];
-	MAX30003_CNFG_GEN_VALS check_switch;
+	MAX30003_FIFO_VALS FIFO[SIZE];// FIFO array to store the data
+	MAX30003_CNFG_GEN_VALS check_switch;// value used to check the condition of switch
 	config_status t;
 	uint16_t i; 
 	uint16_t n = initial_point;
-	int32_t tem;
+	int32_t tem; // temporary variable to store the FIFO data, can be removed 
 	int8_t situation = 0;//check if ecg is not functional;
-	uint16_t step;
+	uint16_t step;// time step
 	ecg_get_cnfg_gen(&check_switch);
+	/*if ecg switch is not enabled, then enable it*/
 	if(check_switch.en_ecg == ENECG_DISABLED){
 		t = ecg_switch(ENECG_ENABLED);
 	}
+	/*clear the fifo before sampling*/
 	ecg_fifo_reset();
 		for(i = 0;i<SIZE;i++){
-		  if(situation<5){
+		  if(situation<5){//ecg functional if no many situations happened
 			ecg_get_sample(&FIFO[i]);
 				switch(FIFO[i].etag){
+					//based on the data sheet 
 					case ETAG_VALID:
 					case ETAG_VALID_EOF:
 						tem = FIFO[i].data<<14;
@@ -741,6 +744,7 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 						i--;
 						delay_ms(10);
 						break;
+					/*if ecg func well, there is not supposed to happen overflow at this point, if happened, ecg broke or chip broke*/
 				   case ETAG_FIFO_OVERFLOW:
 				        situation=5;
 						n = initial_point;
@@ -751,10 +755,10 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 			}
 			
 		}else{
-			return step;
+			return step;// if ecg broke, return the current step
 		}
 	
 	}
-	return step;
+	return step;// step should equal to Size if ecg works
 }
 

@@ -44,10 +44,14 @@ int main(void)
    ecg_fifo_reset();
   // ecg_stop_synch();
 	for(;;)
-	{       
+	{
+	/*start sampling the data for 1000 sample*/       
     step = ecg_sampling_process(0,data,1000);
+	/*keep sampling*/
 	nextstep = ecg_sampling_process(step,data,1000);
+	/*after 2000 sample stored, disable the ecg for some time*/
 	ecg_switch(ENECG_DISABLED);
+	memset(data, 0, 1000);
 	delay_ms(10);
 	    
 	

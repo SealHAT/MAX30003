@@ -291,10 +291,11 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals);
 /**
  * ecg_sampling_process
  *
- * make the ecg start sampling or stop sampling
- *
- * @param sampling_status(see ecg.h), ECG_SAMPLE(see max30003.h), const uint16_t SIZE
- * @
+ * make the ecg start sampling and record data in the array. It set the initial place as the beginning of the array
+ * to store the data in certain size. If I want to start collecting the 1000 sample of ecg data at 10th place at array. 
+ * The func should write as ecg_sampling_process(10, Storage, 1000); 
+ * @param uint16_t initial_point, signed int voltage[], uint16_t SIZE
+ * @return the time step, should equal to the SIZE
  */
 uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint16_t SIZE);
 
