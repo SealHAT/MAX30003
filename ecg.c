@@ -127,6 +127,17 @@ config_status ecg_init(){
 	bool cnfg_ecg_sucess    = false;
 	MAX30003_CNFG_GEN_VALS  cnfg_gen_vals;
 	MAX30003_CNFG_ECG_VALS  cnfg_ecg_vals;
+    MAX30003_EN_INT_VALS vals;
+	config_status t;
+    vals.en_eint = ENINT_ENABLED;
+    vals.en_dcloffint = ENDCLOFFINT_DISABLED;
+    vals.en_eovf = ENEOVF_DISABLED;
+    vals.en_fstint = ENFSTINT_DISABLED;
+    vals.en_lonint = ENLONINT_DISABLED;
+    vals.en_pllint = ENPLLINT_DISABLED;
+    vals.en_rrint = ENRRINT_DISABLED;
+    vals.en_samp = ENSAMP_DISABLED;
+    vals.intb_type = INTBTYPE_NMOS_WITH_PU;
 	ecg_sw_reset();
 	delay_ms(100);
 	ecg_set_cnfg_gen(CNFGGEN_VALS_DEFAULT,CNFG_GEN_DEFAULT_MASK);
@@ -135,6 +146,7 @@ config_status ecg_init(){
 	delay_ms(100);
 	ecg_set_mngr_int(MNGR_INT_VALS_DEFAULT,MNGR_INT_DEFAULT_MASK);
 	delay_ms(100);
+	t = ecg_en_int(INT_PIN_1,vals);
 	ecg_get_cnfg_gen(&cnfg_gen_vals);
 	if(cnfg_gen_vals.en_ecg == ENECG_ENABLED){
 		success++;
@@ -157,7 +169,7 @@ config_status ecg_init(){
 	if(cnfg_ecg_vals.rate == RATE_MIN_SPS){
 		success++;
 	}
-	if(success == 5){
+	if(success == 5 && t == CONFIG_SUCCESS){
 		return CONFIG_SUCCESS;
 	}else{
 		return CONFIG_FAILURE;
@@ -717,7 +729,7 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 	if(check_switch.en_ecg == ENECG_DISABLED){
 		t = ecg_switch(ENECG_ENABLED);
 	}
-	/*clear the fifo before sampling*/
+	/*clear the fifo before sampling, without this, this sample func won't work because once the EFIT interrupt existed, the data-overflow happened immediately, try a lot of times*/
 	ecg_fifo_reset();
 		for(i = 0;i<SIZE;i++){
 		  if(situation<5){//ecg functional if no many situations happened

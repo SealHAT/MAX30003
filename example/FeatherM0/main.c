@@ -6,7 +6,7 @@
 #include "si5351-samd21-minimal.h"
 
 /* Buffer for storing ECG samples */
-#define ECG_LOG_SZ	(5000)
+#define ECG_LOG_SZ	(200)
 signed int data[ECG_LOG_SZ];
 
 /* initializes SPI for the ECG device		*/
@@ -30,31 +30,21 @@ int main(void)
 	memset(data, 0, sizeof(data));
 	/*Initialize the ecg and set for configuration we want*/
 	t = ecg_init();
+//	t = ecg_fifo_thres(EFIT_AS_16);
 	/*set up the interrupt pin, i set up ENINT as interrupt Pin 1, with default threshold 16, you can use func config_status ecg_fifo_thres(MNGRINT_EFIT_VAL vals) to setup your own thresholds(see ecg.h)*/
-    MAX30003_EN_INT_VALS vals;
-	vals.en_eint = ENINT_ENABLED;
-	vals.en_dcloffint = ENDCLOFFINT_DISABLED;
-	vals.en_eovf = ENEOVF_DISABLED;
-	vals.en_fstint = ENFSTINT_DISABLED;
-	vals.en_lonint = ENLONINT_DISABLED;
-	vals.en_pllint = ENPLLINT_DISABLED;
-	vals.en_rrint = ENRRINT_DISABLED;
-	vals.en_samp = ENSAMP_DISABLED;
-	vals.intb_type = INTBTYPE_NMOS_WITH_PU;
-	t = ecg_en_int(INT_PIN_1,vals);// see ecg.h for more information
 
    uint16_t step=0;
    uint16_t nextstep = 0;
    MAX30003_STATUS_VALS shit;
    ecg_get_status(&shit);
-   delay_ms(100);
+ //  delay_ms(100);
 	for(;;)
 	{
 	/*start sampling the data for 1000 sample when there was an interrupt*/
 	if(gpio_get_pin_level(INT1)==false){       
-    step = ecg_sampling_process(0,data,1000);
+    step = ecg_sampling_process(0,data,200);
 	/*keep sampling*/
-	nextstep = ecg_sampling_process(step,data,1000);//make sure the size parameter did not go beyond 1000
+/*	nextstep = ecg_sampling_process(step,data,1000);//make sure the size parameter did not go beyond 1000
 	nextstep = ecg_sampling_process(nextstep+step,data,1000);
 	nextstep = ecg_sampling_process(nextstep*2+step,data,1000);
 	nextstep = ecg_sampling_process(nextstep*3+step,data,800);//make sure the available place for us to store equal to size of storage array - 200;
