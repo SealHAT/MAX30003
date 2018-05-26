@@ -123,8 +123,6 @@ config_status ecg_change_lowfre(CNFGECG_DLPF_VAL vals){
 
 config_status ecg_init(){
 	int success = 0;
-	bool cnfg_gen_sucess    = false;
-	bool cnfg_ecg_sucess    = false;
 	MAX30003_CNFG_GEN_VALS  cnfg_gen_vals;
 	MAX30003_CNFG_ECG_VALS  cnfg_ecg_vals;
     MAX30003_EN_INT_VALS vals;
@@ -150,11 +148,6 @@ config_status ecg_init(){
 	ecg_get_cnfg_gen(&cnfg_gen_vals);
 	if(cnfg_gen_vals.en_ecg == ENECG_ENABLED){
 		success++;
-	}
-	if(success==1){
-		cnfg_gen_sucess = true;
-		}else{
-		cnfg_gen_sucess = false;
 	}
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
 	if(cnfg_ecg_vals.dhpf == DHPF_HALF){
@@ -425,6 +418,7 @@ config_status ecg_en_dcloff_int(int_pin pin, ENINT_ENDCLOFFINT_VAL vals, ENINT_I
 	}
 	break;	
 }
+	return CONFIG_FAILURE;
 	
 }
 
@@ -503,7 +497,8 @@ config_status ecg_en_lon_int(int_pin pin, ENINT_ENLONINT_VAL vals, ENINT_INTBTYP
 			}
 		}
 		break;
-	}	
+	}
+	return CONFIG_FAILURE;	
 }
 
 config_status ecg_en_evof_int(int_pin pin, ENINT_ENEOVF_VAL vals, ENINT_INTBTYPE_VAL type){
@@ -581,7 +576,8 @@ config_status ecg_en_evof_int(int_pin pin, ENINT_ENEOVF_VAL vals, ENINT_INTBTYPE
 			}
 		}
 		break;
-	}	
+	}
+	return CONFIG_FAILURE;	
 }
 
 config_status ecg_fifo_thres(MNGRINT_EFIT_VAL vals){
@@ -676,7 +672,8 @@ config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE
 			}
 		}
 		break;
-	}	
+	}
+	return CONFIG_FAILURE;	
 }
 
 config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals){
@@ -712,14 +709,15 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals){
 			}
 		}
 	
-  }
+	}
+	return CONFIG_FAILURE;
 }
 
 uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint16_t SIZE){
 	MAX30003_FIFO_VALS FIFO[SIZE];// FIFO array to store the data
 	MAX30003_CNFG_GEN_VALS check_switch;// value used to check the condition of switch
 	config_status t;
-	uint16_t i; 
+	int16_t i; 
 	uint16_t n = initial_point;
 	int32_t tem; // temporary variable to store the FIFO data, can be removed 
 	int8_t situation = 0;//check if ecg is not functional;
@@ -729,8 +727,6 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 	if(check_switch.en_ecg == ENECG_DISABLED){
 		t = ecg_switch(ENECG_ENABLED);
 	}
-	/*clear the fifo before sampling, without this, this sample func won't work because once the EFIT interrupt existed, the data-overflow happened immediately, try a lot of times*/
-	ecg_fifo_reset();
 		for(i = 0;i<SIZE;i++){
 		  if(situation<5){//ecg functional if no many situations happened
 			ecg_get_sample(&FIFO[i]);
@@ -758,11 +754,18 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 						break;
 					/*if ecg func well, there is not supposed to happen overflow at this point, if happened, ecg broke or chip broke*/
 				   case ETAG_FIFO_OVERFLOW:
-				        situation=5;
-						n = initial_point;
-						i = 0;
-						step = 0;
-						ecg_fifo_reset();
+				   /*if there is a fifo overflow since the beginning of the collection, we reset the fifo without breaking up the whole func*/
+							if(i==0){
+								i--;
+								ecg_fifo_reset();
+								break;
+							 }else{ // if it is not at the beginning of the data collection, which meant ecg or chip doesn't func well, break up the func, just return the time step and reset fifo
+								situation=5;
+								n = initial_point;
+								i = 0;
+								step = 0;
+								ecg_fifo_reset();
+							 }
 						break;						
 			}
 			

@@ -294,8 +294,9 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals);
  * make the ecg start sampling and record data in the array. It set the initial place as the beginning of the array
  * to store the data in certain size. The parameter called SIZE should not beyond 1000(Important!!!!!) to make sure 
  * few garbage data generate. The sum of initial point and SIZE should not beyond (size of storage array - 200) to 
- * make sure we do not collect garbage data(Important!!!!). At the end, we will abaondon the last 200 bits of data in storage array
- * because they contains garbage data(Important!!!!).
+ * make sure we do not collect garbage data(Important!!!!). At the end, we will abandon the last 200 bits of data in storage array
+ * because they contains garbage data(Important!!!!). If our data storage array is less or equal than 970 and initial point is 0, then we don't need to 
+ * to worry about garbage data, we could make the Initial point + Size = Storage without minus 200 bits.
  * If I want to start collecting the 1000 sample of ecg data at 10th place at array. 
  * The func should write as ecg_sampling_process(10, Storage, 1000); 
  * @param uint16_t initial_point, signed int voltage[], uint16_t SIZE

@@ -6,8 +6,8 @@
 #include "si5351-samd21-minimal.h"
 
 /* Buffer for storing ECG samples */
-#define ECG_LOG_SZ	(200)
-signed int data[ECG_LOG_SZ];
+#define FIFO_SIZE (768)     //fifo size (32 word * 24 bits)
+signed int FIFO[FIFO_SIZE];
 
 /* initializes SPI for the ECG device		*/
 void spi_init();	// TODO place in a device header
@@ -27,32 +27,23 @@ int main(void)
 	fclock_init();
 	ecg_sw_reset();
 	/* clear the ECG sample log */
-	memset(data, 0, sizeof(data));
+	memset(FIFO, 0, sizeof(FIFO));
+	uint16_t step=0;
+	uint16_t nextstep = 0;
+	MAX30003_STATUS_VALS shit;
+	ecg_get_status(&shit);
 	/*Initialize the ecg and set for configuration we want*/
 	t = ecg_init();
-//	t = ecg_fifo_thres(EFIT_AS_16);
-	/*set up the interrupt pin, i set up ENINT as interrupt Pin 1, with default threshold 16, you can use func config_status ecg_fifo_thres(MNGRINT_EFIT_VAL vals) to setup your own thresholds(see ecg.h)*/
-
-   uint16_t step=0;
-   uint16_t nextstep = 0;
-   MAX30003_STATUS_VALS shit;
-   ecg_get_status(&shit);
- //  delay_ms(100);
+	
 	for(;;)
 	{
 	/*start sampling the data for 1000 sample when there was an interrupt*/
 	if(gpio_get_pin_level(INT1)==false){       
-    step = ecg_sampling_process(0,data,200);
-	/*keep sampling*/
-/*	nextstep = ecg_sampling_process(step,data,1000);//make sure the size parameter did not go beyond 1000
-	nextstep = ecg_sampling_process(nextstep+step,data,1000);
-	nextstep = ecg_sampling_process(nextstep*2+step,data,1000);
-	nextstep = ecg_sampling_process(nextstep*3+step,data,800);//make sure the available place for us to store equal to size of storage array - 200;
-	/*we can disable ecg for some time if necessary and reopen it*/
+    step = ecg_sampling_process(0,FIFO,FIFO_SIZE);
 	}
 	ecg_get_status(&shit);
-	memset(data, 0, sizeof(data));//clear the storage array, when in state machine, we should put the data into storage and then clear it;
-
+	memset(FIFO, 0, sizeof(FIFO));//clear the storage array, when in state machine, we should put the data into storage and then clear it;
+    
 	
 	    
 		 
