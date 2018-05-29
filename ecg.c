@@ -43,7 +43,7 @@ const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
 const MAX30003_CNFG_ECG_VALS CNFECG_VALS_DEFAULT = {
 	.dhpf = DHPF_HALF,
 	.dlpf = DLPF_40_HZ,
-	.gain = GAIN_20_V,
+	.gain = GAIN_40_V,
 	.rate = RATE_MIN_SPS
 };
 
@@ -57,18 +57,21 @@ const MAX30003_CNFG_ECG_MASKS CNFG_ECG_DEFAULT_MASK = CNFGECG_DLPF|CNFGECG_DHPF|
 const MAX30003_CNFG_GEN_MASKS CNFG_GEN_DEFAULT_MASK = CNFGGEN_EN_ECG;
 const MAX30003_MNGR_INT_MASKS MNGR_INT_DEFAULT_MASK = MNGRINT_EFIT|MNGRINT_CLR_SAMP|MNGRINT_SAMP_IT;
 
-config_status ecg_change_gain(CNFGECG_GAIN_VAL vals){
+config_status ecg_change_gain(CNFGECG_GAIN_VAL vals)
+{
 	MAX30003_CNFG_ECG_VALS	VALS;
 	ecg_get_cnfg_ecg(&VALS);
-	if(VALS.gain == vals){
+	if(VALS.gain == vals)
+	{
 		return SAME_CONFIG;
-		}else{
+	}else{
 		VALS.gain = vals;
 		ecg_set_cnfg_ecg(VALS,(CNFGECG_GAIN));
 		ecg_get_cnfg_ecg(&VALS);
-		if(VALS.gain == vals){
+		if(VALS.gain == vals)
+		{
 			return CONFIG_SUCCESS;
-			}else{
+		}else{
 			return CONFIG_FAILURE;
 		}
 	}
@@ -76,52 +79,62 @@ config_status ecg_change_gain(CNFGECG_GAIN_VAL vals){
 }
 
 
-config_status ecg_change_datarate(CNFGECG_RATE_VAL vals){
+config_status ecg_change_datarate(CNFGECG_RATE_VAL vals)
+{
 	MAX30003_CNFG_ECG_VALS	VALS;
 	ecg_get_cnfg_ecg(&VALS);
-	if(VALS.rate == vals){
+	if(VALS.rate == vals)
+	{
 		return SAME_CONFIG;
-		}else{
+	}else{
 		VALS.rate = vals;
 		ecg_set_cnfg_ecg(VALS,(CNFGECG_RATE));
 		ecg_get_cnfg_ecg(&VALS);
-		if(VALS.rate == vals){
+		if(VALS.rate == vals)
+		{
 			return CONFIG_SUCCESS;
-			}else{
+		}else{
 			return CONFIG_FAILURE;
 		}
 	}
 	
 }
 
-config_status ecg_change_lowfre(CNFGECG_DLPF_VAL vals){
+config_status ecg_change_lowfre(CNFGECG_DLPF_VAL vals)
+{
 	MAX30003_CNFG_ECG_VALS	VALS;
 	ecg_get_cnfg_ecg(&VALS);
-	if(VALS.dlpf == vals){
+	if(VALS.dlpf == vals)
+	{
 		return SAME_CONFIG;
-		}
-	else if (vals == DLPF_100_HZ && VALS.rate == RATE_MIN_SPS){
+	}
+	else if (vals == DLPF_100_HZ && VALS.rate == RATE_MIN_SPS)
+	{
 		return CONFIG_FAILURE;
-		}
-	else if (vals == DLPF_150_HZ && VALS.rate == RATE_MIN_SPS){
+	}
+	else if (vals == DLPF_150_HZ && VALS.rate == RATE_MIN_SPS)
+	{
 		return CONFIG_FAILURE;	
-		}
-	else if (vals == DLPF_150_HZ && VALS.rate == RATE_MED_SPS){
+	}
+	else if (vals == DLPF_150_HZ && VALS.rate == RATE_MED_SPS)
+	{
 		return CONFIG_FAILURE;
 	}
 	else{
 		VALS.dlpf = vals;
 		ecg_set_cnfg_ecg(VALS,(CNFGECG_DLPF));
 		ecg_get_cnfg_ecg(&VALS);
-		if(VALS.dlpf == vals){
+		if(VALS.dlpf == vals)
+		{
 			return CONFIG_SUCCESS;
-			}else{
+		}else{
 			return CONFIG_FAILURE;
 		}
 	}
 }
 
-config_status ecg_init(){
+config_status ecg_init()
+{
 	int success = 0;
 	MAX30003_CNFG_GEN_VALS  cnfg_gen_vals;
 	MAX30003_CNFG_ECG_VALS  cnfg_ecg_vals;
@@ -146,23 +159,29 @@ config_status ecg_init(){
 	delay_ms(100);
 	t = ecg_en_int(INT_PIN_1,vals);
 	ecg_get_cnfg_gen(&cnfg_gen_vals);
-	if(cnfg_gen_vals.en_ecg == ENECG_ENABLED){
+	if(cnfg_gen_vals.en_ecg == ENECG_ENABLED)
+	{
 		success++;
 	}
 	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
-	if(cnfg_ecg_vals.dhpf == DHPF_HALF){
+	if(cnfg_ecg_vals.dhpf == DHPF_HALF)
+	{
 		success++;
 	}
-	if(cnfg_ecg_vals.dlpf == DLPF_40_HZ){
+	if(cnfg_ecg_vals.dlpf == DLPF_40_HZ)
+	{
 		success++;
 	}
-	if(cnfg_ecg_vals.gain == GAIN_20_V){
+	if(cnfg_ecg_vals.gain == GAIN_20_V)
+	{
 		success++;
 	}
-	if(cnfg_ecg_vals.rate == RATE_MIN_SPS){
+	if(cnfg_ecg_vals.rate == RATE_MIN_SPS)
+	{
 		success++;
 	}
-	if(success == 5 && t == CONFIG_SUCCESS){
+	if(success == 5 && t == CONFIG_SUCCESS)
+	{
 		return CONFIG_SUCCESS;
 	}else{
 		return CONFIG_FAILURE;
@@ -171,18 +190,20 @@ config_status ecg_init(){
 	
 }
 
-config_status ecg_switch(CNFGGEN_EN_ECG_VAL vals){
+config_status ecg_switch(CNFGGEN_EN_ECG_VAL vals)
+{
 	MAX30003_CNFG_GEN_VALS VALS;
 	ecg_get_cnfg_gen(&VALS);
-	if(VALS.en_ecg == vals){
+	if(VALS.en_ecg == vals)
+	{
 		return SAME_CONFIG;
-		}else{
+	}else{
 		VALS.en_ecg = vals;
 		ecg_set_cnfg_gen(VALS,CNFGGEN_EN_ECG);
 		ecg_get_cnfg_gen(&VALS);
 		if(VALS.en_ecg == vals){
 			return CONFIG_SUCCESS;
-			}else{
+		}else{
 			return CONFIG_FAILURE;
 		}
 		
@@ -190,91 +211,105 @@ config_status ecg_switch(CNFGGEN_EN_ECG_VAL vals){
 	
 }
 
-config_status ecg_dcloff_switch(CNFGGEN_EN_DCLOFF_VAL vals){
+config_status ecg_dcloff_switch(CNFGGEN_EN_DCLOFF_VAL vals)
+{
 	MAX30003_CNFG_GEN_VALS VALS;
 	ecg_get_cnfg_gen(&VALS);
-	if(VALS.en_dcloff == vals){
+	if(VALS.en_dcloff == vals)
+	{
 		return SAME_CONFIG;
 	}
-	else if(vals == _ENDCLOFF_RESERVED1 || vals == _ENDCLOFF_RESERVED2){
+	else if(vals == _ENDCLOFF_RESERVED1 || vals == _ENDCLOFF_RESERVED2)
+	{
+		return CONFIG_FAILURE;
+	}else{
+		VALS.en_dcloff = vals;
+		ecg_set_cnfg_gen(VALS,CNFGGEN_EN_DCLOFF);
+		ecg_get_cnfg_gen(&VALS);
+		if(VALS.en_dcloff == vals)
+		{
+			return CONFIG_SUCCESS;
+		}else{
+				return CONFIG_FAILURE;
+		}
+	}
+}
+
+config_status ecg_dcloff_ipol(CNFGGEN_DCLOFF_IPOL_VAL vals)
+{
+	MAX30003_CNFG_GEN_VALS VALS;
+	ecg_get_cnfg_gen(&VALS);
+	if(VALS.ipol == vals)
+	{
+		return SAME_CONFIG;
+	}else{
+		VALS.ipol = vals;
+		ecg_set_cnfg_gen(VALS,CNFGGEN_IPOL);
+		ecg_get_cnfg_gen(&VALS);
+		if(VALS.ipol == vals){
+			return CONFIG_SUCCESS;
+		}else{
+			return CONFIG_FAILURE;
+		}
+	}
+}
+
+config_status ecg_dcloff_imag(CNFGGEN_DCLOFF_IMAG_VAL vals)
+{
+	MAX30003_CNFG_GEN_VALS VALS;
+	ecg_get_cnfg_gen(&VALS);
+	if(VALS.imag == vals)
+	{
+		return SAME_CONFIG;
+	}
+	else if (vals == _DCLOFFIMAG_RESERVED1 || vals == _DCLOFFIMAG_RESERVED2)
+	{
 		return CONFIG_FAILURE;
 	}
 	else{
-			VALS.en_dcloff = vals;
-			ecg_set_cnfg_gen(VALS,CNFGGEN_EN_DCLOFF);
+		VALS.imag = vals;
+		ecg_set_cnfg_gen(VALS,CNFGGEN_IMAG);
+		ecg_get_cnfg_gen(&VALS);
+		if(VALS.imag == vals)
+		{
+			return CONFIG_SUCCESS;
+		}else{
+			return CONFIG_FAILURE;
+		}
+	}	
+}
+
+config_status ecg_dcloff_vth(CNFGGEN_DCLOFF_VTH_VAL vals)
+{
+	MAX30003_CNFG_GEN_VALS VALS;
+	ecg_get_cnfg_gen(&VALS);
+	if(VALS.vth == vals)
+	{
+		return SAME_CONFIG;
+	}else{
+			VALS.vth = vals;
+			ecg_set_cnfg_gen(VALS,CNFGGEN_VTH);
 			ecg_get_cnfg_gen(&VALS);
-			if(VALS.en_dcloff == vals){
+			if(VALS.vth == vals)
+			{
 				return CONFIG_SUCCESS;
 			}else{
 				return CONFIG_FAILURE;
 			}
-	}
-}
-
-config_status ecg_dcloff_ipol(CNFGGEN_DCLOFF_IPOL_VAL vals){
-	MAX30003_CNFG_GEN_VALS VALS;
-	ecg_get_cnfg_gen(&VALS);
-	if(VALS.ipol == vals){
-		return SAME_CONFIG;
-		}else{
-				VALS.ipol = vals;
-				ecg_set_cnfg_gen(VALS,CNFGGEN_IPOL);
-				ecg_get_cnfg_gen(&VALS);
-				if(VALS.ipol == vals){
-					return CONFIG_SUCCESS;
-					}else{
-					return CONFIG_FAILURE;
-				}
-	}
-}
-
-config_status ecg_dcloff_imag(CNFGGEN_DCLOFF_IMAG_VAL vals){
-	MAX30003_CNFG_GEN_VALS VALS;
-	ecg_get_cnfg_gen(&VALS);
-	if(VALS.imag == vals){
-		return SAME_CONFIG;
-	}
-	else if (vals == _DCLOFFIMAG_RESERVED1 || vals == _DCLOFFIMAG_RESERVED2){
-		return CONFIG_FAILURE;
-	}
-	else{
-				VALS.imag = vals;
-				ecg_set_cnfg_gen(VALS,CNFGGEN_IMAG);
-				ecg_get_cnfg_gen(&VALS);
-				if(VALS.imag == vals){
-					return CONFIG_SUCCESS;
-					}else{
-					return CONFIG_FAILURE;
-				}
 	}	
 }
 
-config_status ecg_dcloff_vth(CNFGGEN_DCLOFF_VTH_VAL vals){
+config_status ecg_en_rbias(CNFGGEN_EN_RBIAS_VAL vals)
+{
 	MAX30003_CNFG_GEN_VALS VALS;
 	ecg_get_cnfg_gen(&VALS);
-	if(VALS.vth == vals){
+	if(VALS.en_rbias == vals)
+	{
 		return SAME_CONFIG;
+	}else if (vals == _ENRBIAS_RESERVED1 || vals == _ENRBIAS_RESERVED2)
+	{
+		return CONFIG_FAILURE;
 	}else{
-				VALS.vth = vals;
-				ecg_set_cnfg_gen(VALS,CNFGGEN_VTH);
-				ecg_get_cnfg_gen(&VALS);
-				if(VALS.vth == vals){
-					return CONFIG_SUCCESS;
-					}else{
-					return CONFIG_FAILURE;
-				}
-	}	
-}
-
-config_status ecg_en_rbias(CNFGGEN_EN_RBIAS_VAL vals){
-	MAX30003_CNFG_GEN_VALS VALS;
-	ecg_get_cnfg_gen(&VALS);
-	if(VALS.en_rbias == vals){
-		return SAME_CONFIG;
-	}else if (vals == _ENRBIAS_RESERVED1 || vals == _ENRBIAS_RESERVED2){
-		return CONFIG_FAILURE;
-	}
-	else{
 			VALS.en_rbias = vals;
 			ecg_set_cnfg_gen(VALS, CNFGGEN_EN_RBIAS);
 			ecg_get_cnfg_gen(&VALS);
@@ -287,12 +322,15 @@ config_status ecg_en_rbias(CNFGGEN_EN_RBIAS_VAL vals){
 }
 	
 
-config_status ecg_rbiasv(CNFGGEN_RBIASV_VAL vals){
+config_status ecg_rbiasv(CNFGGEN_RBIASV_VAL vals)
+{
 	MAX30003_CNFG_GEN_VALS VALS;
 	ecg_get_cnfg_gen(&VALS);
-	if(VALS.rbiasv == vals){
+	if(VALS.rbiasv == vals)
+	{
 		return SAME_CONFIG;
-	}else if (vals == _RBIASV_RESERVED){
+	}else if (vals == _RBIASV_RESERVED)
+	{
 		return CONFIG_FAILURE;
 	}
 	else{
@@ -308,16 +346,19 @@ config_status ecg_rbiasv(CNFGGEN_RBIASV_VAL vals){
 }
 
 
-config_status ecg_rbiasp(CNFGGEN_RBIASP_VAL vals){
+config_status ecg_rbiasp(CNFGGEN_RBIASP_VAL vals)
+{
 	MAX30003_CNFG_GEN_VALS VALS;
 	ecg_get_cnfg_gen(&VALS);
-	if(VALS.rbiasp == vals){
+	if(VALS.rbiasp == vals)
+	{
 		return SAME_CONFIG;
 	}else{
 			VALS.rbiasp = vals;
 			ecg_set_cnfg_gen(VALS, CNFGGEN_RBIASP);
 			ecg_get_cnfg_gen(&VALS);
-			if(VALS.rbiasp == vals){
+			if(VALS.rbiasp == vals)
+			{
 				return CONFIG_SUCCESS;
 			}else{
 				return CONFIG_FAILURE;
@@ -325,16 +366,19 @@ config_status ecg_rbiasp(CNFGGEN_RBIASP_VAL vals){
 	}
 }
 	
-config_status ecg_rbiasn(CNFGGEN_RBIASN_VAL vals){
+config_status ecg_rbiasn(CNFGGEN_RBIASN_VAL vals)
+{
 	MAX30003_CNFG_GEN_VALS VALS;
 	ecg_get_cnfg_gen(&VALS);
-	if(VALS.rbiasn == vals){
+	if(VALS.rbiasn == vals)
+	{
 		return SAME_CONFIG;
 	}else{
 			VALS.rbiasn = vals;
 			ecg_set_cnfg_gen(VALS, CNFGGEN_RBIASN);
 			ecg_get_cnfg_gen(&VALS);
-			if(VALS.rbiasn == vals){
+			if(VALS.rbiasn == vals)
+			{
 				return CONFIG_SUCCESS;
 			}else{
 				return CONFIG_FAILURE;
@@ -342,14 +386,17 @@ config_status ecg_rbiasn(CNFGGEN_RBIASN_VAL vals){
 	}	
 }
 
-config_status ecg_en_dcloff_int(int_pin pin, ENINT_ENDCLOFFINT_VAL vals, ENINT_INTBTYPE_VAL type){
+config_status ecg_en_dcloff_int(int_pin pin, ENINT_ENDCLOFFINT_VAL vals, ENINT_INTBTYPE_VAL type)
+{
 	MAX30003_EN_INT_VALS VALS;
 	switch(pin){
 	case INT_PIN_1:
 	ecg_get_en_int(&VALS);
-	if(VALS.en_dcloffint == vals && VALS.intb_type == type){
+	if(VALS.en_dcloffint == vals && VALS.intb_type == type)
+	{
 		return SAME_CONFIG;
-	}else if(VALS.en_dcloffint == vals){
+	}else if(VALS.en_dcloffint == vals)
+	{
 		VALS.intb_type = type;
 		ecg_set_en_int(VALS, ENINT_INTB_TYPE);
 		ecg_get_en_int(&VALS);
@@ -359,7 +406,8 @@ config_status ecg_en_dcloff_int(int_pin pin, ENINT_ENDCLOFFINT_VAL vals, ENINT_I
 			return CONFIG_FAILURE;
 		}		
 
-	}else if(VALS.intb_type == type){
+	}else if(VALS.intb_type == type)
+	{
 		VALS.en_dcloffint = vals;
 		ecg_set_en_int(VALS, ENINT_EN_DCLOFFINT);
 		ecg_get_en_int(&VALS);
@@ -383,116 +431,132 @@ config_status ecg_en_dcloff_int(int_pin pin, ENINT_ENDCLOFFINT_VAL vals, ENINT_I
 	break;
 	case INT_PIN_2:
 	ecg_get_en_int2(&VALS);
-	if(VALS.en_dcloffint == vals && VALS.intb_type == type){
+	if(VALS.en_dcloffint == vals && VALS.intb_type == type)
+	{
 		return SAME_CONFIG;
-		}else if(VALS.en_dcloffint == vals){
+	}else if(VALS.en_dcloffint == vals)
+	{
 		VALS.intb_type = type;
 		ecg_set_en_int2(VALS, ENINT_INTB_TYPE);
 		ecg_get_en_int2(&VALS);
 		if(VALS.intb_type == type){
 			return CONFIG_SUCCESS;
-			}else{
+		}else{
 			return CONFIG_FAILURE;
 		}
 
-		}else if(VALS.intb_type == type){
+	}else if(VALS.intb_type == type)
+	{
 		VALS.en_dcloffint = vals;
 		ecg_set_en_int2(VALS, ENINT_EN_DCLOFFINT);
 		ecg_get_en_int2(&VALS);
-		if(VALS.en_dcloffint == vals){
+		if(VALS.en_dcloffint == vals)
+		{
 			return CONFIG_SUCCESS;
-			}else{
+		}else{
 			return CONFIG_FAILURE;
 		}
-		}else{
+	}else{
 		VALS.en_dcloffint = vals;
 		VALS.intb_type = type;
 		ecg_set_en_int2(VALS,ENINT_EN_DCLOFFINT|ENINT_INTB_TYPE);
 		ecg_get_en_int2(&VALS);
-		if(VALS.intb_type == type && VALS.en_dcloffint == vals){
+		if(VALS.intb_type == type && VALS.en_dcloffint == vals)
+		{
 			return CONFIG_SUCCESS;
 
-			}else{
+		}else{
 			return CONFIG_FAILURE;
 		}
 	}
 	break;	
-}
+  }
 	return CONFIG_FAILURE;
 	
 }
 
-config_status ecg_en_lon_int(int_pin pin, ENINT_ENLONINT_VAL vals, ENINT_INTBTYPE_VAL type){
+config_status ecg_en_lon_int(int_pin pin, ENINT_ENLONINT_VAL vals, ENINT_INTBTYPE_VAL type)
+{
 	MAX30003_EN_INT_VALS VALS;
 	switch(pin){
 		case INT_PIN_1:
 	    ecg_get_en_int(&VALS);
-		if(VALS.en_lonint == vals && VALS.intb_type == type){
+		if(VALS.en_lonint == vals && VALS.intb_type == type)
+		{
 			return SAME_CONFIG;
-			}else if(VALS.en_lonint == vals){
+		}else if(VALS.en_lonint == vals)
+		{
 			VALS.intb_type = type;
 			ecg_set_en_int(VALS, ENINT_INTB_TYPE);
 			ecg_get_en_int(&VALS);
-			if(VALS.intb_type == type){
+			if(VALS.intb_type == type)
+			{
 				return CONFIG_SUCCESS;
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
 
-			}else if(VALS.intb_type == type){
+		}else if(VALS.intb_type == type)
+		{
 			VALS.en_lonint = vals;
 			ecg_set_en_int(VALS, ENINT_EN_LONINT);
 			ecg_get_en_int(&VALS);
 			if(VALS.en_lonint == vals){
 				return CONFIG_SUCCESS;
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
-			}else{
+		}else{
 			VALS.en_lonint = vals;
 			VALS.intb_type = type;
 			ecg_set_en_int(VALS,ENINT_EN_LONINT|ENINT_INTB_TYPE);
 			ecg_get_en_int(&VALS);
-			if(VALS.intb_type == type && VALS.en_lonint == vals){
+			if(VALS.intb_type == type && VALS.en_lonint == vals)
+			{
 				return CONFIG_SUCCESS;
 
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
 		}
 		break;
 		case INT_PIN_2:
 	    ecg_get_en_int2(&VALS);
-		if(VALS.en_lonint == vals && VALS.intb_type == type){
+		if(VALS.en_lonint == vals && VALS.intb_type == type)
+		{
 			return SAME_CONFIG;
-			}else if(VALS.en_lonint == vals){
+		}else if(VALS.en_lonint == vals)
+		{
 			VALS.intb_type = type;
 			ecg_set_en_int2(VALS, ENINT_INTB_TYPE);
 			ecg_get_en_int2(&VALS);
 			if(VALS.intb_type == type){
 				return CONFIG_SUCCESS;
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
 
-			}else if(VALS.intb_type == type){
+		}else if(VALS.intb_type == type)
+		{
 			VALS.en_lonint = vals;
 			ecg_set_en_int2(VALS, ENINT_EN_LONINT);
 			ecg_get_en_int2(&VALS);
-			if(VALS.en_lonint == vals){
+			if(VALS.en_lonint == vals)
+			{
 				return CONFIG_SUCCESS;
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
-			}else{
+		}else{
 			VALS.en_lonint = vals;
 			VALS.intb_type = type;
 			ecg_set_en_int2(VALS,ENINT_EN_LONINT|ENINT_INTB_TYPE);
 			ecg_get_en_int2(&VALS);
-			if(VALS.intb_type == type && VALS.en_lonint == vals){
+			if(VALS.intb_type == type && VALS.en_lonint == vals)
+			{
 				return CONFIG_SUCCESS;
 
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
 		}
@@ -501,95 +565,109 @@ config_status ecg_en_lon_int(int_pin pin, ENINT_ENLONINT_VAL vals, ENINT_INTBTYP
 	return CONFIG_FAILURE;	
 }
 
-config_status ecg_en_evof_int(int_pin pin, ENINT_ENEOVF_VAL vals, ENINT_INTBTYPE_VAL type){
+config_status ecg_en_evof_int(int_pin pin, ENINT_ENEOVF_VAL vals, ENINT_INTBTYPE_VAL type)
+{
 	MAX30003_EN_INT_VALS VALS;
 	switch(pin){
 		case INT_PIN_1:
 		ecg_get_en_int(&VALS);
-		if(VALS.en_eovf == vals && VALS.intb_type == type){
+		if(VALS.en_eovf == vals && VALS.intb_type == type)
+		{
 			return SAME_CONFIG;
-			}else if(VALS.en_eovf == vals){
+		}else if(VALS.en_eovf == vals)
+		{
 			VALS.intb_type = type;
 			ecg_set_en_int(VALS, ENINT_INTB_TYPE);
 			ecg_get_en_int(&VALS);
-			if(VALS.intb_type == type){
+			if(VALS.intb_type == type)
+			{
 				return CONFIG_SUCCESS;
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
 
-			}else if(VALS.intb_type == type){
+		}else if(VALS.intb_type == type)
+		{
 			VALS.en_eovf = vals;
 			ecg_set_en_int(VALS, ENINT_EN_EOVF);
 			ecg_get_en_int(&VALS);
-			if(VALS.en_eovf == vals){
+			if(VALS.en_eovf == vals)
+			{
 				return CONFIG_SUCCESS;
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
 			
-			}else{
+		}else{
 			VALS.en_eovf = vals;
 			VALS.intb_type = type;
 			ecg_set_en_int(VALS,ENINT_EN_EOVF|ENINT_INTB_TYPE);
 			ecg_get_en_int(&VALS);
-			if(VALS.intb_type == type && VALS.en_eovf == vals){
+			if(VALS.intb_type == type && VALS.en_eovf == vals)
+			{
 				return CONFIG_SUCCESS;
 
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
 		}
 		break;
 		case INT_PIN_2:
 		ecg_get_en_int2(&VALS);
-		if(VALS.en_eovf == vals && VALS.intb_type == type){
+		if(VALS.en_eovf == vals && VALS.intb_type == type)
+		{
 			return SAME_CONFIG;
-			}else if(VALS.en_eovf == vals){
+		}else if(VALS.en_eovf == vals)
+		{
 			VALS.intb_type = type;
 			ecg_set_en_int2(VALS, ENINT_INTB_TYPE);
 			ecg_get_en_int2(&VALS);
-			if(VALS.intb_type == type){
+			if(VALS.intb_type == type)
+			{
 				return CONFIG_SUCCESS;
-				}else{
+			}else{
 				return CONFIG_FAILURE;
 			}
 
-			}else if(VALS.intb_type == type){
+		}else if(VALS.intb_type == type)
+		{
 			VALS.en_eovf = vals;
 			ecg_set_en_int2(VALS, ENINT_EN_EOVF);
 			ecg_get_en_int2(&VALS);
 			if(VALS.en_eovf == vals){
-				return CONFIG_SUCCESS;
+					return CONFIG_SUCCESS;
 				}else{
-				return CONFIG_FAILURE;
-			}
-			}else{
+					return CONFIG_FAILURE;
+			    }
+		}else{
 			VALS.en_eovf = vals;
 			VALS.intb_type = type;
 			ecg_set_en_int2(VALS,ENINT_EN_EOVF|ENINT_INTB_TYPE);
 			ecg_get_en_int2(&VALS);
 			if(VALS.intb_type == type && VALS.en_eovf == vals){
-				return CONFIG_SUCCESS;
+					return CONFIG_SUCCESS;
 				}else{
-				return CONFIG_FAILURE;
-			}
+					return CONFIG_FAILURE;
+			    }
 		}
 		break;
 	}
 	return CONFIG_FAILURE;	
 }
 
-config_status ecg_fifo_thres(MNGRINT_EFIT_VAL vals){
+config_status ecg_fifo_thres(MNGRINT_EFIT_VAL vals)
+{
 	MAX30003_MNGR_INT_VALS VALS;
 	ecg_get_mngr_int(&VALS);
-	if(VALS.efit == vals){
+	if(VALS.efit == vals)
+	{
 		return SAME_CONFIG;
 	}else{
 		VALS.efit = vals;
 		ecg_set_mngr_int(VALS, MNGRINT_EFIT);
 		ecg_get_mngr_int(&VALS);
-		if(VALS.efit == vals){
+		if(VALS.efit == vals)
+		{
 			return CONFIG_SUCCESS;
 		}else{
 			return CONFIG_FAILURE;
@@ -597,14 +675,17 @@ config_status ecg_fifo_thres(MNGRINT_EFIT_VAL vals){
 	}
 }
 
-config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE_VAL type){
+config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE_VAL type)
+{
 	MAX30003_EN_INT_VALS VALS;
 	switch(pin){
 		case INT_PIN_1:
 		ecg_get_en_int(&VALS);
-		if(VALS.en_eint == vals && VALS.intb_type == type){
+		if(VALS.en_eint == vals && VALS.intb_type == type)
+		{
 			return SAME_CONFIG;
-			}else if(VALS.en_eint == vals){
+		}else if(VALS.en_eint == vals)
+		{
 			VALS.intb_type = type;
 			ecg_set_en_int(VALS, ENINT_INTB_TYPE);
 			ecg_get_en_int(&VALS);
@@ -612,9 +693,10 @@ config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE
 				return CONFIG_SUCCESS;
 				}else{
 				return CONFIG_FAILURE;
-			}
+			    }
 
-			}else if(VALS.intb_type == type){
+		}else if(VALS.intb_type == type)
+		{
 			VALS.en_eint = vals;
 			ecg_set_en_int(VALS, ENINT_EN_EINT);
 			ecg_get_en_int(&VALS);
@@ -622,9 +704,9 @@ config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE
 				return CONFIG_SUCCESS;
 				}else{
 				return CONFIG_FAILURE;
-			}
+			    }
 			
-			}else{
+		}else{
 			VALS.en_eint = vals;
 			VALS.intb_type = type;
 			ecg_set_en_int(VALS,ENINT_EN_EINT|ENINT_INTB_TYPE);
@@ -639,9 +721,11 @@ config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE
 		break;
 		case INT_PIN_2:
 		ecg_get_en_int2(&VALS);
-		if(VALS.en_eint == vals && VALS.intb_type == type){
+		if(VALS.en_eint == vals && VALS.intb_type == type)
+		{
 			return SAME_CONFIG;
-			}else if(VALS.en_eint == vals){
+		}else if(VALS.en_eint == vals)
+		{
 			VALS.intb_type = type;
 			ecg_set_en_int2(VALS, ENINT_INTB_TYPE);
 			ecg_get_en_int2(&VALS);
@@ -649,9 +733,10 @@ config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE
 				return CONFIG_SUCCESS;
 				}else{
 				return CONFIG_FAILURE;
-			}
+			    }
 
-			}else if(VALS.intb_type == type){
+		}else if(VALS.intb_type == type)
+		{
 			VALS.en_eint = vals;
 			ecg_set_en_int2(VALS, ENINT_EN_EINT);
 			ecg_get_en_int2(&VALS);
@@ -659,8 +744,8 @@ config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE
 				return CONFIG_SUCCESS;
 				}else{
 				return CONFIG_FAILURE;
-			}
-			}else{
+			    }
+		}else{
 			VALS.en_eint = vals;
 			VALS.intb_type = type;
 			ecg_set_en_int2(VALS,ENINT_EN_EINT|ENINT_INTB_TYPE);
@@ -669,25 +754,28 @@ config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE
 				return CONFIG_SUCCESS;
 				}else{
 				return CONFIG_FAILURE;
-			}
+			    }
 		}
 		break;
 	}
 	return CONFIG_FAILURE;	
 }
 
-config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals){
+config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals)
+{
 	MAX30003_EN_INT_VALS VALS;
 	switch(pin){
 		case INT_PIN_1:
 		ecg_get_en_int(&VALS);
-		if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp){
+		if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp)
+		{
 			return SAME_CONFIG;
 		}else{
 			VALS = vals;
 			ecg_set_en_int(VALS,ENINT_EN_EINT|ENINT_EN_EOVF|ENINT_EN_LONINT|ENINT_EN_DCLOFFINT|ENINT_INTB_TYPE|ENINT_EN_SAMP);
 			ecg_get_en_int(&VALS);
-			if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp){
+			if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp)
+			{
 				return CONFIG_SUCCESS;
 			}else{
 				return CONFIG_FAILURE;
@@ -696,7 +784,8 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals){
 		break;
 		case INT_PIN_2:
 		ecg_get_en_int2(&VALS);
-		if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp){
+		if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp)
+		{
 			return SAME_CONFIG;
 		}else{
 			VALS = vals;
@@ -713,29 +802,34 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals){
 	return CONFIG_FAILURE;
 }
 
-uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint16_t SIZE){
+uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint16_t SIZE)
+{
 	MAX30003_FIFO_VALS FIFO[SIZE];// FIFO array to store the data
 	MAX30003_CNFG_GEN_VALS check_switch;// value used to check the condition of switch
 	config_status t;
 	int16_t i; 
 	uint16_t n = initial_point;
-	int32_t tem; // temporary variable to store the FIFO data, can be removed 
+    int32_t tem; // temporary variable to store the FIFO data, can be removed 
 	int8_t situation = 0;//check if ecg is not functional;
 	uint16_t step = 0;// time step
 	ecg_get_cnfg_gen(&check_switch);
 	/*if ecg switch is not enabled, then enable it*/
-	if(check_switch.en_ecg == ENECG_DISABLED){
+	if(check_switch.en_ecg == ENECG_DISABLED)
+	{
 		t = ecg_switch(ENECG_ENABLED);
 	}
-		for(i = 0;i<SIZE;i++){
+		for(i = 0;i<SIZE;i++)
+		{
 		  if(situation<5){//ecg functional if no many situations happened
 			ecg_get_sample(&FIFO[i]);
-				switch(FIFO[i].etag){
+				switch(FIFO[i].etag)
+				{
 					//based on the data sheet 
 					case ETAG_VALID:
 					case ETAG_VALID_EOF:
 						tem = FIFO[i].data<<14;
-						voltage[n] = tem>>14;
+						tem = tem>>14;
+						voltage[n] = tem;
 						step++;
 						n++;
 						situation = 0;
@@ -758,6 +852,7 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 							if(i==0){
 								i--;
 								ecg_fifo_reset();
+								//delay_ms(10);// to avoid the ditch of the voltage, make sure we start collect the data after the ditch is passed*/
 								break;
 							 }else{ // if it is not at the beginning of the data collection, which meant ecg or chip doesn't func well, break up the func, just return the time step and reset fifo
 								situation=5;
@@ -767,11 +862,11 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 								ecg_fifo_reset();
 							 }
 						break;						
-			}
+			    }
 			
-		}else{
+		   }else{
 			return step;// if ecg broke, return the current step
-		}
+		   }
 	
 	}
 	return step;// step should equal to Size if ecg works

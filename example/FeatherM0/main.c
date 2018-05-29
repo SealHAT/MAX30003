@@ -34,22 +34,15 @@ int main(void)
 	ecg_get_status(&shit);
 	/*Initialize the ecg and set for configuration we want*/
 	t = ecg_init();
-	
 	for(;;)
 	{
 	/*start sampling the data for 1000 sample when there was an interrupt*/
-	if(gpio_get_pin_level(INT1)==false){       
-    step = ecg_sampling_process(0,FIFO,FIFO_SIZE);
-	}
-	ecg_get_status(&shit);
-	memset(FIFO, 0, sizeof(FIFO));//clear the storage array, when in state machine, we should put the data into storage and then clear it;
-    
-	
-	    
-		 
-	
-
-}
+		if(gpio_get_pin_level(INT1)==false){       
+			step = ecg_sampling_process(0,FIFO,FIFO_SIZE);
+		}
+		ecg_get_status(&shit);
+		memset(FIFO, 0, sizeof(FIFO));//clear the storage array, when in state machine, we should put the data into storage and then clear it;
+    }//end of forever loop
 }
 
 void spi_init()
