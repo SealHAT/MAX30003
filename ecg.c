@@ -767,14 +767,14 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals)
 	switch(pin){
 		case INT_PIN_1:
 		ecg_get_en_int(&VALS);
-		if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp)
+		if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type && VALS.en_samp == vals.en_samp && VALS.en_rrint == vals.en_rrint && VALS.en_pllint == vals.en_pllint && VALS.en_fstint == vals.en_fstint)
 		{
 			return SAME_CONFIG;
 		}else{
 			VALS = vals;
-			ecg_set_en_int(VALS,ENINT_EN_EINT|ENINT_EN_EOVF|ENINT_EN_LONINT|ENINT_EN_DCLOFFINT|ENINT_INTB_TYPE|ENINT_EN_SAMP);
+			ecg_set_en_int(VALS,ENINT_EN_EINT|ENINT_EN_EOVF|ENINT_EN_LONINT|ENINT_EN_DCLOFFINT|ENINT_INTB_TYPE|ENINT_EN_SAMP|ENINT_EN_FSTINT|ENINT_EN_RRINT|ENINT_EN_PLLINT);
 			ecg_get_en_int(&VALS);
-			if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp)
+			if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type && VALS.en_samp == vals.en_samp && VALS.en_rrint == vals.en_rrint && VALS.en_pllint == vals.en_pllint && VALS.en_fstint == vals.en_fstint)
 			{
 				return CONFIG_SUCCESS;
 			}else{
@@ -784,14 +784,14 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals)
 		break;
 		case INT_PIN_2:
 		ecg_get_en_int2(&VALS);
-		if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type &&VALS.en_samp == vals.en_samp)
+		if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type && VALS.en_samp == vals.en_samp && VALS.en_rrint == vals.en_rrint && VALS.en_pllint == vals.en_pllint && VALS.en_fstint == vals.en_fstint)
 		{
 			return SAME_CONFIG;
 		}else{
 			VALS = vals;
-			ecg_set_en_int2(VALS,ENINT_EN_EINT|ENINT_EN_EOVF|ENINT_EN_LONINT|ENINT_EN_DCLOFFINT|ENINT_INTB_TYPE|ENINT_EN_SAMP);
+			ecg_set_en_int2(VALS,ENINT_EN_EINT|ENINT_EN_EOVF|ENINT_EN_LONINT|ENINT_EN_DCLOFFINT|ENINT_INTB_TYPE|ENINT_EN_SAMP|ENINT_EN_FSTINT|ENINT_EN_RRINT|ENINT_EN_PLLINT);
 			ecg_get_en_int2(&VALS);
-			if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type&&VALS.en_samp == vals.en_samp){
+			if(VALS.en_dcloffint == vals.en_dcloffint && VALS.en_eint == vals.en_eint && VALS.en_eovf == vals.en_eovf && VALS.en_lonint == vals.en_lonint && VALS.intb_type == vals.intb_type && VALS.en_samp == vals.en_samp && VALS.en_rrint == vals.en_rrint && VALS.en_pllint == vals.en_pllint && VALS.en_fstint == vals.en_fstint){
 				return CONFIG_SUCCESS;
 			}else{
 				return CONFIG_FAILURE;
@@ -852,7 +852,6 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 							if(i==0){
 								i--;
 								ecg_fifo_reset();
-								//delay_ms(10);// to avoid the ditch of the voltage, make sure we start collect the data after the ditch is passed*/
 								break;
 							 }else{ // if it is not at the beginning of the data collection, which meant ecg or chip doesn't func well, break up the func, just return the time step and reset fifo
 								situation=5;

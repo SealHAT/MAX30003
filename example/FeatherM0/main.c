@@ -29,9 +29,6 @@ int main(void)
 	/* clear the ECG sample log */
 	memset(FIFO, 0, sizeof(FIFO));
 	uint16_t step=0;
-	uint16_t nextstep = 0;
-	MAX30003_STATUS_VALS shit;
-	ecg_get_status(&shit);
 	/*Initialize the ecg and set for configuration we want*/
 	t = ecg_init();
 	for(;;)
@@ -40,7 +37,6 @@ int main(void)
 		if(gpio_get_pin_level(INT1)==false){       
 			step = ecg_sampling_process(0,FIFO,FIFO_SIZE);
 		}
-		ecg_get_status(&shit);
 		memset(FIFO, 0, sizeof(FIFO));//clear the storage array, when in state machine, we should put the data into storage and then clear it;
     }//end of forever loop
 }
