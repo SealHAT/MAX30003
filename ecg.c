@@ -27,7 +27,7 @@
 
 /* default values for registers */
 const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
-	.en_ecg     = ENECG_ENABLED,
+	.en_ecg     = ENECG_DISABLED,
 };
 
 const MAX30003_CNFG_ECG_VALS CNFECG_VALS_DEFAULT = {
@@ -815,6 +815,8 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 					//based on the data sheet 
 					case ETAG_VALID:
 					case ETAG_VALID_EOF:
+						//if(FIFO[i].data & 0x00010000)
+							//tem = FIFO[i].data | 0xFFFD0000;
 						tem = FIFO[i].data<<14;
 						tem = tem>>14;
 						voltage[n] = tem;
@@ -827,18 +829,18 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 				   case ETAG_FAST:
 				   case ETAG_FAST_EOF:
 						situation++;
-						i--;
+						//i--;
 						break;
 				   case ETAG_FIFO_EMPTY:
 						situation++;
-						i--;
+						//i--;
 						delay_ms(10);
 						break;
 					/*if ecg func well, there is not supposed to happen overflow at this point, if happened, ecg broke or chip broke*/
 				   case ETAG_FIFO_OVERFLOW:
 				   /*if there is a fifo overflow since the beginning of the collection, we reset the fifo without breaking up the whole func*/
 							if(i==0){
-								i--;
+								//i--;
 								ecg_fifo_reset();
 								break;
 							 }else{ // if it is not at the beginning of the data collection, which meant ecg or chip doesn't func well, break up the func, just return the time step and reset fifo
