@@ -30,15 +30,17 @@ int main(void)
 	MAX30003_STATUS_VALS shit;
 	/* clear the ECG sample log */
 	memset(FIFO, 0, sizeof(FIFO));
-	uint16_t step=0;
+	uint16_t step[25]={0};
+	uint16_t sum = step[0];
 	/*Initialize the ecg and set for configuration we want*/
 	t = ecg_init();
 	t = ecg_switch(ENECG_ENABLED);
-	for(count = 0;count<17;)
+	for(count = 0;count<20;)
 	{
 	/*start sampling the data for 1000 sample when there was an interrupt*/
 		if(gpio_get_pin_level(INT1)==false){       
-			step = ecg_sampling_process(step*count,FIFO,368);
+			step[count+1] = ecg_sampling_process(sum,FIFO,368);
+			sum+=step[count+1];
 			count++;
 		}
 //		memset(FIFO, 0, sizeof(FIFO));//clear the storage array, when in state machine, we should put the data into storage and then clear it;

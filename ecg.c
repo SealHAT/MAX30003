@@ -808,17 +808,19 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 	}
 		for(i = 0;i<SIZE;i++)
 		{
-		  if(situation<5){//ecg functional if no many situations happened
 			ecg_get_sample(&FIFO[i]);
 				switch(FIFO[i].etag)
 				{
 					//based on the data sheet 
 					case ETAG_VALID:
 					case ETAG_VALID_EOF:
-						//if(FIFO[i].data & 0x00010000)
-							//tem = FIFO[i].data | 0xFFFD0000;
-						tem = FIFO[i].data<<14;
-						tem = tem>>14;
+						if((FIFO[i].data & 0x00020000)==0x00020000){
+							tem = FIFO[i].data | 0xFFFE0000;
+						}else{
+							tem = FIFO[i].data;
+						}
+						//tem = FIFO[i].data<<14;
+						//tem = tem>>14;
 						voltage[n] = tem;
 						step++;
 						n++;
@@ -853,9 +855,6 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 						break;						
 			    }
 			
-		   }else{
-			return step;// if ecg broke, return the current step
-		   }
 	
 	}
 	return step;// step should equal to Size if ecg works
