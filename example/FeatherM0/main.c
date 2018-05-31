@@ -35,11 +35,12 @@ int main(void)
 	/*Initialize the ecg and set for configuration we want*/
 	t = ecg_init();
 	t = ecg_switch(ENECG_ENABLED);
-	for(count = 0;count<20;)
+	/*be careful when you fill up the sample if the storage size of array is more than 900, do not fill the exact amount, will cause garbage data, at least left 8 empty spaces in array*/
+	for(count = 0;count<2;)
 	{
 	/*start sampling the data for 1000 sample when there was an interrupt*/
 		if(gpio_get_pin_level(INT1)==false){       
-			step[count+1] = ecg_sampling_process(sum,FIFO,368);
+			step[count+1] = ecg_sampling_process(sum,FIFO,20);
 			sum+=step[count+1];
 			count++;
 		}

@@ -790,73 +790,61 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals)
 	return CONFIG_FAILURE;
 }
 
-uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint16_t SIZE)
+uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint16_t Desired_Sample_Size)
 {
-	MAX30003_FIFO_VALS FIFO[SIZE];// FIFO array to store the data
+	MAX30003_FIFO_VALS FIFO[Desired_Sample_Size];// FIFO array to store the data
 	MAX30003_CNFG_GEN_VALS check_switch;// value used to check the condition of switch
-	config_status t;
-	int16_t i; 
+	config_status t = CONFIG_FAILURE;// config_status of the switch
+	int16_t step = 0;// for loop parameter,considered time-step
 	uint16_t n = initial_point;
-    int32_t tem; // temporary variable to store the FIFO data, can be removed 
-	int8_t situation = 0;//check if ecg is not functional;
-	uint16_t step = 0;// time step
+    int32_t tem = 0; // temporary variable to store the FIFO data 
+	uint16_t Number_Of_Valid_Data = 0;// Number of valid data of total sample period
 	ecg_get_cnfg_gen(&check_switch);
 	/*if ecg switch is not enabled, then enable it*/
 	if(check_switch.en_ecg == ENECG_DISABLED)
 	{
 		t = ecg_switch(ENECG_ENABLED);
 	}
-		for(i = 0;i<SIZE;i++)
+		for(step = 0;step<Desired_Sample_Size;step++)
 		{
-			ecg_get_sample(&FIFO[i]);
-				switch(FIFO[i].etag)
+			ecg_get_sample(&FIFO[step]);
+				switch(FIFO[step].etag)
 				{
 					//based on the data sheet 
 					case ETAG_VALID:
 					case ETAG_VALID_EOF:
-						if((FIFO[i].data & 0x00020000)==0x00020000){
-							tem = FIFO[i].data | 0xFFFE0000;
+						if((FIFO[step].data & 0x00020000)==0x00020000){
+							tem = FIFO[step].data | 0xFFFE0000;
 						}else{
-							tem = FIFO[i].data;
+							tem = FIFO[step].data;
 						}
-						//tem = FIFO[i].data<<14;
-						//tem = tem>>14;
 						voltage[n] = tem;
-						step++;
+						Number_Of_Valid_Data++;
 						n++;
-						situation = 0;
 						break;
+				  /*time step valid but data invalid, data abandoned but time increment, based on data sheet*/
 				   case _ETAG_RESERVED1:
 				   case _ETAG_RESERVED2:
 				   case ETAG_FAST:
 				   case ETAG_FAST_EOF:
-						situation++;
-						//i--;
 						break;
+				  /*Discard the sample without incrementing the time base, suspend read back operations, based on datasheet*/
 				   case ETAG_FIFO_EMPTY:
-						situation++;
-						//i--;
+						if(step>0){
+							step--;
+						}
 						delay_ms(10);
 						break;
-					/*if ecg func well, there is not supposed to happen overflow at this point, if happened, ecg broke or chip broke*/
+					/*if ecg func well, there is not supposed to happen overflow, if happened, ecg broke or chip broke*/
 				   case ETAG_FIFO_OVERFLOW:
-				   /*if there is a fifo overflow since the beginning of the collection, we reset the fifo without breaking up the whole func*/
-							if(i==0){
-								//i--;
-								ecg_fifo_reset();
-								break;
-							 }else{ // if it is not at the beginning of the data collection, which meant ecg or chip doesn't func well, break up the func, just return the time step and reset fifo
-								situation=5;
-								n = initial_point;
-								i = 0;
-								step = 0;
-								ecg_fifo_reset();
-							 }
+					// if data overflow, clear the fifo and break the func				
+						ecg_fifo_reset();
+						return Number_Of_Valid_Data;	 
 						break;						
 			    }
 			
 	
 	}
-	return step;// step should equal to Size if ecg works
+	return Number_Of_Valid_Data;// step should equal to Size if ecg works
 }
 
