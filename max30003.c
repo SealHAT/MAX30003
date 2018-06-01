@@ -812,16 +812,16 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
         spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
 
         /* process sample */
-        msg.data.byte[0] = ECG_BUF_I[2];
+        msg.data.byte[0] = ECG_BUF_I[0];
         msg.data.byte[1] = ECG_BUF_I[1];
-        msg.data.byte[2] = ECG_BUF_I[0];
+        msg.data.byte[2] = ECG_BUF_I[2];
         ecg_decode_ecg_fifo(&vals, msg.data);
 
         switch (vals.etag) {
             case ETAG_VALID_EOF :
             case ETAG_FAST_EOF  :
                 eof = true; /* exit, but save the sample as a valid sample */
-                vals.etag = (ECGFIFO_ETAG_VAL)( (uint8_t)vals.etag & 0x01);
+                vals.etag = vals.etag;
             case ETAG_VALID     :
             case ETAG_FAST      :
                 if (step >= SIZE) { 
@@ -830,9 +830,9 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
                     delay_ms(10000); 
                 }
 				/* format and store the sample */
-				log[step].tag	= (uint8_t )((uint32_t)vals.etag	<< 0);
-				log[step].step = (uint16_t)((uint32_t)step			<< 3);
-				log[step].data = (int32_t )((uint32_t)vals.data		<< 14);
+				log[step].tag  = vals.etag;
+				log[step].step = step;
+				log[step].data = vals.data;
                 
                 /* increment, clear, and get next sample */
                 step++;
@@ -844,7 +844,7 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
             case ETAG_FIFO_EMPTY    :
                 eof = true;
                 break;
-            default :   delay_ms(1000); /* TODO error handling */
+            default : ecg_synch();break; /* TODO error handling */
         }
     } while (!eof && step < SIZE);
     

@@ -731,6 +731,22 @@ typedef struct MAX30003_RTOR_VALS {
 	RTOR_DATA_VAL	data;
 } MAX30003_RTOR_VALS;
 
+typedef union MAX30003_VALS {
+    MAX30003_STATUS_VALS        status;
+    MAX30003_EN_INT_VALS        en_int;
+    MAX30003_MNGR_INT_VALS      mngr_int;
+    MAX30003_MNGR_DYN_VALS      mngr_dyn;
+    MAX30003_INFO_VALS          info;
+    MAX30003_CNFG_GEN_VALS      cnfg_gen;
+    MAX30003_CNFG_CAL_VALS      cnfg_cal;
+    MAX30003_CNFG_EMUX_VALS     cnfg_emux;
+    MAX30003_CNFG_ECG_VALS      cnfg_ecg;
+    MAX30003_CNFG_RTOR1_VALS    cnfg_rtor1;
+    MAX30003_CNFG_RTOR2_VALS    cnfg_rtor2;
+    MAX30003_FIFO_VALS          fifo;
+    MAX30003_RTOR_VALS          rtor;
+} MAX30003_VALS;
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

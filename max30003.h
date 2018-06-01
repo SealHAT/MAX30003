@@ -43,8 +43,8 @@ extern "C"
 #define ECG_BUF_CLR     (0x00)	/* clear byte		*/
 
 // TODO activate these and change ecg_spi_msg size as needed for static memory optimization */
-// #define ECG_CMND_SZ		(1)
-// #define ECG_DATA_SZ		(3)
+#define ECG_CMND_SZ		(1)
+#define ECG_DATA_SZ		(3)
 
 /* SPI variables */
 extern struct spi_xfer ecg_spi_msg;		/* SPI message struct	*/
@@ -94,7 +94,6 @@ void ecg_sw_reset();
 void ecg_synch();
 void ecg_sw_reset();
 
-
 /* MAX30003 register GET functions ************************************************************************
  *	each function reads the values from a register of the MAX30003 ECG device
  *  INPUTS: (use enumerated types)
@@ -124,8 +123,6 @@ void ecg_get_cnfg_ecg	(MAX30003_CNFG_ECG_VALS		*vals);
  *		the number of samples recorded into the log array
  ***********************************************************************************************************/
 uint16_t ecg_get_sample_burst(ECG_SAMPLE *log, const uint16_t SIZE); /* returns number of samples recorded */
-
-
 
 /* MAX30003 register SET functions ************************************************************************
  *	each function writes to a command register of the MAX30003 ECG device
@@ -190,6 +187,7 @@ void ecg_encode_cnfg_rtor2	(const MAX30003_CNFG_RTOR2_VALS	VALS, MAX30003_DATA_t
 void ecg_clear_ibuf();
 void ecg_clear_obuf();
 void ecg_clear_iobuf();
+
 /* ecg_mask ***********************************************************************************************
  *	Endian safe operation that builds a data word by combining old register values with values to update
  *	INPUTS: (use enumerated types)
