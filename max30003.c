@@ -793,6 +793,7 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
  {
     bool eof;
     uint16_t step;              /* unit-less time increment */
+    int32_t *word;
     MAX30003_MSG msg; 
     MAX30003_FIFO_VALS vals;
     
@@ -812,10 +813,13 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
         spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
 
         /* process sample */
-        msg.data.byte[0] = ECG_BUF_I[0];
-        msg.data.byte[1] = ECG_BUF_I[1];
-        msg.data.byte[2] = ECG_BUF_I[2];
-        ecg_decode_ecg_fifo(&vals, msg.data);
+        word = (int32_t*)ECG_BUF_I;
+        vals.data = word[0] >> 6;
+        vals.etag = (word[0] >> 3) & 0x0003; 
+//         msg.data.byte[0] = ECG_BUF_I[0];
+//         msg.data.byte[1] = ECG_BUF_I[1];
+//         msg.data.byte[2] = ECG_BUF_I[2];
+//         ecg_decode_ecg_fifo(&vals, msg.data);
 
         switch (vals.etag) {
             case ETAG_VALID_EOF :

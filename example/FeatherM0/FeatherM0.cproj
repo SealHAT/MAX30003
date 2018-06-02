@@ -917,9 +917,9 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="max30003test.c">
+    <Compile Include="max30003test.c">
       <SubType>compile</SubType>
-    </None>
+    </Compile>
     <None Include="max30003test.h">
       <SubType>compile</SubType>
     </None>

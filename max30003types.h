@@ -606,7 +606,7 @@ typedef enum {
 	ETAG_FIFO_OVERFLOW	= 7
 } ECGFIFO_ETAG_VAL;
 
-typedef uint32_t ECGFIFO_DATA_VAL;
+typedef int32_t ECGFIFO_DATA_VAL;
 
 /***
  * RTOR register's masks and values
