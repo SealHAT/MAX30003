@@ -6,7 +6,7 @@
 #include "si5351-samd21-minimal.h"
 
 /* Buffer for storing ECG samples */
-#define FIFO_SIZE (1024)     //fifo size (32 word * 24 bits)
+#define FIFO_SIZE (5008)     //fifo size (32 word * 24 bits)
 //signed int FIFO[FIFO_SIZE];
 ECG_SAMPLE FIFO[FIFO_SIZE];
 /* initializes SPI for the ECG device		*/
@@ -27,7 +27,6 @@ int main(void)
 	fclock_init();
 	ecg_sw_reset();
 	uint32_t count = 0;
-	MAX30003_STATUS_VALS shit;
 	/* clear the ECG sample log */
 	memset(FIFO, 0, sizeof(FIFO));
 	uint16_t step[314]={0};
@@ -35,8 +34,8 @@ int main(void)
 	/*Initialize the ecg and set for configuration we want*/
 	t = ecg_init();
 	t = ecg_switch(ENECG_ENABLED);
-	/*be careful when you fill up the sample if the storage size of array is more than 900, do not fill the exact amount, will cause garbage data, at least left 8 empty spaces in array*/
-	for(count = 0;count<64;)
+	
+	for(count = 0;count<313;)
 	{
 	/*start sampling the data for 1000 sample when there was an interrupt*/
 		if(gpio_get_pin_level(INT1)==false){       
@@ -46,7 +45,6 @@ int main(void)
 		}
 //		memset(FIFO, 0, sizeof(FIFO));//clear the storage array, when in state machine, we should put the data into storage and then clear it;
     }//end of forever loop
-	ecg_get_status(&shit);
 		memset(FIFO, 0, sizeof(FIFO));//clear the storage array, when in state machine, we should put the data into storage and then clear it;
 }
 
