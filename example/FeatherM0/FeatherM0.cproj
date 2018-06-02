@@ -926,6 +926,9 @@
     <Compile Include="ringbuff\ringbuffer.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="seal_Types.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="SerialPrint.c">
       <SubType>compile</SubType>
     </Compile>

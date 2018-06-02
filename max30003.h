@@ -69,7 +69,7 @@ typedef uint8_t MAX30003_ADDR_t;
 typedef struct __attribute__((__packed__)) ECG_SAMPLE {
 	uint32_t	valid:3;	/* ETAG data from the ECG_FIFO	*/
 	uint32_t	step:11;	/* time step of the sample		*/
-    uint32_t	data:18;	/* voltage of the sample		*/
+    int32_t	data:18;	/* voltage of the sample		*/
 } ECG_SAMPLE;
 
 /* MAX30003_MSG type

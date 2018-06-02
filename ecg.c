@@ -38,7 +38,7 @@ const MAX30003_CNFG_ECG_VALS CNFECG_VALS_DEFAULT = {
 };
 
 const MAX30003_MNGR_INT_VALS MNGR_INT_VALS_DEFAULT = {
-	.efit = EFIT_AS_24,
+	.efit = EFIT_AS_16,
 };
 
 const MAX30003_CNFG_ECG_MASKS CNFG_ECG_DEFAULT_MASK = CNFGECG_DLPF|CNFGECG_DHPF|CNFGECG_GAIN|CNFGECG_RATE;
@@ -790,12 +790,12 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals)
 	return CONFIG_FAILURE;
 }
 
-uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint16_t Desired_Sample_Size)
+uint16_t ecg_sampling_process(uint16_t initial_point, ECG_SAMPLE Storage[], uint16_t Desired_Sample_Size)
 {
 	MAX30003_FIFO_VALS FIFO[Desired_Sample_Size];// FIFO array to store the data
 	MAX30003_CNFG_GEN_VALS check_switch;// value used to check the condition of switch
 	config_status t = CONFIG_FAILURE;// config_status of the switch
-	int16_t step = 0;// for loop parameter,considered time-step
+	uint16_t step = 0;// for loop parameter,considered time-step per interrupt
 	uint16_t n = initial_point;
     int32_t tem = 0; // temporary variable to store the FIFO data 
 	uint16_t Number_Of_Valid_Data = 0;// Number of valid data of total sample period
@@ -813,21 +813,23 @@ uint16_t ecg_sampling_process(uint16_t initial_point, signed int voltage[], uint
 					//based on the data sheet 
 					case ETAG_VALID:
 					case ETAG_VALID_EOF:
+				    case _ETAG_RESERVED1:
+				    case _ETAG_RESERVED2:
+				    case ETAG_FAST:
+				    case ETAG_FAST_EOF:
 						if((FIFO[step].data & 0x00020000)==0x00020000){
 							tem = FIFO[step].data | 0xFFFE0000;
 						}else{
 							tem = FIFO[step].data;
 						}
-						voltage[n] = tem;
+						Storage[n].data=tem;
+						Storage[n].valid = FIFO[step].etag;
+						Storage[n].step = step+1;
 						Number_Of_Valid_Data++;
 						n++;
 						break;
 				  /*time step valid but data invalid, data abandoned but time increment, based on data sheet*/
-				   case _ETAG_RESERVED1:
-				   case _ETAG_RESERVED2:
-				   case ETAG_FAST:
-				   case ETAG_FAST_EOF:
-						break;
+
 				  /*Discard the sample without incrementing the time base, suspend read back operations, based on datasheet*/
 				   case ETAG_FIFO_EMPTY:
 						if(step>0){

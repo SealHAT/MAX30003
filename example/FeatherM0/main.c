@@ -6,9 +6,9 @@
 #include "si5351-samd21-minimal.h"
 
 /* Buffer for storing ECG samples */
-#define FIFO_SIZE (5008)     //fifo size (32 word * 24 bits)
-signed int FIFO[FIFO_SIZE];
-
+#define FIFO_SIZE (1024)     //fifo size (32 word * 24 bits)
+//signed int FIFO[FIFO_SIZE];
+ECG_SAMPLE FIFO[FIFO_SIZE];
 /* initializes SPI for the ECG device		*/
 void spi_init();	// TODO place in a device header
 /* initializes the clock generator module	*/
@@ -36,11 +36,11 @@ int main(void)
 	t = ecg_init();
 	t = ecg_switch(ENECG_ENABLED);
 	/*be careful when you fill up the sample if the storage size of array is more than 900, do not fill the exact amount, will cause garbage data, at least left 8 empty spaces in array*/
-	for(count = 0;count<208;)
+	for(count = 0;count<64;)
 	{
 	/*start sampling the data for 1000 sample when there was an interrupt*/
 		if(gpio_get_pin_level(INT1)==false){       
-			step[count+1] = ecg_sampling_process(sum,FIFO,10);
+			step[count+1] = ecg_sampling_process(sum,FIFO,16);
 			sum+=step[count+1];
 			count++;
 		}
