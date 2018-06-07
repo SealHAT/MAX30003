@@ -789,74 +789,74 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 }
 
 
- uint16_t ecg_get_sample_burst(ECG_SAMPLE_t *log, const uint16_t SIZE)
+ int32_t ecg_get_sample_burst(ECG_SAMPLE_t *log, const uint16_t SIZE)
  {
-    bool eof;
-    uint16_t step;              /* unit-less time increment */
-    int32_t *word;
-    MAX30003_MSG msg; 
-    MAX30003_FIFO_VALS vals;
-    
-    eof = false;
-    step = 0; timeout = 0;
-    if (SIZE == 0) { return 0; } /* bad FIFO size */
-    
-    /* start the burst transfer, but hold CSB low */
-    ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
+     bool eof;
+     uint16_t step;              /* unit-less time increment */
+     int32_t *word;
+     MAX30003_MSG msg;
+     MAX30003_FIFO_VALS vals;
+     
+     eof = false;
+     step = 0x0000;
+     
+     /* start the burst transfer, but hold csb low */
+     ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
 
-    gpio_set_pin_level(MOD_CS, false);
-    spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
-    ECG_BUF_O[ECG_CMND_POS] = 0x00;
+     gpio_set_pin_level(MOD_CS, false);
+     spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
+     ECG_BUF_O[ECG_CMND_POS] = 0x00;
 
-    /* start collecting samples from FIFO */
-    do {
-        spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
+     /* start collecting samples from FIFO */
 
-        /* process sample */
-        word = (int32_t*)ECG_BUF_I;
-        vals.data = word[0] >> 6;
-        vals.etag = (word[0] >> 3) & 0x0003; 
-//         msg.data.byte[0] = ECG_BUF_I[0];
-//         msg.data.byte[1] = ECG_BUF_I[1];
-//         msg.data.byte[2] = ECG_BUF_I[2];
-//         ecg_decode_ecg_fifo(&vals, msg.data);
+     do {
+         spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
 
-        switch (vals.etag) {
-            case ETAG_VALID_EOF :
-            case ETAG_FAST_EOF  :
-                eof = true; /* exit, but save the sample as a valid sample */
-                vals.etag = vals.etag;
-            case ETAG_VALID     :
-            case ETAG_FAST      :
-                if (step >= SIZE) { 
-					/* data fifo full, still data in ecg fifo need to clean up */
-					// TODO implement a circular FIFO or some scheme to best preserve data 
-                    delay_ms(10000); 
-                }
-				/* format and store the sample */
-				log[step].tag  = vals.etag;
-				log[step].step = step;
-				log[step].data = vals.data;
-                
-                /* increment, clear, and get next sample */
-                step++;
-                break;
+         /* process sample */
+         word = (int32_t*)ECG_BUF_I;
+         vals.data = word[0] >> 6;
+         vals.etag = (word[0] >> 3) & 0x0003;
+         //         msg.data.byte[0] = ECG_BUF_I[0];
+         //         msg.data.byte[1] = ECG_BUF_I[1];
+         //         msg.data.byte[2] = ECG_BUF_I[2];
+         //         ecg_decode_ecg_fifo(&vals, msg.data);
 
-            case ETAG_FIFO_OVERFLOW :
+         switch (vals.etag) {
+             case ETAG_VALID_EOF :
+             case ETAG_FAST_EOF  :
+             eof = true; /* exit, but save the sample as a valid sample */
+             vals.etag = vals.etag;
+             case ETAG_VALID     :
+             case ETAG_FAST      :
+             if (step >= SIZE) {
+                 /* data fifo full, still data in ecg fifo need to clean up */
+                 // TODO implement a circular FIFO or some scheme to best preserve data
+                 delay_ms(10000);
+             }
+             /* format and store the sample */
+             log[step].tag  = vals.etag;
+             log[step].step = step;
+             log[step].data = vals.data;
+             
+             /* increment, clear, and get next sample */
+             step++;
+             break;
+
+             case ETAG_FIFO_OVERFLOW :
                 gpio_set_pin_level(MOD_CS, true);
                 ecg_fifo_reset(); /* or synch */
-            case ETAG_FIFO_EMPTY    :
+             case ETAG_FIFO_EMPTY    :
                 eof = true;
-                break;
-            default : ecg_synch();break; /* TODO error handling */
-        }
-    } while (!eof && step < SIZE);
-    
-    /* done sampling spi */
-    gpio_set_pin_level(MOD_CS, true); 
- 
-    return step;
-    }
+             break;
+             default : ecg_synch();break; /* TODO error handling */
+         }
+     } while (!eof && step < SIZE);
+     
+     /* done sampling spi */
+     gpio_set_pin_level(MOD_CS, true);
+     
+     return step;
+ }
 
 void ecg_fifo_reset()
 {

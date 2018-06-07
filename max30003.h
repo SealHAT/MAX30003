@@ -67,9 +67,9 @@ typedef uint8_t MAX30003_ADDR_t;
  *	packing and bit order is ignored as the total struct size is 32-bits
  */
 typedef struct __attribute__((__packed__)) ECG_SAMPLE_t {
-	uint32_t	valid:3;	/* ETAG data from the ECG_FIFO	*/
+	uint32_t	tag:3;	    /* ETAG data from the ECG_FIFO	*/
 	uint32_t	step:11;	/* time step of the sample		*/
-  uint32_t	data:18;	/* voltage of the sample		*/
+    uint32_t	data:18;	/* voltage of the sample		*/
 } ECG_SAMPLE_t;
 
 /* MAX30003_MSG type
@@ -123,7 +123,7 @@ void ecg_get_cnfg_ecg	(MAX30003_CNFG_ECG_VALS		*vals);
  *	RETURNS:
  *		the number of samples recorded into the log array, -1 if overflow
  ***********************************************************************************************************/
-uint16_t ecg_get_sample_burst(ECG_SAMPLE_t *log, const uint16_t SIZE); /* returns number of samples recorded */
+int32_t ecg_get_sample_burst(ECG_SAMPLE_t *log, const uint16_t SIZE); /* returns number of samples recorded */
 
 /* MAX30003 register SET functions ************************************************************************
  *	each function writes to a command register of the MAX30003 ECG device

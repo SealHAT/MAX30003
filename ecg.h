@@ -42,7 +42,7 @@ extern "C"
 #define  ECG_LOGSIZE (24)
 
 void ecg_spi_init();
-int32_t ecg_init();
+//int32_t ecg_init();
 
 /**
  * Ekg Configuration enum
@@ -314,7 +314,7 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals);
  * @param uint16_t initial_point, signed int voltage[], uint16_t SIZE
  * @return the time step, should equal to the SIZE
  */
-uint16_t ecg_sampling_process(uint16_t initial_point, ECG_SAMPLE Storage[], uint16_t Desired_Sample_Size);
+uint16_t ecg_sampling_process(uint16_t initial_point, ECG_SAMPLE_t Storage[], uint16_t Desired_Sample_Size);
 
 #ifdef __cplusplus
 }

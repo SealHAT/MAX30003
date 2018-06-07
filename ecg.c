@@ -28,6 +28,12 @@ void ecg_spi_init()
     spi_m_sync_set_mode(&SPI_MOD, SPI_MODE_0);
     spi_m_sync_enable(&SPI_MOD);
     gpio_set_pin_level(MOD_CS,true);
+    
+    ecg_spi_msg.size  = ECG_BUF_SZ;
+    ecg_spi_msg.rxbuf = ECG_BUF_I;
+    ecg_spi_msg.txbuf = ECG_BUF_O;
+}    
+
 
 /* default values for registers */
 const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
@@ -69,10 +75,6 @@ config_status ecg_change_gain(CNFGECG_GAIN_VAL vals)
 	}
 	
 }
-
-    ecg_spi_msg.size  = ECG_BUF_SZ;
-    ecg_spi_msg.rxbuf = ECG_BUF_I;
-    ecg_spi_msg.txbuf = ECG_BUF_O;
 
 config_status ecg_change_datarate(CNFGECG_RATE_VAL vals)
 {
@@ -797,7 +799,7 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals)
 	return CONFIG_FAILURE;
 }
 
-uint16_t ecg_sampling_process(uint16_t initial_point, ECG_SAMPLE Storage[], uint16_t Desired_Sample_Size)
+uint16_t ecg_sampling_process(uint16_t initial_point, ECG_SAMPLE_t Storage[], uint16_t Desired_Sample_Size)
 {
 	MAX30003_FIFO_VALS FIFO[Desired_Sample_Size];// FIFO array to store the data
 	MAX30003_CNFG_GEN_VALS check_switch;// value used to check the condition of switch
@@ -830,7 +832,7 @@ uint16_t ecg_sampling_process(uint16_t initial_point, ECG_SAMPLE Storage[], uint
 							tem = FIFO[step].data;
 						}
 						Storage[n].data=tem;
-						Storage[n].valid = FIFO[step].etag;
+						Storage[n].tag = FIFO[step].etag;
 						Storage[n].step = step+1;
 						Number_Of_Valid_Data++;
 						n++;
