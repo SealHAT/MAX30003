@@ -33,3 +33,47 @@ void ecg_spi_init()
     ecg_spi_msg.rxbuf = ECG_BUF_I;
     ecg_spi_msg.txbuf = ECG_BUF_O;
 }
+
+int32_t ecg_init()
+{
+    MAX30003_VALS   old_vals;
+    MAX30003_VALS   new_vals;
+    
+    memset(&new_vals, 0, MAX30003_DATA_BYTES);
+    
+    new_vals.cnfg_gen.rbiasn       = RBIASN_NOT_CONNECTED;
+    new_vals.cnfg_gen.rbiasp       = RBIASP_NOT_CONNECTED;
+    new_vals.cnfg_gen.rbiasv       = RBIASV_100_MOHM;
+    new_vals.cnfg_gen.en_rbias     = ENRBIAS_DISABLED;
+    new_vals.cnfg_gen.en_dcloff    = ENDCLOFF_DISABLED;
+    new_vals.cnfg_gen.en_ecg       = ENECG_ENABLED;
+    new_vals.cnfg_gen.fmstr        = FMSTR_512_HZ;
+    
+    ecg_set_cnfg_gen(new_vals.cnfg_gen, CNFGGEN_DEFAULT_MASK);
+//    ecg_get_cnfg_gen(&old_vals.cnfg_gen);
+    /* TODO - check vals */
+    
+    memset(&new_vals, 0, MAX30003_DATA_BYTES);
+    new_vals.cnfg_ecg.dlpf = DLPF_40_HZ;
+    new_vals.cnfg_ecg.dhpf = DHPF_HALF;
+    new_vals.cnfg_ecg.gain = GAIN_20_V;
+    new_vals.cnfg_ecg.rate = RATE_MIN_SPS;
+    
+    ecg_set_cnfg_ecg(new_vals.cnfg_ecg, CNFGECG_DEFAULT_MASK);
+//     ecg_get_cnfg_ecg(&old_vals.cnfg_ecg);
+    
+    memset(&new_vals, 0, MAX30003_DATA_BYTES);
+    new_vals.mngr_int.efit = EFIT_AS_24;
+    
+    ecg_set_mngr_int(new_vals.mngr_int, MNGRINT_DEFAULT_MASK);
+/*    ecg_get_mngr_int(&old_vals.mngr_int);*/
+    
+    memset(&new_vals, 0, MAX30003_DATA_BYTES);
+    new_vals.en_int.en_eint    = ENINT_ENABLED;
+    new_vals.en_int.intb_type  = INTBTYPE_NMOS_WITH_PU;
+    
+    ecg_set_en_int(new_vals.en_int, ENINT1_DEFUALT_MASK);
+/*    ecg_get_en_int(&old_vals.en_int);*/
+    
+    return 0;
+}
