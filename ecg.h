@@ -24,17 +24,25 @@
 #ifndef ECG_H
 #define ECG_H
 
+#include "max30003.h"
+#define MOD_INT1 (MOD9)
+#define MOD_INT2 (MOD8)
+
+#define CNFGGEN_DEFAULT_MASK (CNFGGEN_EN_ECG)
+#define CNFGECG_DEFAULT_MASK (CNFGECG_DLPF|CNFGECG_DHPF|CNFGECG_GAIN|CNFGECG_RATE)
+#define MNGRINT_DEFAULT_MASK (MNGRINT_EFIT)
+#define ENINT1_DEFUALT_MASK  (ENINT_INTB_TYPE|ENINT_EN_EINT)
+#define ENINT2_DEFUALT_MASK  (ENINT_INTB_TYPE|ENINT_EN_LONINT)
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-//libraries we used in ecg.h
-#include "max30003.h"
-#include <stdbool.h>
-#include <stdio.h>
-#include <math.h>
+#define  ECG_LOGSIZE (24)
 
+void ecg_spi_init();
+int32_t ecg_init();
 
 /**
  * Ekg Configuration enum

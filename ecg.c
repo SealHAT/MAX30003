@@ -22,8 +22,12 @@
  */
  
 #include "ecg.h"
-#include "driver_init.h"
 
+void ecg_spi_init()
+{
+    spi_m_sync_set_mode(&SPI_MOD, SPI_MODE_0);
+    spi_m_sync_enable(&SPI_MOD);
+    gpio_set_pin_level(MOD_CS,true);
 
 /* default values for registers */
 const MAX30003_CNFG_GEN_VALS CNFGGEN_VALS_DEFAULT = {
@@ -66,6 +70,9 @@ config_status ecg_change_gain(CNFGECG_GAIN_VAL vals)
 	
 }
 
+    ecg_spi_msg.size  = ECG_BUF_SZ;
+    ecg_spi_msg.rxbuf = ECG_BUF_I;
+    ecg_spi_msg.txbuf = ECG_BUF_O;
 
 config_status ecg_change_datarate(CNFGECG_RATE_VAL vals)
 {
