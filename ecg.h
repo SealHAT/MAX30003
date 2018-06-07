@@ -24,13 +24,20 @@
 #ifndef ECG_H
 #define ECG_H
 
+#include "max30003.h"
+#define MOD_INT1 (MOD9)
+#define MOD_INT2 (MOD8)
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "max30003.h"
-#include "max30003test.h"
+#define  ECG_LOGSIZE (24)
+
+
+void ecg_spi_init();
+
 
 #ifdef __cplusplus
 }

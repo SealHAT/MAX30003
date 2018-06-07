@@ -740,9 +740,9 @@ uint8_t ecg_spi_read(MAX30003_MSG *msg)
     ECG_BUF_O[ECG_CMND_POS] = (uint8_t)msg->command;
 
     /* perform spi transfer */
-    gpio_set_pin_level(CS, false);
-    xfer_bytes = spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
-    gpio_set_pin_level(CS, true);
+    gpio_set_pin_level(MOD_CS, false);
+    xfer_bytes = spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
+    gpio_set_pin_level(MOD_CS, true);
 
     /* arrange the MISO bytes into the data bins */
     msg->data.byte[0] = ECG_BUF_I[3];
@@ -767,9 +767,9 @@ uint8_t ecg_spi_write(MAX30003_MSG *msg)
 
 
     /* perform spi transfer */
-    gpio_set_pin_level(CS, false);
-    xfer_bytes = spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
-    gpio_set_pin_level(CS, true);
+    gpio_set_pin_level(MOD_CS, false);
+    xfer_bytes = spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
+    gpio_set_pin_level(MOD_CS, true);
 
     return xfer_bytes;
 }
@@ -789,7 +789,7 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 }
 
 
- uint16_t ecg_get_sample_burst(ECG_SAMPLE *log, const uint16_t SIZE)
+ uint16_t ecg_get_sample_burst(ECG_SAMPLE_t *log, const uint16_t SIZE)
  {
     bool eof;
     uint16_t step;              /* unit-less time increment */
@@ -803,14 +803,14 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
     /* start the burst transfer, but hold csb low */
     ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
 
-    gpio_set_pin_level(CS, false);
-    spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
+    gpio_set_pin_level(MOD_CS, false);
+    spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
     ECG_BUF_O[ECG_CMND_POS] = 0x00;
 
     /* start collecting samples from FIFO */
 
     do {
-        spi_m_sync_transfer(&ECG_SPI_DEV_0, &ecg_spi_msg);
+        spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
 
         /* process sample */
         word = (int32_t*)ECG_BUF_I;
@@ -843,7 +843,7 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
                 break;
 
             case ETAG_FIFO_OVERFLOW :
-                gpio_set_pin_level(CS, true);
+                gpio_set_pin_level(MOD_CS, true);
                 ecg_fifo_reset(); /* or synch */
             case ETAG_FIFO_EMPTY    :
                 eof = true;
@@ -853,7 +853,7 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
     } while (!eof && step < SIZE);
     
     /* done sampling spi */
-    gpio_set_pin_level(CS, true); 
+    gpio_set_pin_level(MOD_CS, true); 
  
     return step;
  }
@@ -906,3 +906,4 @@ void ecg_sw_reset()
 
     ecg_spi_write(&msg);
 }
+

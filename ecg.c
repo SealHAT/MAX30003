@@ -23,3 +23,13 @@
  
 #include "ecg.h"
 
+void ecg_spi_init()
+{
+    spi_m_sync_set_mode(&SPI_MOD, SPI_MODE_0);
+    spi_m_sync_enable(&SPI_MOD);
+    gpio_set_pin_level(MOD_CS,true);
+
+    ecg_spi_msg.size  = ECG_BUF_SZ;
+    ecg_spi_msg.rxbuf = ECG_BUF_I;
+    ecg_spi_msg.txbuf = ECG_BUF_O;
+}
