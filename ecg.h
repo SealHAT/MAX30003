@@ -26,7 +26,7 @@
 
 #include "max30003.h"
 #define MOD_INT1 (MOD9)
-#define MOD_INT2 (MOD8)
+#define MOD_INT2 (MOD2)
 
 #define CNFGGEN_DEFAULT_MASK (CNFGGEN_EN_ECG)
 #define CNFGECG_DEFAULT_MASK (CNFGECG_DLPF|CNFGECG_DHPF|CNFGECG_GAIN|CNFGECG_RATE)
@@ -41,8 +41,7 @@ extern "C"
 
 #define  ECG_LOGSIZE (24)
 
-void ecg_spi_init();
-//int32_t ecg_init();
+
 
 /**
  * Ekg Configuration enum
@@ -51,8 +50,8 @@ void ecg_spi_init();
  * Config_Failure would not result any extra influence on registers 
  */
 typedef enum config_status {
-	SAME_CONFIG = 0,
-	CONFIG_SUCCESS = 1,
+	CONFIG_SUCCESS = 0,
+    SAME_CONFIG    = 1,
 	CONFIG_FAILURE = 2
 } config_status;
 
@@ -69,7 +68,8 @@ typedef enum int_pin {
 } int_pin;
 
 //int32_t ECG_LOG;
-
+int32_t ecg_spi_init();
+config_status ecg_init();
 
 /**
  * ecg_change_gain
@@ -109,15 +109,15 @@ config_status ecg_change_lowfre(CNFGECG_DLPF_VAL vals);
  */
 config_status ecg_change_datarate(CNFGECG_RATE_VAL vals);
 
-/**
- * ecg_init()
- *
- * Initializes and starts the ekg module with the default configurations
- * (see doucumentation for default ekg config)
- *
- * @return CONFIG_SUCCESS if successful, CONFIGFAILURE if initialization fails
- */
-config_status ecg_init();
+// /**
+//  * ecg_init()
+//  *
+//  * Initializes and starts the ekg module with the default configurations
+//  * (see doucumentation for default ekg config)
+//  *
+//  * @return CONFIG_SUCCESS if successful, CONFIGFAILURE if initialization fails
+//  */
+// config_status ecg_init();
 
 /**
  * ecg_switch

@@ -22,16 +22,21 @@
  */
  
 #include "ecg.h"
+#include <string.h>
 
-void ecg_spi_init()
+int32_t ecg_spi_init()
 {
-    spi_m_sync_set_mode(&SPI_MOD, SPI_MODE_0);
+    if (spi_m_sync_set_mode(&SPI_MOD, SPI_MODE_0)) {
+        return ERR_NOT_INITIALIZED;
+    }
     spi_m_sync_enable(&SPI_MOD);
     gpio_set_pin_level(MOD_CS,true);
     
     ecg_spi_msg.size  = ECG_BUF_SZ;
     ecg_spi_msg.rxbuf = ECG_BUF_I;
     ecg_spi_msg.txbuf = ECG_BUF_O;
+    
+    return ERR_NONE;
 }    
 
 
@@ -132,61 +137,68 @@ config_status ecg_change_lowfre(CNFGECG_DLPF_VAL vals)
 
 config_status ecg_init()
 {
-	int success = 0;
-	MAX30003_CNFG_GEN_VALS  cnfg_gen_vals;
-	MAX30003_CNFG_ECG_VALS  cnfg_ecg_vals;
-    MAX30003_EN_INT_VALS vals;
-	config_status t;
-    vals.en_eint = ENINT_ENABLED;
-    vals.en_dcloffint = ENDCLOFFINT_DISABLED;
-    vals.en_eovf = ENEOVF_DISABLED;
-    vals.en_fstint = ENFSTINT_DISABLED;
-    vals.en_lonint = ENLONINT_DISABLED;
-    vals.en_pllint = ENPLLINT_DISABLED;
-    vals.en_rrint = ENRRINT_DISABLED;
-    vals.en_samp = ENSAMP_DISABLED;
-    vals.intb_type = INTBTYPE_NMOS_WITH_PU;
-	ecg_sw_reset();
-	delay_ms(100);
-	ecg_set_cnfg_gen(CNFGGEN_VALS_DEFAULT,CNFG_GEN_DEFAULT_MASK);
-	delay_ms(100);
-	ecg_set_cnfg_ecg(CNFECG_VALS_DEFAULT,CNFG_ECG_DEFAULT_MASK);
-	delay_ms(100);
-	ecg_set_mngr_int(MNGR_INT_VALS_DEFAULT,MNGR_INT_DEFAULT_MASK);
-	delay_ms(100);
-	t = ecg_en_int(INT_PIN_1,vals);
-	ecg_get_cnfg_gen(&cnfg_gen_vals);
-	if(cnfg_gen_vals.en_ecg == ENECG_ENABLED)
-	{
-		success++;
-	}
-	ecg_get_cnfg_ecg(&cnfg_ecg_vals);
-	if(cnfg_ecg_vals.dhpf == DHPF_HALF)
-	{
-		success++;
-	}
-	if(cnfg_ecg_vals.dlpf == DLPF_40_HZ)
-	{
-		success++;
-	}
-	if(cnfg_ecg_vals.gain == GAIN_20_V)
-	{
-		success++;
-	}
-	if(cnfg_ecg_vals.rate == RATE_MIN_SPS)
-	{
-		success++;
-	}
-	if(success == 5 && t == CONFIG_SUCCESS)
-	{
-		return CONFIG_SUCCESS;
-	}else{
-		return CONFIG_FAILURE;
-	}
-	
-	
-}
+    MAX30003_VALS   old_vals;
+    MAX30003_VALS   new_vals;
+    
+    memset(&new_vals, 0, MAX30003_DATA_BYTES);
+    
+    new_vals.cnfg_gen.rbiasn       = RBIASN_NOT_CONNECTED;
+    new_vals.cnfg_gen.rbiasp       = RBIASP_NOT_CONNECTED;
+    new_vals.cnfg_gen.rbiasv       = RBIASV_100_MOHM;
+    new_vals.cnfg_gen.en_rbias     = ENRBIAS_DISABLED;
+    new_vals.cnfg_gen.en_dcloff    = ENDCLOFF_DISABLED;
+    new_vals.cnfg_gen.en_ecg       = ENECG_ENABLED;
+    new_vals.cnfg_gen.fmstr        = FMSTR_512_HZ;
+    
+    ecg_set_cnfg_gen(new_vals.cnfg_gen, CNFGGEN_DEFAULT_MASK);
+    ecg_get_cnfg_gen(&old_vals.cnfg_gen);
+    
+    if(new_vals.cnfg_gen.en_ecg != old_vals.cnfg_gen.en_ecg) {
+        return CONFIG_FAILURE;
+    }
 
+    
+    memset(&new_vals, 0, MAX30003_DATA_BYTES);
+    new_vals.cnfg_ecg.dlpf = DLPF_40_HZ;
+    new_vals.cnfg_ecg.dhpf = DHPF_HALF;
+    new_vals.cnfg_ecg.gain = GAIN_20_V;
+    new_vals.cnfg_ecg.rate = RATE_MIN_SPS;
+    
+    ecg_set_cnfg_ecg(new_vals.cnfg_ecg, CNFGECG_DEFAULT_MASK);
+    ecg_get_cnfg_ecg(&old_vals.cnfg_ecg);
+    
+    if( new_vals.cnfg_ecg.dhpf != old_vals.cnfg_ecg.dhpf &&
+        new_vals.cnfg_ecg.dlpf != old_vals.cnfg_ecg.dlpf &&
+        new_vals.cnfg_ecg.gain != old_vals.cnfg_ecg.gain &&
+        new_vals.cnfg_ecg.rate != old_vals.cnfg_ecg.rate ) {
+            return CONFIG_FAILURE;
+        }
+    
+    memset(&new_vals, 0, MAX30003_DATA_BYTES);
+    new_vals.mngr_int.efit = EFIT_AS_24;
+    
+    ecg_set_mngr_int(new_vals.mngr_int, MNGRINT_DEFAULT_MASK);
+    ecg_get_mngr_int(&old_vals.mngr_int);
+    
+    if ( new_vals.mngr_int.efit != old_vals.mngr_int.efit ) {
+        return CONFIG_FAILURE;
+    }
+    
+    memset(&new_vals, 0, MAX30003_DATA_BYTES);
+    new_vals.en_int.en_eint    = ENINT_ENABLED;
+    new_vals.en_int.intb_type  = INTBTYPE_NMOS_WITH_PU;
+    
+    ecg_set_en_int(new_vals.en_int, ENINT1_DEFUALT_MASK);
+    ecg_set_en_int2(new_vals.en_int, ENINT1_DEFUALT_MASK);
+    ecg_get_en_int(&old_vals.en_int);
+    
+    if ( new_vals.en_int.en_eint   != old_vals.en_int.en_eint &&
+         new_vals.en_int.intb_type != old_vals.en_int.intb_type ) {
+             return CONFIG_FAILURE;
+    }
+    
+    return CONFIG_SUCCESS;
+}
 config_status ecg_switch(CNFGGEN_EN_ECG_VAL vals)
 {
 	MAX30003_CNFG_GEN_VALS VALS;
