@@ -203,21 +203,15 @@ config_status ecg_switch(CNFGGEN_EN_ECG_VAL vals)
 {
 	MAX30003_CNFG_GEN_VALS VALS;
 	ecg_get_cnfg_gen(&VALS);
-	if(VALS.en_ecg == vals)
-	{
-		return SAME_CONFIG;
+
+	VALS.en_ecg = vals;
+	ecg_set_cnfg_gen(VALS,CNFGGEN_EN_ECG);
+	ecg_get_cnfg_gen(&VALS);
+	if(VALS.en_ecg == vals){
+		return CONFIG_SUCCESS;
 	}else{
-		VALS.en_ecg = vals;
-		ecg_set_cnfg_gen(VALS,CNFGGEN_EN_ECG);
-		ecg_get_cnfg_gen(&VALS);
-		if(VALS.en_ecg == vals){
-			return CONFIG_SUCCESS;
-		}else{
-			return CONFIG_FAILURE;
-		}
-		
-	}
-	
+		return CONFIG_FAILURE;
+	}	
 }
 
 config_status ecg_dcloff_switch(CNFGGEN_EN_DCLOFF_VAL vals)
