@@ -25,6 +25,7 @@
 #define ECG_H
 
 #include "max30003.h"
+#include "ecg_types.h"
 #define MOD_INT1 (MOD9)
 #define MOD_INT2 (MOD2)
 
@@ -39,15 +40,11 @@ extern "C"
 {
 #endif
 
-#define  ECG_LOGSIZE (24)
-
-
-
 /**
  * Ekg Configuration enum
  *
- * Each represents the results indicating if the configuration applied or not. 
- * Config_Failure would not result any extra influence on registers 
+ * Each represents the results indicating if the configuration applied or not.
+ * Config_Failure would not result any extra influence on registers
  */
 typedef enum config_status {
 	CONFIG_SUCCESS = 0,
@@ -58,8 +55,8 @@ typedef enum config_status {
 /**
  * Interrupt Pin Configuration enum
  *
- * In the function of setting interrupt pins, we have two choices, this enum 
- * is a parameter of the interrupt pin setting func 
+ * In the function of setting interrupt pins, we have two choices, this enum
+ * is a parameter of the interrupt pin setting func
  */
 
 typedef enum int_pin {
@@ -74,7 +71,7 @@ config_status ecg_init();
 /**
  * ecg_change_gain
  *
- * Change cnfg_ecg register D[17:16] value to achieve the goal of adjusting gain 
+ * Change cnfg_ecg register D[17:16] value to achieve the goal of adjusting gain
  * of ecg. This allow you to input any CNFGECG_GAIN_VAL, and the func checks for
  * should any changes need to be applied if the settings already applied
 
@@ -86,11 +83,11 @@ config_status ecg_change_gain(CNFGECG_GAIN_VAL vals);
 /**
  * ecg_change_lowfre
  *
- * Change cnfg_ecg register D[13:12] value to achieve the goal of adjusting digital 
- * low-pass filter of ecg. This allow you to input any CNFGECG_DLPF_VAL, and the func 
+ * Change cnfg_ecg register D[13:12] value to achieve the goal of adjusting digital
+ * low-pass filter of ecg. This allow you to input any CNFGECG_DLPF_VAL, and the func
  * checks for should any changes need to be applied if the settings already applied
  * Be sure to check DLPF availability at certain data rates(see MAX30003 data sheet).
- * recommend to change data rate before apply any changes of DLPF 
+ * recommend to change data rate before apply any changes of DLPF
 
  * @param CNFG_ECG_DLPF_VAL(see max30003types.h)
  * @return CONFIG_SUCCESS if successful, SAME_CONFIG if setting already applied, CONFIG_FAILURE if config failed
@@ -100,7 +97,7 @@ config_status ecg_change_lowfre(CNFGECG_DLPF_VAL vals);
 /**
  * ecg_change_datarate
  *
- * Change cnfg_ecg register D[23:22] value to achieve the goal of adjusting sample 
+ * Change cnfg_ecg register D[23:22] value to achieve the goal of adjusting sample
  * rate of ecg. This allow you to input any CNFGECG_RATE_VAL, and the func checks for
  * should any changes need to be applied if the settings already applied
 
@@ -122,7 +119,7 @@ config_status ecg_change_datarate(CNFGECG_RATE_VAL vals);
 /**
  * ecg_switch
  *
- * Change cnfg_gen register D[19] value to achieve the goal of adjusting switch 
+ * Change cnfg_gen register D[19] value to achieve the goal of adjusting switch
  * of ecg. This allow you to input any CNFGGEN_EN_ECG_VAL, and the func checks for
  * should any changes need to be applied if the settings already applied
 
@@ -134,9 +131,9 @@ config_status ecg_switch(CNFGGEN_EN_ECG_VAL vals);
 /**
  * ecg_dcloff_switch
  *
- * Change cnfg_gen register D[13:12] value to achieve the goal of enable dc 
- * lead-off detection. This allow you to choose enable dc lead-off detection 
- * or not, the func checks for should any changes need to be applied if the 
+ * Change cnfg_gen register D[13:12] value to achieve the goal of enable dc
+ * lead-off detection. This allow you to choose enable dc lead-off detection
+ * or not, the func checks for should any changes need to be applied if the
  * settings already applied
 
  * @param CNFGGEN_EN_DCLOFF_VAL(see max30003types.h)
@@ -147,7 +144,7 @@ config_status ecg_dcloff_switch(CNFGGEN_EN_DCLOFF_VAL vals);
 /**
  * ecg_dcloff_ipol
  *
- * Change cnfg_ecg register D[11] value to achieve the goal of change dc  
+ * Change cnfg_ecg register D[11] value to achieve the goal of change dc
  * lead-off current polarity of ecg. This allow you to input any DCLOFF_IPOL_VAL,
  * and the func checks should any changes need to be applied if the settings
  * already applied
@@ -160,7 +157,7 @@ config_status ecg_dcloff_ipol(CNFGGEN_DCLOFF_IPOL_VAL vals);
 /**
  * ecg_dcloff_imag
  *
- * Change cnfg_ecg register D[10:8] value to achieve the goal of change dc  
+ * Change cnfg_ecg register D[10:8] value to achieve the goal of change dc
  * lead-off current magnitude of ecg. This allow you to input any DCLOFF_IMAG_VAL,
  * and the func checks should any changes need to be applied if the settings
  * already applied
@@ -173,7 +170,7 @@ config_status ecg_dcloff_imag(CNFGGEN_DCLOFF_IMAG_VAL vals);
 /**
  * ecg_dcloff_vth
  *
- * Change cnfg_ecg register D[7:6] value to achieve the goal of change dc  
+ * Change cnfg_ecg register D[7:6] value to achieve the goal of change dc
  * lead-off voltage threshold of ecg. This allow you to input any DCLOFF_VTH_VAL,
  * and the func checks should any changes need to be applied if the settings
  * already applied
@@ -269,7 +266,7 @@ config_status ecg_en_evof_int(int_pin pin, ENINT_ENEOVF_VAL vals, ENINT_INTBTYPE
 /**
  * ecg_fifo_thres
  *
- * func to setup for ecg fifo interrupt threshold(issues FIFO Interrupt based on number of unread FIFO records, 
+ * func to setup for ecg fifo interrupt threshold(issues FIFO Interrupt based on number of unread FIFO records,
  * default value is 16, respectively MNGRINT_EFIT_VAL+1, this has be done before setup fifo interrupt pin
 
  * @param  MNGRINT_EFIT_VAL(see max30003types.h)
@@ -292,9 +289,9 @@ config_status ecg_en_fifo_int(int_pin pin, ENINT_ENEINT_VAL vals, ENINT_INTBTYPE
  * ecg_en_int
  *
  * a big func to set up all the interrupt term into one interrupt pin, the func needs to define the all the terms
- * of interrupt including EFINT, EVOF_INT, LON_INT, DCLOFF_INT, INTB(pin type) whether they are disabled or not, 
- * once put in the func, all these term will or in the pin with type you setup 
- 
+ * of interrupt including EFINT, EVOF_INT, LON_INT, DCLOFF_INT, INTB(pin type) whether they are disabled or not,
+ * once put in the func, all these term will or in the pin with type you setup
+
  * @param int_pin(see ecg.h), MAX30003_EN_INT_VALS(see max30003types.h)
  * @return CONFIG_SUCCESS if successful, SAME_CONFIG if setting already applied, CONFIG_FAILURE if config failed
  */
@@ -304,13 +301,13 @@ config_status ecg_en_int(int_pin pin, MAX30003_EN_INT_VALS vals);
  * ecg_sampling_process
  *
  * make the ecg start sampling and record data in the array. It set the initial place as the beginning of the array
- * to store the data in certain size. The parameter called SIZE should not beyond 850(Important!!!!!) to make sure 
- * few garbage data generate. The sum of initial point and SIZE should not beyond (size of storage array - 200) to 
+ * to store the data in certain size. The parameter called SIZE should not beyond 850(Important!!!!!) to make sure
+ * few garbage data generate. The sum of initial point and SIZE should not beyond (size of storage array - 200) to
  * make sure we do not collect garbage data(Important!!!!). At the end, we will abandon the last 200 bits of data in storage array
- * because they contains garbage data(Important!!!!). If our data storage array is less or equal than 970 and initial point is 0, then we don't need to 
+ * because they contains garbage data(Important!!!!). If our data storage array is less or equal than 970 and initial point is 0, then we don't need to
  * to worry about garbage data, we could make the Initial point + Size = Storage, without minus 200 bits.
- * If I want to start collecting the 1000 sample of ecg data at 10th place at array. 
- * The func should write as ecg_sampling_process(10, Storage, 1000); 
+ * If I want to start collecting the 1000 sample of ecg data at 10th place at array.
+ * The func should write as ecg_sampling_process(10, Storage, 1000);
  * @param uint16_t initial_point, signed int voltage[], uint16_t SIZE
  * @return the time step, should equal to the SIZE
  */

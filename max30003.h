@@ -32,8 +32,9 @@ extern "C"
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "max30003types.h"	/* typedefs for the MAX30003 registers	*/
-#include "driver_init.h"	/* "Atmel Start" files for spi			*/
+#include "ecg_types.h"
+#include "max30003_private.h"	/* typedefs for the MAX30003 registers	*/
+#include "driver_init.h"	    /* "Atmel Start" files for spi			*/
 
 /* MACROS for applying a read/write bit and shift to register address values */
 #define ECG_REG_R(REG)  ( (uint8_t)(REG << 1) | MAX30003_R_INDICATOR )
@@ -61,16 +62,6 @@ enum ECG_WORD_POS {
 /* typedef to enforce size of SPI message components */
 typedef struct MAX30003_DATA_t { uint8_t byte[3]; } MAX30003_DATA_t;
 typedef uint8_t MAX30003_ADDR_t;
-
-/* ECG_SAMPLE type
- *	struct for storing a bit-mapped ECG sample in a 32-bit number
- *	packing and bit order is ignored as the total struct size is 32-bits
- */
-typedef struct __attribute__((__packed__)) ECG_SAMPLE_t {
-	uint32_t	tag:3;	    /* ETAG data from the ECG_FIFO	*/
-	uint32_t	step:11;	/* time step of the sample		*/
-    uint32_t	data:18;	/* voltage of the sample		*/
-} ECG_SAMPLE_t;
 
 /* MAX30003_MSG type
  *	structure for storing a message to send/receive over SPI

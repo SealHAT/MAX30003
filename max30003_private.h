@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#ifndef MAX30003TYPES_H
-#define MAX30003TYPES_H
+#ifndef MAX30003PRIVATE_H
+#define MAX30003PRIVATE_H
 
 #ifdef __cplusplus
 extern "C"
@@ -222,7 +222,7 @@ typedef enum {
     MNGRDYN_RESERVED    = 0x00FFFF
 } MAX30003_MNGR_DYN_MASKS;
 
-// TODO do something about 
+// TODO do something about
 typedef uint8_t MNGRDYN_FASTTH_VAL;
 
 typedef enum {
