@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#ifndef MAX30003TYPES_H
-#define MAX30003TYPES_H
+#ifndef MAX30003PRIVATE_H
+#define MAX30003PRIVATE_H
 
 #ifdef __cplusplus
 extern "C"
@@ -222,7 +222,7 @@ typedef enum {
     MNGRDYN_RESERVED    = 0x00FFFF
 } MAX30003_MNGR_DYN_MASKS;
 
-// TODO do something about 
+// TODO do something about
 typedef uint8_t MNGRDYN_FASTTH_VAL;
 
 typedef enum {
@@ -585,9 +585,9 @@ typedef uint8_t CNFGRTOR2_HOFF_VAL;
  * FIFO register's masks and values
  ***/
 typedef enum {
-	ECGFIFO_PTAG	= 0x000007,	// TODO what is this?
-	ECGFIFO_ETAG	= 0x000038,
-	ECGFIFO_DATA	= 0xFFFFC0,
+	ECGFIFO_PTAG	= 0x00000007,	// TODO what is this?
+	ECGFIFO_ETAG	= 0x00000038,
+	ECGFIFO_DATA	= 0xFFFFFFC0, // Allow for sign extension
 } MAX30003_ECG_FIFO_MASKS;
 
 // typedef enum {
@@ -606,7 +606,7 @@ typedef enum {
 	ETAG_FIFO_OVERFLOW	= 7
 } ECGFIFO_ETAG_VAL;
 
-typedef uint32_t ECGFIFO_DATA_VAL;
+typedef int32_t ECGFIFO_DATA_VAL;
 
 /***
  * RTOR register's masks and values
@@ -730,6 +730,22 @@ typedef struct MAX30003_FIFO_VALS {
 typedef struct MAX30003_RTOR_VALS {
 	RTOR_DATA_VAL	data;
 } MAX30003_RTOR_VALS;
+
+typedef union MAX30003_VALS {
+    MAX30003_STATUS_VALS        status;
+    MAX30003_EN_INT_VALS        en_int;
+    MAX30003_MNGR_INT_VALS      mngr_int;
+    MAX30003_MNGR_DYN_VALS      mngr_dyn;
+    MAX30003_INFO_VALS          info;
+    MAX30003_CNFG_GEN_VALS      cnfg_gen;
+    MAX30003_CNFG_CAL_VALS      cnfg_cal;
+    MAX30003_CNFG_EMUX_VALS     cnfg_emux;
+    MAX30003_CNFG_ECG_VALS      cnfg_ecg;
+    MAX30003_CNFG_RTOR1_VALS    cnfg_rtor1;
+    MAX30003_CNFG_RTOR2_VALS    cnfg_rtor2;
+    MAX30003_FIFO_VALS          fifo;
+    MAX30003_RTOR_VALS          rtor;
+} MAX30003_VALS;
 
 #ifdef __cplusplus
 }

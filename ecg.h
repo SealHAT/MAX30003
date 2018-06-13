@@ -24,13 +24,59 @@
 #ifndef ECG_H
 #define ECG_H
 
+#include "max30003.h"
+#include "ecg_types.h"
+#define MOD_INT1 (MOD9)
+#define MOD_INT2 (MOD2)
+
+#define CNFGGEN_DEFAULT_MASK (CNFGGEN_EN_ECG)
+#define CNFGECG_DEFAULT_MASK (CNFGECG_DLPF|CNFGECG_DHPF|CNFGECG_GAIN|CNFGECG_RATE)
+#define MNGRINT_DEFAULT_MASK (MNGRINT_EFIT)
+#define ENINT1_DEFUALT_MASK  (ENINT_INTB_TYPE|ENINT_EN_EINT)
+#define ENINT2_DEFUALT_MASK  (ENINT_INTB_TYPE|ENINT_EN_LONINT)
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "max30003.h"
-#include "max30003test.h"
+/**
+ * Ekg Configuration enum
+ *
+ * Each represents the results indicating if the configuration applied or not.
+ * Config_Failure would not result any extra influence on registers
+ */
+typedef enum config_status {
+	CONFIG_SUCCESS = 0,
+    SAME_CONFIG    = 1,
+	CONFIG_FAILURE = 2
+} config_status;
+
+/**
+ * Interrupt Pin Configuration enum
+ *
+ * In the function of setting interrupt pins, we have two choices, this enum
+ * is a parameter of the interrupt pin setting func
+ */
+
+typedef enum int_pin {
+	INT_PIN_1,
+	INT_PIN_2
+} int_pin;
+
+/**
+ * ecg_spi_init
+ *  initialize the SPI device and buffers for the ECG
+ *  @returns the success value
+ */
+int32_t ecg_spi_init();
+
+/**
+ * ecg_init
+ *  initialize the ecg to the desired defaults for the elephant seal deployment
+ *  @returns the initialization status
+ */
+config_status ecg_init();
 
 #ifdef __cplusplus
 }

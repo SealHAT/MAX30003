@@ -200,7 +200,7 @@
       </AcmeProjectConfig>
     </AcmeProjectConfig>
     <avrtool>com.atmel.avrdbg.tool.samice</avrtool>
-    <avrtoolserialnumber>801001700</avrtoolserialnumber>
+    <avrtoolserialnumber>801001446</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x10010305</avrdeviceexpectedsignature>
     <avrtoolinterface>SWD</avrtoolinterface>
     <com_atmel_avrdbg_tool_samice>
@@ -212,17 +212,16 @@
         <JlinkConfigFile>C:\SPB_Data\git\MAX30003\example\FeatherM0\jlink.config</JlinkConfigFile>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
-      <ToolNumber>801001700</ToolNumber>
+      <ToolNumber>801001446</ToolNumber>
       <ToolName>J-Link</ToolName>
     </com_atmel_avrdbg_tool_samice>
     <avrtoolinterfaceclock>4000000</avrtoolinterfaceclock>
     <custom>
       <ToolOptions>
         <InterfaceProperties>
-          <SwdClock>4000000</SwdClock>
+          <SwdClock>0</SwdClock>
         </InterfaceProperties>
-        <InterfaceName>
-        </InterfaceName>
+        <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>custom</ToolType>
       <ToolNumber>
@@ -477,6 +476,10 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\ecg.c">
+      <SubType>compile</SubType>
+      <Link>ecg.c</Link>
+    </Compile>
     <Compile Include="..\..\ecg.h">
       <SubType>compile</SubType>
       <Link>ecg.h</Link>
@@ -917,16 +920,13 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="max30003test.c">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="max30003test.h">
-      <SubType>compile</SubType>
-    </None>
     <Compile Include="ringbuff\ringbuffer.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="ringbuff\ringbuffer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="seal_Types.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="SerialPrint.c">

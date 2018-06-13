@@ -28,6 +28,13 @@ typedef enum TEST_ER {
 	TEST_RUNFAIL = 3
 } TEST_ER;
 
+/*put here temporary, belong to ecg.h
+typedef enum config_status {
+	SAME_CONFIG = 0,
+	CONFIG_SUCCESS = 1,
+	CONFIG_FAILURE = 2
+} config_status;*/
+
 extern TEST_ER	test_errno;
 extern bool		flag_timeout;
 extern bool		int1_level_n;
@@ -49,6 +56,8 @@ test_result_t MAX30003_TEST_HELLO_WORLD();
 test_result_t MAX30003_FLAG_TEST();
 test_result_t MAX30003_FIFO_TEST();
 test_result_t MAX30003_CONFIG_TEST(const uint8_t SPS, const uint8_t GAIN, const uint8_t LOWPASS);
+//temporary here, belong to ecg.h
+//config_status ecg_change_datarate(CNFGECG_RATE_VAL vals);
 
 char* error_no_to_string();
 
