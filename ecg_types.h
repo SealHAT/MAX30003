@@ -14,9 +14,9 @@
  *	packing and bit order is ignored as the total struct size is 32-bits
  */
 typedef struct __attribute__((__packed__)) {
-	unsigned int	tag  : 3;	/* ETAG data from the ECG_FIFO	*/
-	unsigned int	step : 11;	/* time step of the sample		*/
-    unsigned int	data : 18;	/* voltage of the sample		*/
+	int32_t	tag  : 3;	/* ETAG data from the ECG_FIFO	*/
+	int32_t	step : 11;	/* time step of the sample		*/
+    int32_t	data : 18;	/* voltage of the sample		*/
 } ECG_SAMPLE_t;
 
 typedef enum {

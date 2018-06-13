@@ -520,16 +520,16 @@ void ecg_decode_ecg_fifo(MAX30003_FIFO_VALS *vals, const MAX30003_DATA_t DATA)
 {
 	uint32_t word;
 	
-	word = 0x00000000;
+	word = DATA.byte[2] & 0x80 ? 0xFF000000 : 0x00000000;
 	/* extract and assign bytes from data word to be endian safe */
-	word |= ((uint32_t)(DATA.byte[2]) << 16);
-	word |= ((uint32_t)(DATA.byte[1]) << 8 );
-	word |= ((uint32_t)(DATA.byte[0]) << 0 );
+	word |= ((uint32_t)(DATA.byte[2]) << 24 );
+	word |= ((uint32_t)(DATA.byte[1]) << 16 );
+	word |= ((uint32_t)(DATA.byte[0]) << 8  );
 	
 	/* shift values from the 24-bit data word into the value struct */
 	vals->ptag	= (ECGFIFO_PTAG_VAL)( (word & ECGFIFO_PTAG) >> 0);
 	vals->etag	= (ECGFIFO_ETAG_VAL)( (word & ECGFIFO_ETAG) >> 3);
-	vals->data	= (ECGFIFO_DATA_VAL)( (word & ECGFIFO_DATA) >> 6);
+	vals->data	= (ECGFIFO_DATA_VAL)( (int32_t)(word & ECGFIFO_DATA) >> 6);
 }
 void ecg_decode_rtor(MAX30003_RTOR_VALS *vals, const MAX30003_DATA_t DATA)
 {
@@ -791,71 +791,73 @@ void ecg_get_sample(MAX30003_FIFO_VALS *vals)
 
  int32_t ecg_get_sample_burst(ECG_SAMPLE_t *log, const uint16_t SIZE)
  {
-     bool eof;
-     uint16_t step;              /* unit-less time increment */
-     int32_t *word;
-     MAX30003_MSG msg;
-     MAX30003_FIFO_VALS vals;
+    bool eof;
+    int  sample;
+    uint16_t step;              /* unit-less time increment */
+
+    MAX30003_MSG msg;
+    MAX30003_FIFO_VALS vals;
+    
+    eof = false;
+    step = 0x0000;
      
-     eof = false;
-     step = 0x0000;
-     
-     /* start the burst transfer, but hold csb low */
-     ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
+    /* start the burst transfer, but hold CSB low */
+    ECG_BUF_O[ECG_CMND_POS] = ECG_REG_R(REG_ECG_FIFO_BURST);
 
-     gpio_set_pin_level(MOD_CS, false);
-     spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
-     ECG_BUF_O[ECG_CMND_POS] = 0x00;
+    /* start collecting samples from FIFO */
+    gpio_set_pin_level(MOD_CS, false);
+    ecg_spi_msg.size = 1;
+    spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
+    
+    ecg_spi_msg.size = ECG_BUF_SZ;
+    ECG_BUF_O[ECG_CMND_POS] = 0x00;
 
-     /* start collecting samples from FIFO */
+    /* evaluate and store sample, take action if error */
+    do {
+        /* get and process samples */
+        if (!(step % 4)) {
+            spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);    
+        }
+        
+        sample = (step % 4)*ECG_DATA_SZ;
+        msg.data.byte[0] = ECG_BUF_I[sample + 2];
+        msg.data.byte[1] = ECG_BUF_I[sample + 1];
+        msg.data.byte[2] = ECG_BUF_I[sample + 0];
+        
+        ecg_decode_ecg_fifo(&vals, msg.data);
 
-     do {
-         spi_m_sync_transfer(&SPI_MOD, &ecg_spi_msg);
-
-         /* process sample */
-         word = (int32_t*)ECG_BUF_I;
-         vals.data = word[0] >> 6;
-         vals.etag = (word[0] >> 3) & 0x0003;
-         //         msg.data.byte[0] = ECG_BUF_I[0];
-         //         msg.data.byte[1] = ECG_BUF_I[1];
-         //         msg.data.byte[2] = ECG_BUF_I[2];
-         //         ecg_decode_ecg_fifo(&vals, msg.data);
-
-         switch (vals.etag) {
-             case ETAG_VALID_EOF :
-             case ETAG_FAST_EOF  :
-             eof = true; /* exit, but save the sample as a valid sample */
-             vals.etag = vals.etag;
-             case ETAG_VALID     :
-             case ETAG_FAST      :
-             if (step >= SIZE) {
-                 /* data fifo full, still data in ecg fifo need to clean up */
-                 // TODO implement a circular FIFO or some scheme to best preserve data
-                 delay_ms(10000);
-             }
-             /* format and store the sample */
-             log[step].tag  = vals.etag;
-             log[step].step = step;
-             log[step].data = vals.data;
+        switch (vals.etag) {
+            case ETAG_VALID_EOF :
+            case ETAG_FAST_EOF  :
+                eof = true; /* exit, but save the sample as a valid sample */
+            case ETAG_VALID     :
+            case ETAG_FAST      :
+                /* format and store the sample */
+                log[step].tag  = vals.etag;
+                log[step].step = step;
+                log[step].data = vals.data;
              
-             /* increment, clear, and get next sample */
-             step++;
-             break;
+                /* increment, clear, and get next sample */
+                step++;
+                break;
 
-             case ETAG_FIFO_OVERFLOW :
+            case ETAG_FIFO_OVERFLOW :
                 gpio_set_pin_level(MOD_CS, true);
                 ecg_fifo_reset(); /* or synch */
-             case ETAG_FIFO_EMPTY    :
+            case ETAG_FIFO_EMPTY    :
                 eof = true;
-             break;
-             default : ecg_synch();break; /* TODO error handling */
-         }
-     } while (!eof && step < SIZE);
+                break;
+            default : 
+                gpio_set_pin_level(MOD_CS, true);
+                ecg_synch();
+                break; /* TODO error handling */
+        }
+    } while (!eof && step < SIZE);
      
-     /* done sampling spi */
-     gpio_set_pin_level(MOD_CS, true);
+    /* done sampling spi */
+    gpio_set_pin_level(MOD_CS, true);
      
-     return step;
+    return step;
  }
 
 void ecg_fifo_reset()
