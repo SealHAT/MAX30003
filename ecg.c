@@ -107,3 +107,23 @@ config_status ecg_init()
     
     return CONFIG_SUCCESS;
 }
+
+void ecg_sleep()
+{
+    MAX30003_VALS vals;
+    
+    /* get the old values and modify the enable ecg bit */
+    ecg_get_cnfg_gen(&vals.cnfg_gen);
+    vals.cnfg_gen.en_ecg = ENECG_DISABLED;
+    ecg_set_cnfg_gen(vals.cnfg_gen, CNFGGEN_EN_ECG);
+}
+
+void ecg_wake()
+{
+    MAX30003_VALS   vals;
+    
+    /* get the old values and modify the enable ecg bit */
+    ecg_get_cnfg_gen(&vals.cnfg_gen);
+    vals.cnfg_gen.en_ecg = ENECG_ENABLED;
+    ecg_set_cnfg_gen(vals.cnfg_gen, CNFGGEN_EN_ECG);
+}

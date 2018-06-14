@@ -78,6 +78,9 @@ int32_t ecg_spi_init();
  */
 config_status ecg_init();
 
+void ecg_sleep();
+void ecg_wake();
+
 #ifdef __cplusplus
 }
 #endif
